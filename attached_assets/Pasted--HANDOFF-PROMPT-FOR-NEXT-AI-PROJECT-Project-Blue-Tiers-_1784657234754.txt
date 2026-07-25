@@ -1,0 +1,413 @@
+== HANDOFF PROMPT FOR NEXT AI ==
+
+PROJECT
+-------
+Project: Blue Tiers
+Stack:
+- TanStack Start (SSR)
+- React
+- TypeScript
+- Tailwind CSS
+- Vite
+- Node.js
+
+Development server:
+npm run dev
+
+Runs on port 5000.
+
+======================================================================
+CURRENT TASK (Partially Completed)
+======================================================================
+
+There are two remaining fixes in the Tournament Bracket System.
+
+----------------------------------------------------------------------
+TASK 1 — Replace ⚔️ with 🏆 Above the Finals Column (Admin Panel)
+----------------------------------------------------------------------
+
+File:
+src/components/admin/AdminBracketEditor.tsx
+
+Location:
+Function `FinalsCol` (approximately lines 147–176)
+
+Current code:
+
+```tsx
+<div ... fontSize: 20 }}>⚔️</div>
+```
+
+Replace the icon with:
+
+```text
+🏆
+```
+
+Nothing else in this component should change.
+
+----------------------------------------------------------------------
+TASK 2 — Make the Public Bracket Match the Admin Bracket Exactly
+----------------------------------------------------------------------
+
+Files:
+
+- src/components/tournament/TournamentBracket.tsx
+- src/components/admin/AdminBracketEditor.tsx (reference/source of truth)
+
+The Admin Bracket is now the reference implementation.
+
+Update the PUBLIC bracket so that its layout is visually identical to the Admin Bracket.
+
+======================================================================
+PIXEL DIFFERENCES TO FIX
+======================================================================
+
+1. FinalsColumn Wrapper Width
+
+Public:
+
+```ts
+width: CARD_W + 20
+```
+
+Admin:
+
+```ts
+width: CARD_W + 16
+```
+
+Fix public to:
+
+```ts
+width: CARD_W + 16
+```
+
+----------------------------------------------------------------------
+
+2. Trophy Circle Size
+
+Public:
+
+- width: 48
+- height: 48
+- fontSize: 22
+
+Admin:
+
+- width: 44
+- height: 44
+- fontSize: 20
+
+Update public to match the admin values exactly.
+
+----------------------------------------------------------------------
+
+3. Trophy Vertical Offset
+
+Public:
+
+```ts
+lblTop - 52 - 6
+```
+
+Admin:
+
+```ts
+lblTop - 48 - 6
+```
+
+Use:
+
+```ts
+lblTop - 48 - 6
+```
+
+----------------------------------------------------------------------
+
+4. Finals Label
+
+Public:
+
+Text:
+
+```text
+GRAND FINAL
+```
+
+Padding:
+
+```text
+3px 14px
+```
+
+Font size:
+
+```text
+8.5
+```
+
+Font weight:
+
+```text
+800
+```
+
+Admin:
+
+Text:
+
+```text
+Finals
+```
+
+Padding:
+
+```text
+2px 10px
+```
+
+Font size:
+
+```text
+8
+```
+
+Font weight:
+
+```text
+700
+```
+
+Update the public bracket to match the admin exactly.
+
+----------------------------------------------------------------------
+
+5. Finals Label Colors
+
+The public bracket currently uses theme variables.
+
+Replace them with the admin's hardcoded amber colors.
+
+Background:
+
+```css
+rgba(245,158,11,.08)
+```
+
+Border:
+
+```css
+1px solid rgba(245,158,11,.2)
+```
+
+Text:
+
+```css
+rgba(245,158,11,.8)
+```
+
+----------------------------------------------------------------------
+
+6. Match Card Left Offset
+
+Public:
+
+```ts
+left: 10
+```
+
+Admin:
+
+```ts
+left: 8
+```
+
+Use:
+
+```ts
+left: 8
+```
+
+----------------------------------------------------------------------
+
+7. Trophy Circle Styling
+
+The public bracket currently uses theme variables.
+
+Replace them with the admin styling:
+
+Background:
+
+```css
+radial-gradient(circle, rgba(245,158,11,.14) 0%, transparent 100%)
+```
+
+Border:
+
+```css
+1px solid rgba(245,158,11,.25)
+```
+
+Remove the boxShadow entirely.
+
+----------------------------------------------------------------------
+
+8. Bracket Container Padding
+
+Public:
+
+```css
+padding: 14px 0;
+```
+
+Admin:
+
+```css
+padding: 14px 12px;
+```
+
+Update the public bracket to:
+
+```css
+padding: 14px 12px;
+```
+
+----------------------------------------------------------------------
+
+9. Finals "TBD" Fallback Width
+
+When `finalsMatch` is missing:
+
+Public:
+
+```ts
+CARD_W + 20
+```
+
+Admin:
+
+```ts
+CARD_W + 16
+```
+
+Update to:
+
+```ts
+CARD_W + 16
+```
+
+----------------------------------------------------------------------
+
+10. Connector Theme
+
+The public bracket currently uses:
+
+```tsx
+theme.connColor
+theme.connDot
+```
+
+This is already correct because the public bracket reads the selected theme from:
+
+```text
+tournament.bracketDisplay.theme
+```
+
+No changes are required here.
+
+======================================================================
+IMPORTANT
+======================================================================
+
+- The PUBLIC bracket already displays 🏆 correctly.
+  Do NOT change it.
+
+- Only modify:
+  - FinalsColumn
+  - Bracket container
+  inside:
+
+```
+src/components/tournament/TournamentBracket.tsx
+```
+
+- Do NOT modify the Admin Bracket layout.
+
+- The Admin Bracket is now the source of truth.
+
+- After making all edits, verify that:
+
+```
+npm run dev
+```
+
+starts successfully with:
+
+- No TypeScript errors
+- No Vite errors
+- No runtime errors
+
+======================================================================
+RECENT FIXES ALREADY COMPLETED
+======================================================================
+
+Bracket generation:
+
+- Pads to the next power of two.
+- Example:
+  - 9 teams → 16 slots.
+- Teams are inserted sequentially.
+- Empty slots become `null`.
+- Empty slots display as "TBD".
+
+Bye logic:
+
+- Completely removed.
+- No automatic advancement.
+- No bye cards.
+
+Match status:
+
+- `"bye"` removed from the status enum.
+
+First-round matches:
+
+- status = "scheduled"
+- winnerId = null
+
+Bracket labels:
+
+- Quarter-Finals hidden.
+- Semi-Finals hidden.
+- Only the Finals column displays a label.
+
+Theme support:
+
+AdminBracketEditor now contains a BRACKET_THEME_COLORS lookup table that maps:
+
+- theme id
+- container background
+- container border
+- connector color
+- connector dot color
+
+The Admin Bracket preview now updates immediately when the selected theme changes.
+
+======================================================================
+KEY FILES
+======================================================================
+
+src/server/tournamentServer.ts
+- Bracket generation
+- Match update server functions
+
+src/components/tournament/TournamentBracket.tsx
+- Public bracket
+
+src/components/admin/AdminBracketEditor.tsx
+- Admin bracket editor
+
+======================================================================
+END OF HANDOFF
+======================================================================

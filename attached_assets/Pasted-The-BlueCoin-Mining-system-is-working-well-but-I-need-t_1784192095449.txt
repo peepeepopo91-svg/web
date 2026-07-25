@@ -1,0 +1,124 @@
+The BlueCoin Mining system is working well, but I need the following improvements. Keep the existing UI, animations, and functionality intact—only implement these changes.
+
+## 1. Rename "Shards" to "Gems"
+
+Replace the word **"Shards"** with **"Gems"** everywhere in the application.
+
+This includes, but is not limited to:
+- Exchange page
+- Mining dashboard
+- Mining rig shop
+- Rig prices
+- Conversion UI
+- Transaction history
+- Tooltips
+- Statistics
+- Notifications
+- Modals
+- Buttons
+- Any backend labels or constants where appropriate
+
+The application should only refer to the currency as **Gems**.
+
+---
+
+## 2. Increase the BlueCoin → Gems Exchange Rate
+
+The current exchange rate is far too low.
+
+I want the economy to feel more rewarding.
+
+The dynamic exchange system should remain exactly as it is, but the base value should be changed so that approximately:
+
+1 BlueCoin ≈ 50–60 Gems
+
+The rate should still fluctuate dynamically based on the existing market algorithm, demand, supply, and any other mechanics already implemented.
+
+Examples:
+
+- 1 BlueCoin = 53 Gems
+- 1 BlueCoin = 58 Gems
+- 1 BlueCoin = 61 Gems
+
+The exact value should continue changing naturally, but it should stay around this range instead of the current low values.
+
+Do **not** remove the dynamic pricing system.
+
+---
+
+## 3. Add Gems → BlueCoin Conversion
+
+Currently users can only exchange:
+
+BlueCoin → Gems
+
+I also want the reverse exchange:
+
+Gems → BlueCoin
+
+Create a simple toggle or switch so users can choose:
+
+• BlueCoin → Gems
+• Gems → BlueCoin
+
+The UI should update automatically depending on the selected direction.
+
+Both conversions must use the current dynamic exchange rate.
+
+---
+
+## 4. Daily Conversion Limit
+
+To prevent abuse, limit exchange transactions.
+
+Each user may perform a maximum of **3 exchange transactions per day**, regardless of conversion direction.
+
+Example:
+
+- BlueCoin → Gems
+- Gems → BlueCoin
+- BlueCoin → Gems
+
+After the third transaction, disable the exchange button and display a message such as:
+
+"You have reached today's exchange limit. Please try again tomorrow."
+
+The counter should reset automatically every 24 hours (or at midnight if that is easier to implement).
+
+Display the remaining exchanges somewhere on the Exchange page.
+
+Example:
+
+Daily Exchanges Remaining
+
+3 / 3
+
+After one trade:
+
+2 / 3
+
+---
+
+## 5. Active Miners
+
+The Active Miners list must **never** show fake, demo, placeholder, or randomly generated miners.
+
+Only display **real logged-in users** who are actively mining.
+
+A user should appear only if:
+
+- They are logged in.
+- They own at least one mining rig.
+- At least one mining rig is currently running.
+
+If no users are mining, display a polished empty state:
+
+"No miners are currently active."
+
+Do not generate fake names under any circumstances.
+
+The list should update automatically whenever users start or stop mining.
+
+---
+
+Maintain the existing premium Blue Tiers styling, glassmorphism, smooth animations, blue glow effects, and responsive design. Do not redesign the interface—only implement these improvements while keeping the code modular, scalable, and easy to connect to a real backend in the future.

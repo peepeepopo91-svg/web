@@ -1,0 +1,429 @@
+I want to add a brand-new **Tournament** page to the website. This should be a **Grand Page**, not a basic page. It should become the complete hub for all PvP tournaments hosted on my Minecraft server.
+
+The design should feel like a professional esports tournament platform, with modern animations, premium UI, interactive brackets, live updates, and full integration with the Admin Panel.
+
+The system should support both **players** and **administrators**, allowing players to view and participate in tournaments while giving administrators complete control over tournament management.
+
+---
+
+# 1. Tournament Home
+
+Create a modern landing page for the current tournament.
+
+Display:
+
+* Tournament banner
+* Tournament name
+* Tournament description
+* Tournament status
+
+  * Upcoming
+  * Registration Open
+  * Registration Closed
+  * Live
+  * Completed
+* Countdown timer
+* Registration deadline
+* Tournament start date
+* Prize pool
+* Supported gamemode(s)
+* Server IP
+* Total registered teams
+* Total registered players
+* Register button
+* Tournament rules button
+
+If no tournament is active, display a clean message indicating that there are currently no active tournaments.
+
+---
+
+# 2. Team Registration
+
+Allow players to register for tournaments.
+
+Support:
+
+* Team name
+* Captain
+* Teammate(s)
+* Team verification
+* Registration status
+* Registration confirmation
+
+Support different team sizes depending on the tournament configuration.
+
+---
+
+# 3. Tournament Bracket
+
+The bracket should be the centerpiece of the page.
+
+Create a beautiful, interactive tournament bracket.
+
+Support:
+
+* Single Elimination
+* Double Elimination (future-ready)
+* Winners Bracket
+* Losers Bracket (if enabled)
+* Finals
+* Grand Finals
+
+Each match should display:
+
+* Team names
+* Player names
+* Current score
+* Match status
+* Winner
+* Match number
+
+Clicking a match should open a detailed match view.
+
+The bracket should update live whenever administrators change results.
+
+---
+
+# 4. Match Details
+
+Each match should contain:
+
+* Team 1
+* Team 2
+* Player list
+* Current score
+* Winning team
+* Match date
+* Match time
+* Arena
+* Gamemode
+* Referee (optional)
+* Notes
+* Replay link (optional)
+
+---
+
+# 5. Live Tournament
+
+When a tournament is running, display:
+
+* Current live match
+* Teams playing
+* Current score
+* Match progress
+* Next scheduled match
+* Remaining matches
+
+Everything should update automatically.
+
+---
+
+# 6. Match Schedule
+
+Create a schedule page showing:
+
+* Match time
+* Teams
+* Arena
+* Gamemode
+* Status
+* Countdown until match
+
+---
+
+# 7. Tournament Rules
+
+Create a dedicated rules section.
+
+Support:
+
+* Allowed mods
+* Allowed clients
+* Banned modifications
+* Replay requirements
+* Disconnect rules
+* Staff decisions
+* Tournament-specific rules
+
+---
+
+# 8. Prize Section
+
+Display prizes professionally.
+
+Examples:
+
+🥇 First Place
+
+🥈 Second Place
+
+🥉 Third Place
+
+Allow multiple rewards per placement, such as:
+
+* Coins
+* Gems
+* Ranks
+* Crate Keys
+* Custom rewards
+
+---
+
+# 9. Tournament Statistics
+
+Display:
+
+* Total teams
+* Total players
+* Total matches
+* Matches completed
+* Remaining matches
+* Average match duration
+* Tournament completion percentage
+
+---
+
+# 10. Player Profiles
+
+Clicking a player should display:
+
+* Minecraft username
+* Current team
+* Current tier
+* Tournament history
+* Wins
+* Losses
+* Win rate
+* Championships won
+* Runner-up finishes
+* Third-place finishes
+
+---
+
+# 11. Team Profiles
+
+Each team should have a profile showing:
+
+* Team name
+* Players
+* Captain
+* Current tournament
+* Tournament history
+* Wins
+* Losses
+* Win rate
+
+---
+
+# 12. Tournament Archive
+
+Create a complete archive of previous tournaments.
+
+Each archived tournament should preserve:
+
+* Bracket
+* Winners
+* Runner-up
+* Third place
+* Teams
+* Match history
+* Statistics
+* Prize information
+* Tournament dates
+
+Nothing should be lost after a tournament ends.
+
+---
+
+# 13. Announcements
+
+Create a Tournament Announcements section.
+
+Examples:
+
+* Registration opened
+* Registration closing soon
+* Brackets released
+* Live tournament started
+* Finals beginning
+* Winners announced
+
+Announcements should appear on the Tournament page.
+
+---
+
+# 14. Notifications
+
+Notify players when:
+
+* Registration accepted
+* Team approved
+* Match assigned
+* Match starting soon
+* Match completed
+* Team eliminated
+* Tournament completed
+
+---
+
+# 15. Live Synchronization
+
+Whenever administrators change:
+
+* Match score
+* Winner
+* Bracket
+* Announcement
+* Registration
+* Tournament status
+
+Every connected user should immediately see the updates without refreshing.
+
+---
+
+# 16. Admin Panel Grand Section
+
+Create a dedicated **Tournament Management** Grand Section.
+
+This should become the complete control center for tournaments.
+
+Include:
+
+## Dashboard
+
+Display:
+
+* Active tournament
+* Tournament status
+* Registered teams
+* Registered players
+* Matches completed
+* Matches remaining
+* Live matches
+
+---
+
+## Tournament Management
+
+Allow administrators to:
+
+* Create tournaments
+* Edit tournaments
+* Delete tournaments
+* Duplicate previous tournaments
+* Archive tournaments
+* Publish tournaments
+* Open registration
+* Close registration
+* Start tournament
+* Pause tournament
+* Resume tournament
+* Finish tournament
+
+---
+
+## Registration Management
+
+Allow administrators to:
+
+* Accept registrations
+* Reject registrations
+* Remove teams
+* Edit teams
+* Replace players
+* Verify teams
+
+---
+
+## Bracket Management
+
+Allow administrators to:
+
+* Automatically generate brackets
+* Manually edit brackets
+* Drag and drop teams
+* Move teams
+* Advance winners
+* Record scores
+* Set winners
+* Disqualify teams
+* Regenerate brackets before the tournament starts
+
+---
+
+## Match Management
+
+Allow administrators to:
+
+* Create matches
+* Edit matches
+* Set gamemode
+* Set arena
+* Set referee
+* Set match time
+* Update score
+* Mark completed
+* Add notes
+* Attach replay links
+
+---
+
+## Prize Management
+
+Allow administrators to:
+
+* Edit prizes
+* Add rewards
+* Remove rewards
+* Change placement rewards
+
+---
+
+## Announcements
+
+Create and manage tournament announcements directly from the Admin Panel.
+
+---
+
+# 17. Performance
+
+Optimize the system for large tournaments.
+
+Support:
+
+* Hundreds of players
+* Many teams
+* Many completed tournaments
+
+Use pagination for any new lists or tables, following the project standard of **10 items per page** where applicable.
+
+---
+
+# 18. Security
+
+Everything must be server-authoritative.
+
+Players must never be able to:
+
+* Modify brackets
+* Change scores
+* Register after registration closes
+* Edit tournament data
+* View admin-only controls
+* Manipulate tournament results
+
+Validate every action on the server.
+
+---
+
+# 19. GitHub Backup
+
+All tournament-related data should use the existing automatic GitHub backup system.
+
+Do not create a separate backup system.
+
+---
+
+# Goal
+
+Create a professional, feature-rich **Tournament Grand Page** that feels like a real esports platform. Players should be able to register, view live brackets, follow tournament progress, check schedules, read announcements, view past tournaments, and track player/team statistics. Administrators should have a powerful **Tournament Management Grand Section** with complete control over every aspect of tournament creation, brackets, matches, registrations, prizes, and announcements, all synchronized live and integrated with the existing website infrastructure.

@@ -1,0 +1,216 @@
+The Admin Panel's Tier List manager MUST NEVER corrupt data/players.json or create Git merge conflicts again.
+
+The current implementation is not reliable. Rewrite the save system to make it production-grade.
+
+REQUIREMENTS
+
+1. ALWAYS produce valid JSON.
+- Never leave trailing commas.
+- Never produce malformed JSON.
+- Validate JSON before writing.
+- If validation fails, cancel the save and show the error instead of writing.
+
+2. NEVER write Git merge conflict markers into players.json.
+The file must NEVER contain:
+<<<<<<< HEAD
+=======
+>>>>>>>
+
+If these are detected while loading or before saving, immediately stop and display a detailed error instead of writing corrupted data.
+
+3. Use a proper JSON parser instead of string manipulation.
+Do not append text manually.
+Always:
+- Load players.json
+- Parse JSON
+- Modify the object
+- Serialize using JSON.stringify(data, null, 2)
+- Save the result
+
+Never build JSON with string concatenation.
+
+4. Every player must follow this schema:
+
+{
+  "name": "",
+  "head": "",
+  "region": "",
+  "ranks": {
+    "mace": "NONE",
+    "sword": "NONE",
+    "axe": "NONE",
+    "uhc": "NONE",
+    "nethpot": "NONE",
+    "diapot": "NONE",
+    "crystal": "NONE"
+  }
+}
+
+If any field is missing, automatically fill it with defaults.
+
+5. Prevent duplicates.
+Player names are unique (case-insensitive).
+
+If the player already exists:
+- update them
+- never create a duplicate entry.
+
+6. Before saving:
+- sort players alphabetically by name.
+- remove duplicate entries automatically.
+
+7. Atomic saving.
+Never partially overwrite players.json.
+
+Instead:
+- create a temporary file
+- validate it
+- replace players.json only after validation succeeds.
+
+8. GitHub save system
+
+When "Save to GitHub" is clicked:
+
+- Validate JSON
+- Validate schema
+- Validate duplicates
+- Write locally
+- Commit to GitHub
+- Wait for GitHub API success
+- Show each step in the UI.
+
+Example:
+
+✓ Validating JSON...
+✓ Checking duplicate players...
+✓ Writing players.json...
+✓ Creating Git commit...
+✓ Uploading commit...
+✓ Waiting for GitHub...
+✓ GitHub commit successful
+Commit:
+0868dfb
+Saved successfully.
+
+If any step fails, show the exact reason.
+
+Never display generic errors like:
+"Unknown Error"
+"Network Error"
+
+Instead show:
+GitHub token missing
+Repository not found
+Permission denied
+GitHub API rate limit
+JSON validation failed
+Commit rejected
+Merge conflict detected
+
+9. If GitHub rejects the push because the remote changed:
+
+Automatically:
+
+git fetch
+git pull --rebase
+
+Resolve JSON automatically if there are no conflicting player edits.
+
+If automatic resolution is impossible, explain exactly why instead of corrupting the file.
+
+10. Before every GitHub save:
+
+Run internal checks:
+
+✓ JSON parses successfully
+✓ No merge markers
+✓ No duplicate players
+✓ All required rank keys exist
+✓ Every player has region
+✓ Every player has head
+✓ GitHub token exists
+✓ Repository reachable
+✓ Branch exists
+
+11. Add a "Validate Data" button inside the Admin Panel.
+
+It should scan every JSON file and report:
+
+✓ Valid JSON
+✓ Duplicate players
+✓ Missing fields
+✓ Invalid ranks
+✓ Missing regions
+✓ Merge markers
+✓ GitHub connection
+
+12. Add a "Repair Data" button.
+
+It should automatically:
+
+- remove merge markers
+- rebuild malformed JSON
+- remove duplicates
+- restore missing rank keys
+- restore missing fields
+- pretty-format the file
+
+13. Add extensive logging.
+
+When saving:
+
+[Admin]
+Loading players.json...
+
+[Admin]
+Parsed 127 players.
+
+[Admin]
+Validating...
+
+[Admin]
+No duplicate players.
+
+[Admin]
+Writing JSON...
+
+[GitHub]
+Authenticating...
+
+[GitHub]
+Uploading commit...
+
+[GitHub]
+Commit created:
+0868dfb
+
+[GitHub]
+Push successful.
+
+14. Test the entire workflow automatically.
+
+Create a temporary player:
+
+Name:
+Test_Save_Player
+
+Region:
+Asia
+
+Mace:
+LT5
+
+Save through the Admin Panel.
+
+Then verify:
+
+✓ player exists in players.json
+✓ player appears on the live Rankings page
+✓ GitHub contains the commit
+✓ refreshing the website still shows the player
+
+Finally delete Test_Save_Player and save again.
+
+Do not finish until every test passes.
+
+The final implementation must never corrupt data/players.json, never create invalid JSON, and never require manual Git conflict resolution for normal Admin Panel edits.

@@ -1,0 +1,203 @@
+I want to add a brand-new **Repository History Management** page to the **Admin Panel**.
+
+**Do not place this inside the GitHub Sync page.**
+
+Instead, create it as its **own standalone Admin Panel section/page**, just like the other major sections (e.g., Dashboard, Players, Mining, GitHub Sync, etc.). It should appear as a first-class feature in the Admin Panel navigation.
+
+## Purpose
+
+Over time, automatic backups and commits can create hundreds or thousands of commits that are no longer useful.
+
+I want the ability to reset the repository history to a single fresh commit directly from the Admin Panel.
+
+This feature is intended for maintenance and repository cleanup.
+
+---
+
+# New Admin Panel Section
+
+Create a dedicated Admin Panel page called:
+
+**Repository History Management**
+
+This should **not** be part of the GitHub Sync page. It should have its own navigation entry and its own page, with a premium, professional UI that matches the rest of the Admin Panel.
+
+---
+
+# Repository Information
+
+Display useful repository information before allowing any action.
+
+Examples:
+
+* Current branch
+* Total commits
+* Repository status
+* Current HEAD commit
+* Last commit message
+* Last commit date
+* Last GitHub push
+* Remote repository
+* Whether there are uncommitted changes
+* Whether there are unpushed commits
+
+---
+
+# Safety Checks
+
+Before allowing a history reset, automatically verify:
+
+* Working tree is clean.
+* No uncommitted changes exist.
+* No Git operation is currently running.
+* Repository is synchronized with GitHub.
+* Current branch is valid.
+* GitHub authentication is available.
+
+If any check fails, clearly explain why the operation cannot continue.
+
+Do not allow a reset until every requirement passes.
+
+---
+
+# Backup Option
+
+Before resetting history, provide an optional checkbox:
+
+☐ Create backup branch before resetting history
+
+If enabled:
+
+Create a branch such as:
+
+`backup-history-YYYY-MM-DD-HHMM`
+
+Push that branch to GitHub before performing the reset.
+
+Display whether the backup succeeded.
+
+---
+
+# Confirmation Dialog
+
+This operation is destructive.
+
+Require the user to confirm before continuing.
+
+The dialog should clearly explain:
+
+* All previous commit history will be removed from the selected branch.
+* Current project files will remain unchanged.
+* Repository size and commit history will be reset.
+* This operation force-pushes the branch.
+* Anyone who has cloned the repository will need to re-sync or re-clone.
+
+Require the user to explicitly confirm.
+
+---
+
+# Reset Process
+
+When confirmed, perform the complete process automatically.
+
+For example:
+
+* Verify repository state.
+* Optionally create backup branch.
+* Create an orphan branch.
+* Stage all current files.
+* Create a new initial commit.
+* Replace the current branch.
+* Force-push to GitHub.
+* Update local tracking references.
+* Verify synchronization.
+* Refresh repository status.
+
+The entire process should be automated.
+
+---
+
+# Progress Display
+
+Show live progress while running.
+
+For example:
+
+✓ Checking repository
+
+✓ Creating backup branch
+
+✓ Creating orphan branch
+
+✓ Staging files
+
+✓ Creating initial commit
+
+✓ Replacing branch
+
+✓ Force pushing to GitHub
+
+✓ Updating local references
+
+✓ Refreshing repository status
+
+✓ Completed successfully
+
+---
+
+# Error Handling
+
+If any step fails:
+
+* Stop safely.
+* Explain exactly what failed.
+* Display the Git error.
+* Do not leave the repository in an inconsistent state.
+* If possible, automatically recover or roll back.
+
+---
+
+# Final Summary
+
+When finished, display a summary including:
+
+* Old commit count
+* New commit count
+* New HEAD commit hash
+* Current branch
+* Backup branch name (if created)
+* Push status
+* Repository synchronization status
+
+---
+
+# UI
+
+Use a modern Admin Panel design.
+
+Include:
+
+* Repository information card.
+* Status badges.
+* Warning banner.
+* Confirmation modal.
+* Progress indicator.
+* Success/failure notifications.
+
+The feature should feel like a professional Git management tool rather than a simple button.
+
+---
+
+# Important Requirements
+
+* Preserve all current project files exactly as they are.
+* Only remove the repository's commit history.
+* Continue using the existing authenticated GitHub synchronization system.
+* Work with the existing GitHub infrastructure where appropriate.
+* Handle errors gracefully.
+* Never perform the operation without explicit confirmation.
+* Keep the repository fully functional after completion.
+
+## Goal
+
+Create a dedicated **Repository History Management** page in the Admin Panel that gives administrators a safe, one-click way to reset the repository history while preserving the current state of the project. It should be a standalone administrative tool, separate from the GitHub Sync page, with comprehensive safety checks, backup options, live progress reporting, and professional error handling.

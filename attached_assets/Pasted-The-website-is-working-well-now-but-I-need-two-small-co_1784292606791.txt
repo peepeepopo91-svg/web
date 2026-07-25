@@ -1,0 +1,61 @@
+The website is working well now, but I need two small consistency improvements.
+
+Keep the existing functionality exactly the same and only make the following changes.
+
+==================================================
+1. Default Untested Gamemodes to "None"
+==================================================
+
+There is an inconsistency between the original players and newly created players.
+
+The original players correctly display:
+
+None
+
+for gamemodes that have not been tested.
+
+However, players created from the Admin Panel display:
+
+-
+
+instead.
+
+I want ALL players, both existing and newly created, to behave the same.
+
+Requirements:
+
+- When a new player is created, every gamemode that is not assigned a tier should automatically be set to:
+  "None"
+  instead of "-"
+- This should happen automatically when creating the player.
+- If a tier is later assigned, replace "None" with the selected tier.
+- If a tier is removed, change it back to "None".
+- Ensure the generated players.js/data file also stores "None" as the default value instead of "-".
+- Make sure Rankings, Player Cards, Search, Filters, Statistics, and the Player Profile modal all correctly recognize "None" as an unranked gamemode.
+
+==================================================
+2. Remove "How to Save" Section
+==================================================
+
+In the GitHub Sync section of the Admin Panel, completely remove the "How to Save" help/instructions section.
+
+Requirements:
+
+- Remove only the "How to Save" section.
+- Keep all other GitHub Sync functionality intact.
+- Do not remove:
+  - Save to GitHub buttons
+  - Sync Everything to GitHub
+  - Pending Changes
+  - GitHub Status
+  - Progress window
+  - Technical Details
+  - Any working GitHub synchronization features
+
+==================================================
+Final Requirement
+==================================================
+
+These are UI/consistency improvements only.
+
+Do not modify or break any existing GitHub synchronization, Admin Panel functionality, Rankings, or player data. Ensure all existing features continue to work exactly as they do now.

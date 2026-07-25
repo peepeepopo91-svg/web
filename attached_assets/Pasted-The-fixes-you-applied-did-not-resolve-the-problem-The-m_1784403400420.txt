@@ -1,0 +1,128 @@
+The fixes you applied did **not** resolve the problem. The mining renewal system is still broken and appears to have introduced additional issues.
+
+### Current Problems
+
+1. The **12-hour renewal system is still not working**.
+2. The **Renew Mining** button does not function correctly.
+3. **Renew Rigs** no longer work at all.
+4. Existing users are not behaving correctly after the migration.
+5. The timer/banner still does not accurately represent the actual mining state.
+
+Instead of applying more small patches, I want you to **debug the entire renewal system from end to end** and identify the real root cause.
+
+### Requirements
+
+#### 1. Trace the Entire Renewal Flow
+
+Verify every step in the renewal lifecycle:
+
+* Player data loading
+* User migration
+* Server initialization
+* Mining tick
+* Offline mining calculation
+* Renewal timer
+* Mining expiration
+* Renew Mining button
+* Renew Rigs functionality
+* Saving to disk
+* Loading from disk
+* GitHub backup
+* Live synchronization between Admin Panel and Mining page
+
+Do not assume any step is correct—verify each one.
+
+---
+
+#### 2. Single Source of Truth
+
+Ensure there is only **one authoritative source** for:
+
+* miningExpiresAt
+* miningExpired
+* miningActive
+* rig durability
+* renewal state
+
+Do not duplicate this logic between the client and the server.
+
+The server should determine the mining state, and the client should simply display it.
+
+---
+
+#### 3. Verify Data Persistence
+
+Inspect the actual saved mining data.
+
+Confirm that:
+
+* `miningExpiresAt` is written correctly.
+* It survives server restarts.
+* It is loaded correctly.
+* It is never accidentally overwritten with `undefined`, `null`, `NaN`, or an invalid value.
+
+Validate all timestamps before using them.
+
+---
+
+#### 4. Renew Mining Button
+
+Verify that clicking **Renew Mining** actually:
+
+* Updates the server data.
+* Sets a new expiration timestamp (12 hours from the current server time).
+* Saves the new timestamp.
+* Broadcasts the update to connected clients.
+* Immediately updates the UI.
+* Continues mining without requiring a refresh.
+
+---
+
+#### 5. Renew Rigs
+
+The **Renew Rigs** feature has stopped working.
+
+Find exactly why it broke.
+
+Restore its original functionality without affecting the new renewal system.
+
+Verify that:
+
+* Rig renewal works.
+* Durability updates correctly.
+* Mining resumes correctly.
+* Existing rigs continue functioning after renewal.
+
+---
+
+#### 6. End-to-End Testing
+
+After implementing the fix, test these scenarios:
+
+* New player.
+* Existing player created before the renewal system.
+* Existing player with expired mining.
+* Existing player with active mining.
+* Player logs out and back in.
+* Server restart.
+* Admin modifies mining data.
+* Renew Mining.
+* Renew Rigs.
+* Offline mining.
+* Mining expiration.
+* GitHub backup.
+* Live synchronization.
+
+Confirm that every scenario works correctly.
+
+---
+
+#### 7. Root Cause Analysis
+
+Before changing any code, identify and explain the actual root cause.
+
+Do **not** guess.
+
+If the issue is architectural, refactor the system instead of adding more compatibility patches or `?? null` fallbacks.
+
+I want a permanent, reliable solution—not another temporary workaround.

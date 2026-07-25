@@ -1,0 +1,354 @@
+Username: ko2o
+Region: EU
+Tier: LT4
+Gamemode: Sword
+
+Username: Kiqyu
+Region: EU
+Tier: HT3
+Gamemode: Sword
+
+Username: PrinceMark
+Region: AS
+Tier: HT4
+Gamemode: Crystal
+
+Username: NotKenz0d
+Region: AS
+Tier: LT4
+Gamemode: Crystal
+
+Username: IDO1299
+Region: EU
+Tier: HT5
+Gamemode: Crystal
+
+Username: stinklezinger4
+Region: AS
+Tier: HT4
+Gamemode: Sword
+
+Username: Wyll_xx
+Region: AS
+Tier: LT3
+Gamemode: Crystal
+
+Username: zenith_fr
+Region: AS
+Tier: LT3
+Gamemode: Nethpot
+
+Username: RealKairo_
+Region: AS
+Tier: LT4
+Gamemode: Mace
+
+Username: stinklezinger4
+Region: AS
+Tier: LT3
+Gamemode: Mace
+
+Username: DarknzGamerz0101
+Region: AS
+Tier: HT4
+Gamemode: Mace
+
+Username: getgoonedon
+Region: NA
+Tier: LT3
+Gamemode: Sword
+
+Username: zyzy
+Region: AS
+Tier: HT4
+Gamemode: Sword
+
+Username: SWAGFORLIFE
+Region: AS
+Tier: HT4
+Gamemode: Crystal
+
+Username: PrinceMark
+Region: AS
+Tier: HT5
+Gamemode: Crystal
+
+Username: Matthew10999
+Region: AS
+Tier: HT4
+Gamemode: Crystal
+
+Username: Caardss
+Region: AS
+Tier: HT4
+Gamemode: Sword
+
+Username: RealKairo_
+Region: AS
+Tier: LT4
+Gamemode: Mace
+
+Username: cakechan
+Region: AS
+Tier: HT4
+Gamemode: Mace
+
+Username: oWashed__
+Region: AS
+Tier: HT4
+Gamemode: UHC
+
+Username: PrinceMark
+Region: AS
+Tier: LT4
+Gamemode: Crystal
+
+Username: SomeRandomDude54
+Region: EU
+Tier: LT3
+Gamemode: Diapot
+
+Username: Die_Melone1
+Region: AS
+Tier: HT5
+Gamemode: Crystal
+
+Username: ItzInno
+Region: AS
+Tier: HT4
+Gamemode: Crystal
+
+Username: Bav3r1
+Region: AS
+Tier: HT4
+Gamemode: Crystal
+
+Username: Win_g
+Region: AS
+Tier: LT4
+Gamemode: Crystal
+
+Username: SWAGFORLIFE
+Region: AS
+Tier: LT3
+Gamemode: Nethpot
+
+Username: noctharyx
+Region: AS
+Tier: LT3
+Gamemode: Crystal
+
+Username: SomeRandomDude54
+Region: EU
+Tier: HT4
+Gamemode: Sword
+
+Username: Zano_0
+Region: EU
+Tier: HT3
+Gamemode: Crystal
+
+Username: vockzy7
+Region: EU
+Tier: LT3
+Gamemode: Crystal
+
+Username: Hxckster
+Region: AS
+Tier: HT4
+Gamemode: Crystal
+
+Username: Nyxveil7
+Region: AU
+Tier: HT4
+Gamemode: Sword
+
+Username: Hokfr
+Region: AS
+Tier: LT4
+Gamemode: Sword
+
+Username: Txeqym
+Region: EU
+Tier: HT4
+Gamemode: Axe
+
+Username: ClownLegPiece
+Region: NA
+Tier: HT4
+Gamemode: Crystal
+
+Username: _Hollowshade_
+Region: AS
+Tier: LT3
+Gamemode: Mace
+
+Username: Blitzor_
+Region: AS
+Tier: LT3
+Gamemode: Nethpot
+
+Username: Nyxveil7
+Region: AU
+Tier: LT4
+Gamemode: Crystal
+
+Username: K0N12
+Region: AS
+Tier: LT3
+Gamemode: Diapot
+
+Username: Prime__
+Region: EU
+Tier: HT4
+Gamemode: Mace
+
+Username: A3MIR
+Region: EU
+Tier: LT3
+Gamemode: Mace
+
+Username: Zano_0
+Region: EU
+Tier: LT2
+Gamemode: Crystal
+
+Username: mohanazo
+Region: AS
+Tier: HT4
+Gamemode: Sword
+
+Username: IMBATMAN
+Region: AS
+Tier: LT4
+Gamemode: Sword
+
+Username: mohanazo
+Region: AS
+Tier: HT4
+Gamemode: Mace
+
+Username: datwildchild
+Region: AU
+Tier: HT4
+Gamemode: Sword
+
+Username: mohanazo
+Region: AS
+Tier: HT4
+Gamemode: Crystal
+
+Username: Zyr3n
+Region: AS
+Tier: HT4
+Gamemode: Sword
+
+Username: Zyr3n
+Region: AS
+Tier: LT3
+Gamemode: UHC
+
+Username: Zyr3n
+Region: AS
+Tier: HT4
+Gamemode: Axe
+
+Username: Zyr3n
+Region: AS
+Tier: HT4
+Gamemode: Crystal
+
+Username: Zyr3n
+Region: AS
+Tier: HT4
+Gamemode: Nethpot
+
+Username: Zyr3n
+Region: AS
+Tier: LT4
+Gamemode: Diapot
+
+Username: D3n1s1
+Region: EU
+Tier: HT4
+Gamemode: Sword
+
+Username: D3n1s1
+Region: EU
+Tier: LT4
+Gamemode: Crystal
+
+Username: oStingray
+Region: NA
+Tier: HT4
+Gamemode: Crystal
+
+Username: mohanazo
+Region: AS
+Tier: HT4
+Gamemode: Nethpot
+
+Username: _Hollowshade_
+Region: AS
+Tier: LT4
+Gamemode: Sword
+
+Username: Prime__
+Region: EU
+Tier: LT3
+Gamemode: Mace
+
+Username: jrizzo141
+Region: NA
+Tier: LT3
+Gamemode: Sword
+
+Username: AliBicimss
+Region: EU
+Tier: LT3
+Gamemode: Nethpot
+
+Username: frag717
+Region: EU
+Tier: HT4
+Gamemode: Crystal
+
+Username: A3MIR
+Region: EU
+Tier: HT3
+Gamemode: Mace
+
+Username: SomeRandomDude54
+Region: EU
+Tier: HT4
+Gamemode: Axe
+
+Username: sentialbeing
+Region: AU
+Tier: HT5
+Gamemode: Sword
+
+Username: sentialbeing
+Region: AU
+Tier: LT4
+Gamemode: Axe
+
+Username: vertex16_
+Region: EU
+Tier: LT3
+Gamemode: Axe
+
+Username: ItzInno
+Region: AS
+Tier: HT3
+Gamemode: Crystal
+
+Username: Becanaldo_
+Region: AS
+Tier: LT3
+Gamemode: Sword
+
+Username: Becanaldo_
+Region: AS
+Tier: HT4
+Gamemode: Mace

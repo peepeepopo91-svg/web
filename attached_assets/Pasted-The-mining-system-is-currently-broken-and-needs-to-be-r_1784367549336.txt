@@ -1,0 +1,131 @@
+The mining system is currently broken and needs to be reworked so that it uses a **single authoritative source of truth**. Right now, the Admin Panel and the Mining page appear to be using different data sources, which causes them to go out of sync.
+
+## 1. Fix Data Synchronization
+
+When I change a player's:
+
+* Blue Coins
+* Gems
+* Mining rigs
+* Upgrades
+* Multipliers
+* Any mining-related data
+
+from the **Admin Panel**, the changes must appear **immediately** on the player's Mining page without requiring a refresh, logout, or waiting for the next mining tick.
+
+Likewise, if the player earns coins, buys a rig, upgrades a rig, converts Blue Coins to Gems, or performs any mining action on the Mining page, those changes must immediately appear in the Admin Panel.
+
+Both the Admin Panel and the Mining page must always display exactly the same live data.
+
+There must be **one shared server-side source of truth** for all mining data. Do not maintain separate copies or caches that can become inconsistent.
+
+---
+
+## 2. Make Mining a Grand Section
+
+The Mining system should **not** be treated as a basic data section.
+
+It should become its own **Grand Section**, just like the other major systems in the Admin Panel.
+
+This Grand Section should contain comprehensive live management and monitoring for the mining system, including (where applicable):
+
+* Blue Coins
+* Gems
+* Total mining rate
+* Total rigs owned
+* Individual rig counts
+* Upgrade levels
+* Multipliers
+* Lifetime mined
+* Last update timestamp
+* Online/offline status (if available)
+* Any other mining statistics already stored by the system
+
+Everything in this Grand Section must update live in real time.
+
+---
+
+## 3. Live Synchronization
+
+Do not require page refreshes.
+
+Whenever mining data changes from **any source**:
+
+* Admin Panel
+* Mining page
+* Automatic mining tick
+* Offline mining calculation
+* Server process
+
+every connected client must immediately receive the updated values.
+
+Use an efficient event-driven solution (such as WebSockets or Server-Sent Events) instead of constant polling wherever practical.
+
+---
+
+## 4. Automatic GitHub Backup
+
+Mining data must continue being backed up to GitHub automatically.
+
+However, **do not commit or push every mining tick or every few seconds**, as that would create unnecessary commits, increase GitHub traffic, and reduce performance.
+
+Instead:
+
+* Save mining data to disk immediately whenever it changes.
+* Mark the mining data as dirty.
+* Batch multiple updates together.
+* Automatically commit and push after a short debounce period (for example, 30–60 seconds after the latest change).
+* If more changes occur before the timer expires, reset the timer so they are included in the same commit.
+* Never create a commit if nothing has changed.
+
+This provides frequent backups while avoiding lag and unnecessary Git history spam.
+
+---
+
+## 5. Remove the Mining Data Backup Section
+
+Once the automatic GitHub backup system above is implemented, remove the **Mining Data Backup** section from the **GitHub Sync** page.
+
+It will no longer be needed because mining data should back up automatically in the background.
+
+The GitHub Sync page should only contain functionality related to the main project synchronization, not a separate mining backup feature.
+
+---
+
+## 6. Reliability
+
+The system must guarantee that mining data is never lost.
+
+If the server shuts down gracefully:
+
+* Perform one final save.
+* Complete one final GitHub backup before exiting.
+
+If GitHub is temporarily unavailable:
+
+* Continue saving data locally.
+* Queue the pending GitHub backup.
+* Retry automatically later.
+* Never interrupt gameplay because GitHub cannot be reached.
+
+---
+
+## 7. Performance
+
+Optimize the mining system so it scales efficiently.
+
+Avoid:
+
+* Excessive JSON parsing.
+* Rewriting large files unnecessarily.
+* Constant Git operations.
+* Blocking server operations.
+* Anything that introduces noticeable lag.
+
+The mining system should remain smooth even with many active players.
+
+---
+
+## Goal
+
+Create a professional, real-time mining system where the Admin Panel and the Mining page always stay perfectly synchronized using one server-side data source, the Mining system is treated as its own **Grand Section** with comprehensive live management, mining data is automatically backed up to GitHub efficiently without impacting performance, and the separate **Mining Data Backup** section in **GitHub Sync** is removed because it becomes unnecessary.

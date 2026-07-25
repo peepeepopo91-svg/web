@@ -1,0 +1,267 @@
+The GitHub save system is STILL NOT WORKING.
+
+Please stop making superficial fixes and find the REAL root cause.
+
+The problem is NOT the UI.
+
+The problem is NOT the progress window.
+
+The problem is that the data is NEVER actually written to the source file or committed to GitHub.
+
+==================================================
+CURRENT ISSUE
+==================================================
+
+When I add a player through the Admin Panel:
+
+- The player appears temporarily.
+- It is added to the Pending Changes list.
+- "Save to GitHub" appears to start.
+- The save progress window opens.
+- The progress reaches:
+
+✓ Preparing data...
+✓ Validating JSON...
+✓ Detecting modified files...
+✓ data/players.js
+✓ Authenticating with GitHub...
+
+Then the progress window **automatically closes by itself**, and no commit is created.
+
+This should NEVER happen.
+
+The save window must remain open until:
+
+- The save completes successfully, OR
+- A real error occurs.
+
+Do not automatically close the progress window during the authentication step.
+
+If authentication fails, keep the window open and display the exact technical error instead of closing.
+
+==================================================
+STOP REPEATING THE SAME MISTAKE
+==================================================
+
+Before writing ANY code:
+
+Review every previous GitHub save implementation you created.
+
+Determine whether you are repeating the same architecture or logic that has already failed.
+
+If you are about to implement the same solution again, STOP.
+
+Find a different solution.
+
+Do not repeat previous mistakes.
+
+==================================================
+VERIFY THE DATA SOURCE
+==================================================
+
+Determine exactly which file is the source of truth.
+
+Do not guess.
+
+Trace the Rankings page completely.
+
+Verify whether it reads from:
+
+- data/players.js
+- data/players.json
+- another generated file
+- another source
+
+The Admin Panel must save to the SAME file that the Rankings page actually imports.
+
+==================================================
+CHECK players.js GENERATION
+==================================================
+
+Carefully inspect how players.js is generated when adding or editing players from the Admin Panel.
+
+I suspect the generated JavaScript is malformed.
+
+Verify ALL of the following:
+
+- The file is actually generated.
+- The export statement is correct.
+- The array syntax is valid.
+- Every object is valid JavaScript.
+- Quotes are escaped correctly.
+- Trailing commas are correct.
+- Brackets and braces are balanced.
+- The file can be imported without syntax errors.
+- No duplicate exports.
+- No duplicated player objects.
+- No merge conflict markers.
+- No malformed formatting.
+
+After generating players.js, validate that it is valid JavaScript before attempting to commit it.
+
+If validation fails, stop the save and display the validation error.
+
+Never upload an invalid players.js file.
+
+==================================================
+SAVE PIPELINE
+==================================================
+
+Trace every step.
+
+Admin Form
+
+↓
+
+Player Object
+
+↓
+
+State
+
+↓
+
+Pending Changes
+
+↓
+
+players.js Generation
+
+↓
+
+Validation
+
+↓
+
+Backend API
+
+↓
+
+GitHub Authentication
+
+↓
+
+GitHub API
+
+↓
+
+Repository
+
+↓
+
+Commit
+
+↓
+
+Reload
+
+↓
+
+Public Rankings
+
+Determine exactly where the chain breaks.
+
+==================================================
+VERIFY THE GITHUB REQUEST
+==================================================
+
+Actually verify:
+
+- Authentication succeeds.
+- Repository is reachable.
+- Branch exists.
+- Latest SHA is retrieved.
+- The updated players.js content includes the new player.
+- Base64 encoding is correct.
+- PUT request succeeds.
+- GitHub returns HTTP 200 or 201.
+- Commit is created.
+
+If any step fails, show the exact error.
+
+==================================================
+PENDING CHANGES
+==================================================
+
+Do NOT remove players.js from Pending Changes until:
+
+✓ GitHub confirms the update.
+
+✓ Commit exists.
+
+✓ Repository contains the new file.
+
+✓ players.js contains the new player.
+
+If GitHub fails, players.js should remain in Pending Changes.
+
+==================================================
+END-TO-END TEST
+==================================================
+
+Use ONLY the Admin Panel.
+
+Create:
+
+Username:
+ZyrenBoy
+
+Gamemode:
+Mace
+
+Tier:
+LT5
+
+Then:
+
+1. Click Save to GitHub.
+
+2. Verify players.js now contains ZyrenBoy.
+
+3. Verify players.js is valid JavaScript.
+
+4. Verify GitHub created a real commit.
+
+5. Verify the repository file changed.
+
+6. Verify Pending Changes is cleared.
+
+7. Refresh the Admin Panel.
+
+Verify ZyrenBoy still exists.
+
+8. Refresh the public Rankings page.
+
+Verify ZyrenBoy appears.
+
+9. Search for ZyrenBoy.
+
+Verify search works.
+
+10. Open his profile.
+
+Verify Mace = LT5.
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+Do NOT claim the task is complete unless ALL of the following are true:
+
+✓ The save progress window no longer closes unexpectedly.
+
+✓ Authentication either succeeds or displays the real error while keeping the window open.
+
+✓ players.js is generated correctly.
+
+✓ players.js passes JavaScript validation.
+
+✓ A real GitHub commit is created.
+
+✓ Pending Changes clears after a successful save.
+
+✓ Refreshing the website preserves the new player.
+
+✓ The public Rankings page uses the updated players.js.
+
+If any of these checks fail, continue debugging until the save system genuinely works end-to-end.

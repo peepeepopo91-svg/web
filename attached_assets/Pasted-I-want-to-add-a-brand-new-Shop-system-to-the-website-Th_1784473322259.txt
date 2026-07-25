@@ -1,0 +1,398 @@
+I want to add a brand-new **Shop** system to the website. This should be a **Grand Page**, not a basic page. It should be designed as a premium feature with a modern UI that matches the Mining page and the rest of the website.
+
+The Shop will allow players to spend **Gems** (earned by converting Blue Coins from mining) to purchase in-game rewards.
+
+The system should be fully server-side, synchronized with the Admin Panel, and integrated with the existing mining economy.
+
+---
+
+# 1. New Grand Shop Page
+
+Create a brand-new **Shop** page.
+
+It should have:
+
+* Modern premium UI
+* Search bar
+* Category navigation
+* Featured items section
+* Item cards with animations
+* Responsive layout
+* Purchase confirmation modal
+* Player Gems balance always visible
+* Purchase history
+* Pending purchases section
+
+The page should feel like a professional game store rather than a basic list.
+
+---
+
+# 2. Currency
+
+The Shop should only use **Gems**.
+
+Players must:
+
+Mining → Blue Coins → Convert to Gems → Buy Items.
+
+Blue Coins should never be spent directly in the Shop.
+
+Everything must be verified server-side.
+
+---
+
+# 3. Shop Categories
+
+## Ranks
+
+* VIP
+* Warrior
+* Knight
+* Sky
+* Trainee
+
+---
+
+## Crate Keys
+
+* Common Key
+* Pro Key
+* Crimson Key
+* Amethyst Key
+* Blue Key
+
+---
+
+## Amethyst Tools (7 Days)
+
+* Sell Axe
+* Axe
+* Pickaxe
+* Shovel
+* Shard Booster
+
+Every tool lasts exactly **7 days** when redeemed in-game.
+
+---
+
+# 4. Pricing
+
+Do **not** use random prices.
+
+Calculate balanced prices based on the existing mining economy.
+
+The prices should consider:
+
+* Blue Coin generation rate
+* Blue Coin → Gem conversion rate
+* Average rigs owned
+* Average mining income
+* Offline mining
+* 12-hour mining renewal system
+* Progression speed
+
+The goal is that players **cannot buy everything within the first day**.
+
+Progression should feel rewarding but require effort.
+
+Use the rarity values below when calculating prices.
+
+## Rarity Scale
+
+Ranks
+
+VIP → 1
+
+Warrior → 2
+
+Knight → 3
+
+Sky → 4
+
+Trainee → 5
+
+---
+
+Crate Keys
+
+Common → 1
+
+Pro → 2
+
+Crimson → 3
+
+Amethyst → 4
+
+Blue → 5
+
+---
+
+Amethyst Tools
+
+Sell Axe → 3
+
+Shovel → 3
+
+Axe → 4
+
+Pickaxe → 5
+
+Shard Booster → 6
+
+Use these rarity levels to create a competitive and well-balanced pricing structure.
+
+The pricing should encourage long-term progression instead of instant completion.
+
+---
+
+# 5. Purchase Flow
+
+Because the website cannot directly give Minecraft items or permissions, implement a purchase request system.
+
+When a player buys an item:
+
+* Deduct Gems immediately.
+* Create a purchase request.
+* Assign it a unique Purchase ID.
+* Save it to the server.
+* Display it in the player's Purchase History.
+
+Initial status:
+
+🟡 Pending
+
+The player should clearly see:
+
+* Item purchased
+* Quantity
+* Gems spent
+* Purchase ID
+* Purchase date
+* Current status
+
+---
+
+# 6. Purchase Status
+
+Support multiple statuses.
+
+Pending
+
+Order has been created.
+
+---
+
+Processing
+
+Staff is preparing to deliver the item.
+
+---
+
+Completed
+
+Item has been delivered in-game.
+
+---
+
+Cancelled
+
+Purchase cancelled.
+
+Refund Gems automatically.
+
+---
+
+Rejected
+
+Purchase denied.
+
+Refund Gems automatically.
+
+---
+
+Every status change should immediately update the player's Shop page.
+
+---
+
+# 7. Purchase History
+
+Every player should have a Purchase History page.
+
+Display:
+
+* Purchase ID
+* Item
+* Category
+* Quantity
+* Price
+* Purchase date
+* Current status
+* Completion date
+* Notes from staff
+
+Newest purchases first.
+
+---
+
+# 8. Admin Panel Grand Section
+
+Create a brand-new **Shop Management** Grand Section in the Admin Panel.
+
+This should become the complete control center for the Shop.
+
+Include:
+
+## Dashboard
+
+Display live statistics:
+
+* Total purchases
+* Pending purchases
+* Completed purchases
+* Cancelled purchases
+* Total Gems spent
+* Revenue by item
+* Most purchased items
+* Recent purchases
+
+---
+
+## Purchase Queue
+
+Display every purchase.
+
+Include:
+
+* Purchase ID
+* Username
+* Item
+* Category
+* Quantity
+* Price
+* Purchase date
+* Current status
+
+Searchable and sortable.
+
+---
+
+## Purchase Management
+
+Allow administrators to:
+
+* Mark as Pending
+* Mark as Processing
+* Mark as Completed
+* Cancel purchase
+* Reject purchase
+* Add internal notes
+* Add player-visible notes
+
+Changing the status should instantly update the player's website.
+
+---
+
+## Refunds
+
+If an order is cancelled or rejected:
+
+Automatically refund the correct amount of Gems.
+
+Log every refund.
+
+Prevent duplicate refunds.
+
+---
+
+## Item Management
+
+Allow administrators to:
+
+* Enable/Disable items
+* Change prices
+* Change descriptions
+* Change icons/images
+* Mark items as Featured
+* Set purchase limits
+* Set stock (optional for future use)
+
+No code changes should be required to edit shop items.
+
+---
+
+## Analytics
+
+Display charts and statistics such as:
+
+* Most popular items
+* Daily purchases
+* Weekly purchases
+* Monthly purchases
+* Gems spent over time
+* Top buyers
+
+---
+
+# 9. Security
+
+Everything must be server-authoritative.
+
+Players must never be able to:
+
+* Change item prices.
+* Give themselves items.
+* Edit purchase status.
+* Fake purchases.
+* Spend negative Gems.
+* Purchase without enough Gems.
+* Double purchase through spam clicking.
+
+Validate every purchase server-side.
+
+---
+
+# 10. Live Synchronization
+
+When:
+
+* Gems change
+* Purchase created
+* Purchase completed
+* Purchase cancelled
+* Purchase refunded
+* Status changed
+
+Every connected client should update instantly.
+
+No page refresh should be required.
+
+---
+
+# 11. GitHub Backup
+
+Every purchase and every Shop-related change must be included in the existing automatic GitHub backup system.
+
+Do not create a new backup system.
+
+Use the current debounced GitHub backup infrastructure.
+
+---
+
+# 12. Notifications
+
+Players should receive attractive notifications when:
+
+* Purchase successful
+* Not enough Gems
+* Purchase processing
+* Purchase completed
+* Purchase cancelled
+* Gems refunded
+
+Administrators should also receive notifications for important Shop events.
+
+---
+
+# Goal
+
+Create a professional, production-quality Shop system that feels like a real game store. Players should be able to spend Gems earned through mining, track every purchase from their account, and wait for staff to deliver the purchased items in-game. Administrators should have a powerful **Shop Management Grand Section** to manage purchases, prices, analytics, refunds, and delivery efficiently, while keeping everything synchronized in real time and securely backed up through the existing GitHub backup system.

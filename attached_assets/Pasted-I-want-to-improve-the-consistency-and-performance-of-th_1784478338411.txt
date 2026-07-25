@@ -1,0 +1,109 @@
+I want to improve the consistency and performance of the entire website by standardizing pagination.
+
+## Pagination Rule
+
+From now on, **any new list or any existing list that is not already paginated** should automatically use pagination.
+
+The default maximum should be:
+
+**10 items per page**
+
+This rule should apply across the entire website unless a specific page has a valid reason to use a different page size.
+
+---
+
+## Important
+
+Do **not** modify any lists that are **already paginated**.
+
+If a page already has working pagination, leave it exactly as it is.
+
+Only add pagination to lists that currently display all items at once or to any new lists created in the future.
+
+---
+
+## Where This Applies
+
+Examples include (but are not limited to):
+
+* Player lists
+* Shop purchase history
+* Pending purchases
+* Completed purchases
+* Admin management tables
+* Mining player lists
+* Leaderboards (unless intentionally limited)
+* Logs
+* Notifications
+* Audit logs
+* Activity history
+* Search results
+* Reports
+* Analytics tables
+* Transaction history
+* Reward history
+* Git history
+* Repository management pages
+* Any future tables or data lists
+
+If a page displays a collection of records, it should use pagination unless there is a strong reason not to.
+
+---
+
+## Pagination UI
+
+Keep the pagination design consistent across the website.
+
+Include:
+
+* Previous button
+* Next button
+* Current page indicator
+* Total pages
+* Total records
+* First page button
+* Last page button
+
+Disable buttons appropriately when they cannot be used.
+
+The design should match the existing pagination style used elsewhere in the website.
+
+---
+
+## Search & Filtering
+
+When a search or filter is applied:
+
+* Filter first.
+* Then paginate the filtered results.
+* If the search changes, automatically reset to page 1.
+* Preserve sorting before pagination.
+
+---
+
+## Performance
+
+Do not render thousands of items at once.
+
+Only render the items for the current page.
+
+Avoid unnecessary processing of records that are not visible.
+
+The pagination system should remain efficient even if lists grow to thousands of entries.
+
+---
+
+## Future-Proofing
+
+Whenever a new page or feature is added that contains a list, table, or collection of records, it should automatically follow this standard unless explicitly configured otherwise.
+
+The default behavior across the project should be:
+
+* Maximum **10 items per page**.
+* Consistent pagination controls.
+* Consistent styling.
+* Consistent behavior.
+
+## Goal
+
+Create a consistent, performant pagination standard across the entire application. Every list that is not already paginated should be limited to **10 items per page**, while preserving all existing pagination implementations exactly as they are.

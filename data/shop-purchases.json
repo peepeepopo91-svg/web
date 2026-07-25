@@ -1,0 +1,58 @@
+{
+  "purchases": [
+    {
+      "id": "BT-HJFEC8NE",
+      "username": "zolup",
+      "itemId": "tool-axe",
+      "itemName": "Axe",
+      "category": "amethyst-tools",
+      "quantity": 6,
+      "price": 440000,
+      "totalCost": 2640000,
+      "status": "pending",
+      "createdAt": 1784478216315,
+      "updatedAt": 1784478216315,
+      "completedAt": null,
+      "staffNotes": null,
+      "playerNotes": null,
+      "refunded": false,
+      "refundedAt": null
+    },
+    {
+      "id": "BT-RH9U5UEV",
+      "username": "zolup",
+      "itemId": "tool-axe",
+      "itemName": "Axe",
+      "category": "amethyst-tools",
+      "quantity": 1,
+      "price": 440000,
+      "totalCost": 440000,
+      "status": "processing",
+      "createdAt": 1784474703769,
+      "updatedAt": 1784476068409,
+      "completedAt": null,
+      "staffNotes": null,
+      "playerNotes": "given",
+      "refunded": false,
+      "refundedAt": null
+    },
+    {
+      "id": "BT-KBDXYPDY",
+      "username": "zolup",
+      "itemId": "rank-warrior",
+      "itemName": "Warrior",
+      "category": "ranks",
+      "quantity": 3,
+      "price": 90000,
+      "totalCost": 270000,
+      "status": "completed",
+      "createdAt": 1784474575886,
+      "updatedAt": 1784474652180,
+      "completedAt": 1784474652180,
+      "staffNotes": null,
+      "playerNotes": "givennnnn",
+      "refunded": false,
+      "refundedAt": null
+    }
+  ]
+}

@@ -1,0 +1,596 @@
+{
+  "tournaments": [
+    {
+      "id": "t_ms0qjofe_ubzqe",
+      "name": "Blue Network PvP World Cup",
+      "description": "🏆 Blue Network PvP World Cup is finally here! The teams are ready, the battles are about to begin, and only one team can claim victory.\n\nWho are you cheering for? 🔥",
+      "banner": "",
+      "status": "live",
+      "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+      "serverIp": "play.sennahosting.com",
+      "maxTeamSize": 2,
+      "minTeamSize": 2,
+      "requireCaptain": false,
+      "registrationDeadline": null,
+      "startDate": 1784739600000,
+      "prizePool": "in Discord",
+      "prizes": [
+        {
+          "placement": 1,
+          "label": "🥇 First Place",
+          "rewards": [
+            {
+              "type": "custom",
+              "label": "in Discord",
+              "amount": ""
+            }
+          ]
+        }
+      ],
+      "rules": {
+        "allowedMods": [
+          "OptiFine",
+          "Lunar Client",
+          "Badlion Client",
+          "Labymod"
+        ],
+        "allowedClients": [
+          "Vanilla",
+          "Forge",
+          "Fabric",
+          "Lunar",
+          "Badlion",
+          "Labymod"
+        ],
+        "bannedMods": [
+          "Reach mods",
+          "Kill aura",
+          "AutoClicker",
+          "X-Ray"
+        ],
+        "replayRequirements": "All players must record their POV. Replays must be submitted within 24 hours of the match.",
+        "disconnectRules": "A team will be given 5 minutes to reconnect. If unable, the match will be forfeited.",
+        "staffDecisions": "All staff decisions are final. Any disputes must be raised within 24 hours via Discord.",
+        "custom": []
+      },
+      "bracket": {
+        "type": "single_elimination",
+        "rounds": [
+          {
+            "name": "Round of 16",
+            "matchIds": [
+              "t_ms0s7dij_56jve",
+              "t_ms0s7dij_qe0cj",
+              "t_ms0s7dij_340rn",
+              "t_ms0s7dij_jfs8x",
+              "t_ms0s7dij_5s0yt",
+              "t_ms0s7dij_s5un2",
+              "t_ms0s7dij_ji13v",
+              "t_ms0s7dij_dhduq"
+            ]
+          },
+          {
+            "name": "Quarter-Finals",
+            "matchIds": [
+              "t_ms0s7dij_hyv7h",
+              "t_ms0s7dij_x6rgd",
+              "t_ms0s7dij_grhli",
+              "t_ms0s7dij_6qawx"
+            ]
+          },
+          {
+            "name": "Semi-Finals",
+            "matchIds": [
+              "t_ms0s7dij_ttknd",
+              "t_ms0s7dij_6f2g4"
+            ]
+          },
+          {
+            "name": "Finals",
+            "matchIds": [
+              "t_ms0s7dij_caetf"
+            ]
+          }
+        ]
+      },
+      "teams": [
+        {
+          "id": "team_brotherhood",
+          "name": "BrotherHood",
+          "captain": "D3n1s1",
+          "players": [
+            "D3n1s1",
+            "feet_lover420"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006200000,
+          "notes": ""
+        },
+        {
+          "id": "team_zyxveil",
+          "name": "Zyxveil",
+          "captain": "Nyxveil7",
+          "players": [
+            "Nyxveil7",
+            "Zyr3n"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006201000,
+          "notes": ""
+        },
+        {
+          "id": "team_adidas",
+          "name": "adidas",
+          "captain": "Kiqyu",
+          "players": [
+            "Kiqyu",
+            "nike_kz"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006202000,
+          "notes": ""
+        },
+        {
+          "id": "team_chuds",
+          "name": "CHUDS",
+          "captain": "Mondoster",
+          "players": [
+            "Mondoster",
+            "Mini Shelf"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006203000,
+          "notes": ""
+        },
+        {
+          "id": "team_velocity",
+          "name": "Velocity",
+          "captain": "ItzDark",
+          "players": [
+            "ItzDark",
+            "XReApEr"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006204000,
+          "notes": ""
+        },
+        {
+          "id": "team_theprince",
+          "name": "The Prince",
+          "captain": "PrinceMark",
+          "players": [
+            "PrinceMark",
+            "Matthew10999"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006205000,
+          "notes": ""
+        },
+        {
+          "id": "team_uppermoon",
+          "name": "Upper moon",
+          "captain": "Dantoms",
+          "players": [
+            "Dantoms",
+            "Nocries_"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006206000,
+          "notes": ""
+        },
+        {
+          "id": "team_primeinvicta",
+          "name": "The Prime Invicta",
+          "captain": "Prime__",
+          "players": [
+            "Prime__",
+            "PrimeInno"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006207000,
+          "notes": ""
+        },
+        {
+          "id": "team_pinnaclesweet",
+          "name": "Pinnacle Sweet",
+          "captain": "cakechan",
+          "players": [
+            "cakechan",
+            "Charlesatfarms"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006208000,
+          "notes": ""
+        },
+        {
+          "id": "team_nemesis",
+          "name": "Nemesis",
+          "captain": "NullStrike",
+          "players": [
+            "NullStrike",
+            "K0N12"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006209000,
+          "notes": ""
+        },
+        {
+          "id": "team_weakfragile",
+          "name": "Weak & Fragile",
+          "captain": "stinklezinger4",
+          "players": [
+            "stinklezinger4",
+            "LightWorkFR"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006210000,
+          "notes": ""
+        },
+        {
+          "id": "team_2bigmelons",
+          "name": "The 2 Big Melons 🍈",
+          "captain": "ItzV0id_MC",
+          "players": [
+            "ItzV0id_MC",
+            "xxdemon55"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006211000,
+          "notes": ""
+        },
+        {
+          "id": "team_dragonslayers",
+          "name": "Dragon Slayers",
+          "captain": "SomeRandomDude54",
+          "players": [
+            "SomeRandomDude54",
+            "duckocraft"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006212000,
+          "notes": ""
+        },
+        {
+          "id": "team_lbusyduo",
+          "name": "lbusy duo",
+          "captain": "Thegodlarry36",
+          "players": [
+            "Thegodlarry36",
+            "ultramarwan"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006213000,
+          "notes": ""
+        },
+        {
+          "id": "team_warriorsxd",
+          "name": "WarriorsXD",
+          "captain": "IMYOURMOHID",
+          "players": [
+            "IMYOURMOHID",
+            "M_U_GAMER"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006214000,
+          "notes": ""
+        },
+        {
+          "id": "team_theshrine",
+          "name": "The Shrine",
+          "captain": "amonon",
+          "players": [
+            "amonon",
+            "trikiblouma"
+          ],
+          "status": "approved",
+          "registeredAt": 1785006215000,
+          "notes": ""
+        }
+      ],
+      "matches": [
+        {
+          "id": "t_ms0s7dij_56jve",
+          "round": 0,
+          "matchNumber": 1,
+          "bracketSide": "winners",
+          "team1Id": "team_uppermoon",
+          "team2Id": "team_chuds",
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "pending",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_qe0cj",
+          "round": 0,
+          "matchNumber": 2,
+          "bracketSide": "winners",
+          "team1Id": "team_adidas",
+          "team2Id": "team_weakfragile",
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "scheduled",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_340rn",
+          "round": 0,
+          "matchNumber": 3,
+          "bracketSide": "winners",
+          "team1Id": "team_primeinvicta",
+          "team2Id": "team_theshrine",
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "scheduled",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_jfs8x",
+          "round": 0,
+          "matchNumber": 4,
+          "bracketSide": "winners",
+          "team1Id": "team_lbusyduo",
+          "team2Id": "team_velocity",
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "scheduled",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_5s0yt",
+          "round": 0,
+          "matchNumber": 5,
+          "bracketSide": "winners",
+          "team1Id": "team_nemesis",
+          "team2Id": "team_zyxveil",
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "scheduled",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_s5un2",
+          "round": 0,
+          "matchNumber": 6,
+          "bracketSide": "winners",
+          "team1Id": "team_theprince",
+          "team2Id": "team_dragonslayers",
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "scheduled",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_ji13v",
+          "round": 0,
+          "matchNumber": 7,
+          "bracketSide": "winners",
+          "team1Id": "team_pinnaclesweet",
+          "team2Id": "team_2bigmelons",
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "scheduled",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_dhduq",
+          "round": 0,
+          "matchNumber": 8,
+          "bracketSide": "winners",
+          "team1Id": "team_brotherhood",
+          "team2Id": "team_warriorsxd",
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "scheduled",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_hyv7h",
+          "round": 1,
+          "matchNumber": 9,
+          "bracketSide": "winners",
+          "team1Id": null,
+          "team2Id": null,
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "pending",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_x6rgd",
+          "round": 1,
+          "matchNumber": 10,
+          "bracketSide": "winners",
+          "team1Id": null,
+          "team2Id": null,
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "pending",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_grhli",
+          "round": 1,
+          "matchNumber": 11,
+          "bracketSide": "winners",
+          "team1Id": null,
+          "team2Id": null,
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "pending",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_6qawx",
+          "round": 1,
+          "matchNumber": 12,
+          "bracketSide": "winners",
+          "team1Id": null,
+          "team2Id": null,
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "pending",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_ttknd",
+          "round": 2,
+          "matchNumber": 13,
+          "bracketSide": "winners",
+          "team1Id": null,
+          "team2Id": null,
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "pending",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_6f2g4",
+          "round": 2,
+          "matchNumber": 14,
+          "bracketSide": "winners",
+          "team1Id": null,
+          "team2Id": null,
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "pending",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        },
+        {
+          "id": "t_ms0s7dij_caetf",
+          "round": 3,
+          "matchNumber": 15,
+          "bracketSide": "finals",
+          "team1Id": null,
+          "team2Id": null,
+          "score1": 0,
+          "score2": 0,
+          "winnerId": null,
+          "status": "pending",
+          "scheduledAt": null,
+          "completedAt": null,
+          "arena": "",
+          "gamemode": "Mace, Nethpot, Crystal, UHC, Sword",
+          "referee": "",
+          "notes": "",
+          "replayLink": ""
+        }
+      ],
+      "announcements": [
+        {
+          "id": "t_ms0qkx5y_k1fp1",
+          "title": "Brackets Released! Get ready to compete for that glorious victory!",
+          "body": "",
+          "type": "info",
+          "createdAt": 1785006161638
+        }
+      ],
+      "createdAt": 1785006103657,
+      "updatedAt": 1785010416824,
+      "bracketDisplay": {
+        "theme": "esports",
+        "scaleMode": "manual",
+        "manualScale": 0.84
+      }
+    }
+  ],
+  "activeTournamentId": "t_ms0qjofe_ubzqe"
+}

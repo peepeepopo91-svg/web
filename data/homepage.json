@@ -1,0 +1,416 @@
+{
+  "published": true,
+  "publishAt": null,
+  "version": 18,
+  "lastEditedAt": "2026-07-25T12:11:11.561Z",
+  "lastEditedBy": "admin",
+  "theme": {
+    "brandPrimary": "#00BFFF",
+    "brandSecondary": "#0099FF",
+    "brandAccent": "#0066FF",
+    "bgPrimary": "#00060f",
+    "bgSecondary": "#0B0F17",
+    "surface": "#111827",
+    "glassOpacity": 0.03,
+    "borderRadius": "xl",
+    "fontHeading": "Space Grotesk",
+    "fontBody": "Inter",
+    "heroGradient": "linear-gradient(135deg, #00BFFF 0%, #0088FF 50%, #0044DD 100%)",
+    "textGradient": "linear-gradient(90deg, #00BFFF, #0088FF, #0055DD)",
+    "particleColor": "#00BFFF",
+    "particleCount": 60,
+    "particleSpeed": 1,
+    "backgroundStyle": "gradient",
+    "backgroundImage": "",
+    "backgroundOverlay": "rgba(0,0,0,0.2)"
+  },
+  "layout": {
+    "sectionOrder": [
+      "announcement",
+      "event",
+      "navbar",
+      "hero",
+      "stats",
+      "quote",
+      "features",
+      "footer"
+    ],
+    "maxWidth": "1280px",
+    "sectionSpacing": "normal",
+    "containerPadding": "md",
+    "navbarFixed": true,
+    "showScrollHint": true
+  },
+  "hero": {
+    "enabled": true,
+    "liveTickerEnabled": true,
+    "liveTickerLabel": "LIVE",
+    "title": "DOMINATE",
+    "titleAccent": "THE TIERS",
+    "subtitle": "Discover the most competitive Minecraft PvP rankings, explore player profiles, and see who dominates the battlefield.",
+    "primaryCta": {
+      "text": "Join Discord",
+      "link": "https://discord.gg/DmEPAb3NFU",
+      "external": true,
+      "style": "discord",
+      "visible": true
+    },
+    "secondaryCta": {
+      "text": "Leaderboards",
+      "link": "/rankings",
+      "external": false,
+      "style": "outline",
+      "visible": true
+    },
+    "showServerIP": true,
+    "serverIP": "play.sennahosting.com",
+    "ipCopyLabel": "Copy",
+    "ipCopiedLabel": "Copied!",
+    "align": "center",
+    "minHeight": "screen",
+    "titleSize": "xl",
+    "animation": "fade-up"
+  },
+  "stats": {
+    "enabled": true,
+    "title": "",
+    "subtitle": "",
+    "cards": [
+      {
+        "id": "ranked",
+        "label": "Total Players",
+        "value": "auto",
+        "source": "players",
+        "suffix": "",
+        "accent": false,
+        "icon": "👥",
+        "visible": true
+      },
+      {
+        "id": "tests",
+        "label": "Tests Completed",
+        "value": "auto",
+        "source": "tests",
+        "suffix": "",
+        "accent": true,
+        "icon": "⭐",
+        "visible": true
+      },
+      {
+        "id": "years",
+        "label": "Years Running",
+        "value": 1,
+        "source": "manual",
+        "suffix": "+",
+        "accent": false,
+        "icon": "🏆",
+        "visible": true
+      }
+    ]
+  },
+  "features": {
+    "enabled": true,
+    "title": "Every game mode",
+    "subtitle": "you could imagine",
+    "description": "7 competitive PvP modes, each with its own ranked tier list.",
+    "layout": "grid",
+    "columns": 6,
+    "items": [
+      {
+        "id": "sword",
+        "label": "Sword",
+        "icon": "⚔️",
+        "link": "/rankings?mode=sword",
+        "visible": true,
+        "color": "#00BFFF",
+        "description": ""
+      },
+      {
+        "id": "crystal",
+        "label": "Crystal",
+        "icon": "💎",
+        "link": "/rankings?mode=crystal",
+        "visible": true,
+        "color": "#00BFFF",
+        "description": ""
+      },
+      {
+        "id": "axe",
+        "label": "Axe",
+        "icon": "🪓",
+        "link": "/rankings?mode=axe",
+        "visible": true,
+        "color": "#00BFFF",
+        "description": ""
+      },
+      {
+        "id": "mace",
+        "label": "Mace",
+        "icon": "🔨",
+        "link": "/rankings?mode=mace",
+        "visible": true,
+        "color": "#00BFFF",
+        "description": ""
+      },
+      {
+        "id": "uhc",
+        "label": "UHC",
+        "icon": "🏆",
+        "link": "/rankings?mode=uhc",
+        "visible": true,
+        "color": "#00BFFF",
+        "description": ""
+      },
+      {
+        "id": "nethpot",
+        "label": "Nethpot",
+        "icon": "🧪",
+        "link": "/rankings?mode=nethpot",
+        "visible": true,
+        "color": "#00BFFF",
+        "description": ""
+      },
+      {
+        "id": "diapot",
+        "label": "Diapot",
+        "icon": "⚗️",
+        "link": "/rankings?mode=diapot",
+        "visible": true,
+        "color": "#00BFFF",
+        "description": ""
+      }
+    ]
+  },
+  "quote": {
+    "enabled": true,
+    "text": "It's so accurate and fair to follow",
+    "highlight": "accurate and fair",
+    "author": "— Blue Tiers community",
+    "align": "center"
+  },
+  "footer": {
+    "enabled": true,
+    "logoText": "BlueTiers",
+    "logoUrl": "",
+    "showWatermark": true,
+    "showSocials": true,
+    "showLegal": true,
+    "showServerIP": true,
+    "columns": [
+      {
+        "title": "navigate",
+        "links": [
+          {
+            "label": "Home",
+            "url": "/",
+            "internal": true
+          },
+          {
+            "label": "Rankings",
+            "url": "/rankings",
+            "internal": true
+          },
+          {
+            "label": "Tournament",
+            "url": "/tournament",
+            "internal": true
+          },
+          {
+            "label": "Mining",
+            "url": "/mining",
+            "internal": true
+          },
+          {
+            "label": "Shop",
+            "url": "/shop",
+            "internal": true
+          },
+          {
+            "label": "Tier Tagger",
+            "url": "/tier-tagger",
+            "internal": true
+          }
+        ]
+      },
+      {
+        "title": "social",
+        "links": [
+          {
+            "label": "Discord",
+            "url": "https://discord.gg/DmEPAb3NFU",
+            "internal": false
+          },
+          {
+            "label": "X / Twitter",
+            "url": "https://x.com",
+            "internal": false
+          },
+          {
+            "label": "TikTok",
+            "url": "https://tiktok.com",
+            "internal": false
+          },
+          {
+            "label": "YouTube",
+            "url": "https://youtube.com",
+            "internal": false
+          }
+        ]
+      },
+      {
+        "title": "legal",
+        "links": [
+          {
+            "label": "Terms of Service",
+            "url": "terms",
+            "internal": true
+          },
+          {
+            "label": "Privacy Policy",
+            "url": "privacy",
+            "internal": true
+          },
+          {
+            "label": "Screenshare Rules",
+            "url": "screenshare",
+            "internal": true
+          }
+        ]
+      }
+    ],
+    "bottomLinks": [
+      {
+        "label": "API Documentation",
+        "url": "#",
+        "internal": false
+      }
+    ],
+    "copyright": "© 2026 Blue Tiers. All rights reserved.",
+    "tagline": "Not affiliated with Microsoft or Mojang AB.",
+    "extra": ""
+  },
+  "nav": {
+    "logoText": "Blue Tiers",
+    "logoUrl": "",
+    "showSearch": true,
+    "showDiscord": true,
+    "discordLink": "https://discord.gg/DmEPAb3NFU",
+    "links": [
+      {
+        "id": "rankings",
+        "label": "Rankings",
+        "to": "/rankings",
+        "icon": "BarChart2",
+        "visible": true,
+        "external": false
+      },
+      {
+        "id": "tournament",
+        "label": "Tournament",
+        "to": "/tournament",
+        "icon": "Trophy",
+        "visible": true,
+        "external": false
+      },
+      {
+        "id": "mining",
+        "label": "Mining",
+        "to": "/mining",
+        "icon": "Pickaxe",
+        "visible": true,
+        "external": false
+      },
+      {
+        "id": "exchange",
+        "label": "Exchange",
+        "to": "/exchange",
+        "icon": "ArrowLeftRight",
+        "visible": true,
+        "external": false
+      },
+      {
+        "id": "shop",
+        "label": "Shop",
+        "to": "/shop",
+        "icon": "ShoppingBag",
+        "visible": true,
+        "external": false
+      },
+      {
+        "id": "tier-tagger",
+        "label": "Tier Tagger",
+        "to": "/tier-tagger",
+        "icon": "Tag",
+        "visible": true,
+        "external": false
+      }
+    ]
+  },
+  "announcements": [
+    {
+      "id": "default",
+      "enabled": false,
+      "text": "Welcome to Blue Tiers — the new homepage CMS is live!",
+      "title": "Welcome to Blue Tiers",
+      "body": "The new homepage CMS is live!",
+      "eyebrow": "News",
+      "icon": "✦",
+      "type": "info",
+      "style": "spotlight",
+      "accentColor": "#00BFFF",
+      "backgroundColor": "#062039",
+      "link": "",
+      "linkLabel": "Learn more",
+      "startAt": null,
+      "endAt": null,
+      "dismissible": true
+    }
+  ],
+  "event": {
+    "enabled": false,
+    "title": "PvP World Cup",
+    "subtitle": "Registration closes soon",
+    "description": "Assemble your squad, climb the bracket, and prove who owns the arena.",
+    "eyebrow": "Featured event",
+    "icon": "🏆",
+    "buttonText": "Register Now",
+    "link": "/tournament",
+    "secondaryButtonText": "View details",
+    "secondaryLink": "/tournament",
+    "endDate": "2026-08-31T23:59:59Z",
+    "visible": true,
+    "showAboveNavbar": true,
+    "badge": "EVENT",
+    "style": "split",
+    "accentColor": "#00BFFF",
+    "backgroundColor": "#071426",
+    "imageUrl": "",
+    "countdownLabel": "Registration closes in",
+    "showCountdown": true,
+    "metaLabel": "Format",
+    "metaValue": "Open tournament",
+    "showMeta": false,
+    "bannerHeight": "md",
+    "showPrimaryButton": true,
+    "showSecondaryButton": true,
+    "dismissible": false,
+    "hideWhenExpired": false,
+    "closedText": "Registration is now closed.",
+    "hideOnScroll": true
+  },
+  "media": {
+    "logoUrl": "",
+    "faviconUrl": "",
+    "ogImageUrl": "",
+    "heroBackgroundUrl": "",
+    "footerWatermarkUrl": ""
+  },
+  "seo": {
+    "title": "Blue Tiers — #1 Minecraft PvP Tier List",
+    "description": "The definitive tier list for all types of Minecraft PvP players. Rankings, mining, shop, and more.",
+    "keywords": "minecraft, pvp, tier list, blue tiers, rankings",
+    "canonical": "https://bluetiers.bolt.host",
+    "ga4Id": "",
+    "gscVerification": ""
+  }
+}

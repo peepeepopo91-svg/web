@@ -1,0 +1,89 @@
+{
+  "startedAt": 1753266000000,
+  "peakConcurrentEver": 7,
+  "dailyStats": {
+    "2026-07-23": {
+      "pageViews": 142,
+      "uniqueSessions": 41,
+      "pages": {
+        "/": 80,
+        "/mining": 17,
+        "/tournament": 5,
+        "/rankings": 11,
+        "/exchange": 11,
+        "/shop": 18
+      },
+      "referrers": {
+        "Referral": 61,
+        "Direct": 81
+      },
+      "devices": {
+        "Desktop": 142
+      },
+      "browsers": {
+        "Firefox": 118,
+        "Chrome": 24
+      },
+      "os": {
+        "Linux": 142
+      },
+      "peakConcurrent": 7
+    },
+    "2026-07-24": {
+      "pageViews": 128,
+      "uniqueSessions": 39,
+      "pages": {
+        "/": 87,
+        "/tournament": 6,
+        "/rankings": 15,
+        "/mining": 6,
+        "/exchange": 5,
+        "/shop": 9
+      },
+      "referrers": {
+        "Referral": 42,
+        "Direct": 86
+      },
+      "devices": {
+        "Desktop": 128
+      },
+      "browsers": {
+        "Chrome": 25,
+        "Firefox": 103
+      },
+      "os": {
+        "Linux": 128
+      },
+      "peakConcurrent": 4
+    },
+    "2026-07-25": {
+      "pageViews": 357,
+      "uniqueSessions": 118,
+      "pages": {
+        "/": 203,
+        "/rankings": 57,
+        "/tournament": 41,
+        "/tier-tagger": 33,
+        "/shop": 5,
+        "/mining": 4,
+        "/exchange": 14
+      },
+      "referrers": {
+        "Referral": 83,
+        "Direct": 274
+      },
+      "devices": {
+        "Desktop": 357
+      },
+      "browsers": {
+        "Firefox": 283,
+        "Chrome": 74
+      },
+      "os": {
+        "Linux": 352,
+        "Windows": 5
+      },
+      "peakConcurrent": 4
+    }
+  }
+}

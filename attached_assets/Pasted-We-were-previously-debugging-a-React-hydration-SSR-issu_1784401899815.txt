@@ -1,0 +1,77 @@
+We were previously debugging a React hydration/SSR issue, but the previous AI ran out of quota before it could finish. Please continue from where it left off instead of starting over.
+
+## What was identified
+
+The root cause appears to be in **`Footer.tsx`**.
+
+It currently does something similar to:
+
+```tsx
+useState(getSiteContent)
+```
+
+This passes `getSiteContent` as a lazy initializer.
+
+React executes that function during:
+
+* Server-Side Rendering (SSR)
+* Client hydration
+
+The problem is that the function returns **different values** in each environment:
+
+* During SSR there is no `localStorage`, so it returns the default content.
+* During client hydration it reads the admin-saved values from `localStorage`.
+
+This mismatch causes React hydration to fail, which then cascades into the **Invalid Hook Call** errors.
+
+The previous AI's planned fix was:
+
+* Export the default content as a constant (for example `CONTENT_DEFAULTS`) from the store.
+* Use those defaults as the initial state so SSR and the first client render are identical.
+* Only read from `localStorage` after hydration (inside an effect or another client-only mechanism).
+
+## Additional components to inspect
+
+The previous AI also noted that these components appear on every page and should be checked for the same SSR/hydration issue:
+
+* `EventBanner`
+* `CountdownTimer`
+
+If they also read browser-only data during the initial render, fix them using the same SSR-safe approach.
+
+## New issue introduced
+
+While implementing the fix, the previous AI renamed:
+
+```ts
+DEFAULTS
+```
+
+to
+
+```ts
+CONTENT_DEFAULTS
+```
+
+However, it forgot to update the references inside `getSiteContent()`.
+
+This broke the server because `getSiteContent()` still references the old constant.
+
+Please fix every reference consistently instead of partially renaming the constant.
+
+The previous AI also mentioned removing an unnecessary inline type import in `Footer`, so if that simplification is still appropriate, complete it.
+
+## Goal
+
+Fix the hydration mismatch **properly**, not by suppressing warnings.
+
+Requirements:
+
+* SSR and the initial client render must produce identical output.
+* No Invalid Hook Call errors.
+* No hydration mismatch warnings.
+* Admin-saved content should still load correctly after hydration.
+* Do not break the existing admin content editing system.
+* Keep the solution clean and SSR-safe rather than relying on hacks or disabling hydration checks.
+
+Before making changes, inspect all components involved in the initial page render and ensure none of them read browser-only state during SSR.

@@ -1,0 +1,433 @@
+The GitHub save system is STILL NOT WORKING.
+
+The repository is connected, but when I add a player in the Admin Panel and click "Save to GitHub", it fails with a network error and nothing is committed.
+
+I do NOT want another explanation, another placeholder implementation, or another UI-only change.
+
+I want a REAL, fully functional GitHub save system that persists changes to the repository.
+
+If the current architecture cannot support GitHub commits, redesign it into a working architecture instead of trying to patch the broken one.
+
+==================================================
+REMOVE AUTO SAVE
+==================================================
+
+Completely remove the Auto Save system.
+
+Remove:
+
+- Auto Save toggle
+- Auto Save timer
+- Auto Save status
+- Auto Save icon
+- Auto Save background jobs
+
+Everything related to Auto Save should be removed.
+
+==================================================
+SAVE BUTTONS PER SECTION
+==================================================
+
+Instead of one global save button, every editable section of the Admin Panel must have its own:
+
+"Save to GitHub"
+
+button.
+
+Examples:
+
+Tier List
+[ Save to GitHub ]
+
+Gamemodes
+[ Save to GitHub ]
+
+Economy
+[ Save to GitHub ]
+
+Mining
+
+Users
+
+Homepage
+
+Events
+
+Website Settings
+
+Each button should save ONLY that section.
+
+==================================================
+SAVE PROGRESS WINDOW
+==================================================
+
+When I press Save to GitHub, open a professional progress window.
+
+Do NOT simply display:
+
+Saving...
+
+Instead, show every step in real time.
+
+Example:
+
+✓ Preparing data...
+
+✓ Validating JSON...
+
+✓ Detecting modified files...
+
+✓ Authenticating with GitHub...
+
+✓ Repository:
+peepeepopo91-svg/rupa
+
+✓ Branch:
+main
+
+✓ Loading latest file SHA...
+
+✓ Encoding updated file...
+
+✓ Uploading to GitHub...
+
+✓ Creating commit...
+
+✓ Waiting for GitHub response...
+
+✓ Verifying commit...
+
+✓ Refreshing cached data...
+
+✓ Save completed successfully.
+
+Each step should appear only after the previous one completes.
+
+==================================================
+TECHNICAL DETAILS
+==================================================
+
+Inside the progress window create an expandable section:
+
+Technical Details
+
+Display:
+
+Repository
+
+Branch
+
+File path
+
+Previous SHA
+
+New SHA
+
+Commit message
+
+GitHub API endpoint
+
+HTTP status code
+
+GitHub response
+
+Time taken
+
+Request duration
+
+==================================================
+IF ANY STEP FAILS
+==================================================
+
+Immediately stop the save.
+
+Highlight the failed step in red.
+
+Display the REAL error.
+
+Examples:
+
+Bad credentials
+
+Invalid SHA
+
+Repository not found
+
+Resource not accessible by personal access token
+
+Validation failed
+
+File not found
+
+Rate limited
+
+Never only display:
+
+Save Failed
+
+==================================================
+DEBUG THE ENTIRE SAVE PIPELINE
+==================================================
+
+Trace every part of the system.
+
+Inspect:
+
+Save button
+
+Dirty state
+
+Data collection
+
+JSON serialization
+
+API endpoint
+
+Backend/server function
+
+Authentication
+
+GitHub token
+
+Environment variables
+
+Repository lookup
+
+Branch lookup
+
+SHA lookup
+
+PUT request
+
+Commit creation
+
+GitHub response
+
+Reloading repository data
+
+Cache invalidation
+
+Refresh logic
+
+Find the exact point where saving fails.
+
+Do not hide exceptions.
+
+==================================================
+NETWORK ERROR
+==================================================
+
+The current error is:
+
+Network Error while fetching resources.
+
+Determine the REAL reason.
+
+Examples:
+
+Endpoint does not exist
+
+Wrong URL
+
+Wrong fetch path
+
+Server function not deployed
+
+Server function crashing
+
+CORS
+
+Missing environment variable
+
+Wrong GitHub token
+
+Wrong repository
+
+Wrong branch
+
+Wrong payload
+
+Wrong SHA
+
+Permission denied
+
+GitHub API rejection
+
+Actually fix the cause.
+
+==================================================
+REAL GITHUB SYNCHRONIZATION
+==================================================
+
+Do NOT simulate GitHub saving.
+
+Actually update the repository.
+
+Actually create commits.
+
+Actually modify repository files.
+
+Actually verify that GitHub accepted the commit.
+
+==================================================
+VERIFY EVERY SAVE
+==================================================
+
+After every save verify:
+
+✓ Commit exists
+
+✓ Repository updated
+
+✓ Branch updated
+
+✓ File updated
+
+✓ JSON valid
+
+✓ Latest commit SHA
+
+Only display success if every verification succeeds.
+
+==================================================
+TEST THE ENTIRE SYSTEM
+==================================================
+
+Do NOT stop after writing code.
+
+Perform real end-to-end testing.
+
+TEST 1
+
+Create this player from the Admin Panel:
+
+Username:
+ZyrenBoy
+
+Gamemode:
+Mace
+
+Tier:
+LT5
+
+Leave other fields as sensible defaults.
+
+Then:
+
+Click:
+
+Save to GitHub
+
+Verify:
+
+✓ GitHub accepted the request
+
+✓ Commit created
+
+✓ Repository updated
+
+✓ JSON updated
+
+Refresh Admin Panel
+
+Verify ZyrenBoy still exists.
+
+Open the PUBLIC Rankings page.
+
+Verify ZyrenBoy appears.
+
+Search:
+
+ZyrenBoy
+
+Verify search works.
+
+Open his profile.
+
+Verify:
+
+Mace = LT5
+
+PASS only if ALL succeed.
+
+==================================================
+TEST OTHER SECTIONS
+==================================================
+
+Also test:
+
+Homepage edits
+
+Economy edits
+
+Gamemode edits
+
+Event edits
+
+Mining edits
+
+User edits
+
+Each one must:
+
+Save
+
+Commit
+
+Refresh
+
+Persist
+
+==================================================
+UI POLISH
+==================================================
+
+The Save Progress window should look premium.
+
+Use:
+
+Glassmorphism
+
+Blue gradients
+
+Animated progress indicators
+
+Checkmarks
+
+Error icons
+
+Smooth animations
+
+Responsive layout
+
+==================================================
+FINAL ACCEPTANCE CRITERIA
+==================================================
+
+Do NOT consider the task complete unless ALL are true:
+
+✓ ZyrenBoy was created from the Admin Panel.
+
+✓ Save to GitHub succeeded.
+
+✓ A REAL GitHub commit exists.
+
+✓ Repository JSON contains ZyrenBoy.
+
+✓ Refreshing the Admin Panel still shows ZyrenBoy.
+
+✓ The public Rankings page shows ZyrenBoy.
+
+✓ Searching for ZyrenBoy works.
+
+✓ Mace tier is LT5.
+
+✓ No console errors.
+
+✓ No network errors.
+
+✓ Every Save to GitHub button works for its respective section.
+
+If any test fails, continue debugging until every acceptance criterion passes.
+
+Do not stop after changing code. Continue debugging, testing, and verifying until the system genuinely works end-to-end.

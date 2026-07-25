@@ -1,0 +1,312 @@
+```text
+Fix the "Repair Data" system in the Tier List admin panel.
+
+Currently, when I click the "Repair Data" button, it fails with:
+
+```
+
+Repair failed: Cannot parse players.json even after removing conflict markers. Manual fix required.
+
+Parse error:
+SyntaxError: Expected ',' or '}' after property value in JSON at position 292
+
+````
+
+The current repair system is not actually repairing the corrupted JSON. It only removes Git conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`) but does not fix the JSON structure afterward.
+
+The problem is that `data/players.json` can be corrupted in multiple ways after Git merge conflicts:
+
+Examples of corruption:
+
+### 1. Missing commas
+
+Before:
+
+```json
+{
+  "ranks": {
+    "mace": "NONE",
+    "sword": "NONE",
+    "crystal": "LT4"
+    "axe": "NONE"
+  }
+}
+````
+
+After repair:
+
+```json
+{
+  "ranks": {
+    "mace": "NONE",
+    "sword": "NONE",
+    "crystal": "LT4",
+    "axe": "NONE"
+  }
+}
+```
+
+---
+
+### 2. Duplicate properties
+
+Example:
+
+```json
+{
+  "ranks": {
+    "mace": "NONE",
+    "sword": "NONE",
+    "mace": "HT5",
+    "crystal": "LT4"
+  }
+}
+```
+
+The repair system should remove duplicates and keep the correct/latest value.
+
+Expected:
+
+```json
+{
+  "ranks": {
+    "mace": "HT5",
+    "sword": "NONE",
+    "crystal": "LT4"
+  }
+}
+```
+
+---
+
+### 3. Git conflict markers inside objects
+
+Example:
+
+```json
+{
+  "name": "Player",
+  "ranks": {
+<<<<<<< HEAD
+    "sword": "HT4",
+    "uhc": "NONE"
+=======
+    "sword": "HT5",
+    "crystal": "LT4"
+>>>>>>> commit
+  }
+}
+```
+
+The repair system should merge the two versions:
+
+```json
+{
+  "name": "Player",
+  "ranks": {
+    "sword": "HT5",
+    "uhc": "NONE",
+    "crystal": "LT4"
+  }
+}
+```
+
+---
+
+## Required improvements:
+
+### 1. Build a real JSON repair engine
+
+Do not just remove:
+
+```
+<<<<<<<
+=======
+>>>>>>>
+```
+
+The repair system needs to:
+
+* Detect conflict blocks
+* Extract both sides
+* Merge the JSON data
+* Remove duplicate objects
+* Fix missing commas
+* Fix broken brackets
+* Restore valid JSON structure
+* Validate before saving
+
+---
+
+### 2. Player-specific recovery
+
+`players.json` has this structure:
+
+```json
+[
+  {
+    "name": "player",
+    "head": "url",
+    "region": "Asia",
+    "ranks": {
+      "mace": "HT5",
+      "sword": "LT4",
+      "axe": "NONE",
+      "uhc": "HT5",
+      "nethpot": "HT4",
+      "diapot": "LT5",
+      "crystal": "LT5"
+    }
+  }
+]
+```
+
+The repair system should understand players.
+
+When duplicate players exist:
+
+Example:
+
+```json
+{
+"name":"Blue_Gaming08",
+"ranks":{
+"sword":"HT5"
+}
+}
+```
+
+and:
+
+```json
+{
+"name":"Blue_Gaming08",
+"ranks":{
+"crystal":"HT4"
+}
+}
+```
+
+Merge them into:
+
+```json
+{
+"name":"Blue_Gaming08",
+"ranks":{
+"sword":"HT5",
+"crystal":"HT4"
+}
+}
+```
+
+Never create duplicate players.
+
+---
+
+### 3. Add repair preview before saving
+
+Before applying repair, show:
+
+```
+Repair Preview
+
+Detected Issues:
+❌ 12 Git conflict markers
+❌ 8 duplicate players
+❌ 24 duplicate rank keys
+❌ 5 missing commas
+
+Recovery:
+✅ Merged player data
+✅ Removed conflicts
+✅ Fixed JSON formatting
+
+Result:
+Valid JSON
+
+[Apply Repair]
+[Cancel]
+```
+
+---
+
+### 4. Add automatic JSON validation
+
+After repairing:
+
+Run JSON validation.
+
+Only allow saving if:
+
+```javascript
+JSON.parse(playersJson)
+```
+
+works successfully.
+
+If it still fails:
+
+Show:
+
+```
+Repair incomplete.
+
+Remaining error:
+Line: 154
+Column: 12
+
+Problem:
+Missing closing bracket
+```
+
+---
+
+### 5. Create a backup before repair
+
+Before modifying:
+
+```
+data/players.json
+```
+
+Create:
+
+```
+data/backups/players-before-repair-TIMESTAMP.json
+```
+
+So data is never permanently lost.
+
+---
+
+### 6. Improve error messages
+
+Instead of:
+
+```
+Repair failed: Cannot parse players.json
+```
+
+Show:
+
+```
+Repair failed.
+
+The repair engine fixed:
+- 20 conflict markers
+- 5 duplicate players
+
+Remaining issue:
+Missing comma near player "adambobjh22"
+Line: 12
+
+Backup created:
+players-before-repair-xxxxx.json
+```
+
+---
+
+The goal is that clicking **Repair Data** should fully recover corrupted `players.json` files caused by Git merge conflicts without requiring manual editing. The repair system should be intelligent enough to understand the Tier List player data format, merge conflicts safely, and always output valid JSON.
+
+```
+```

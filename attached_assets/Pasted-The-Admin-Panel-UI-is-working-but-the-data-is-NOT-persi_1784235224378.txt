@@ -1,0 +1,219 @@
+The Admin Panel UI is working, but the data is NOT persistent.
+
+Currently, any changes I make (adding players, editing tiers, changing settings, etc.) disappear after refreshing the page because they are only stored in memory.
+
+I want the Admin Panel to become the true content management system for Blue Tiers.
+
+## IMPORTANT
+
+Do NOT use localStorage, sessionStorage, or temporary in-memory state for permanent data.
+
+Changes must be persisted using the GitHub repository (through a backend or GitHub API integration) so that they survive page refreshes and deployments.
+
+Everything that is editable from the Admin Panel should be saved back to the repository.
+
+---
+
+# 1. Manual GitHub Save
+
+Whenever I modify anything in the Admin Panel, mark the page as having unsaved changes.
+
+Display a badge such as:
+
+● Unsaved Changes
+
+Add a button:
+
+Save Changes to GitHub
+
+When clicked:
+
+- Save all pending changes.
+- Update the appropriate data/configuration files in the GitHub repository.
+- Commit the changes with a meaningful commit message.
+
+Example:
+
+"Admin: Added player Steve"
+
+or
+
+"Admin: Updated Sword tiers"
+
+or
+
+"Admin: Modified Exchange Settings"
+
+After a successful save:
+
+- Remove the "Unsaved Changes" indicator.
+- Display a success toast:
+
+✓ Changes successfully saved to GitHub.
+
+If saving fails:
+
+Display an error notification explaining what went wrong.
+
+Do not silently fail.
+
+---
+
+# 2. Auto Save Settings
+
+Create a new section in the Admin Panel:
+
+GitHub Synchronization
+
+Inside it add:
+
+✓ Auto Save to GitHub
+
+Toggle:
+
+ON / OFF
+
+When OFF:
+
+Nothing changes.
+
+When ON:
+
+Every 5 seconds:
+
+- Check whether there are unsaved changes.
+- If there are, automatically save them to GitHub.
+- If nothing changed, do nothing.
+
+Never create unnecessary commits.
+
+Only commit when actual changes exist.
+
+---
+
+# 3. Manual Save While Auto Save Is Enabled
+
+If Auto Save is enabled:
+
+Disable the normal Save Changes button.
+
+Instead show a message such as:
+
+"Auto Save is enabled. Changes are automatically synced to GitHub every 5 seconds."
+
+or
+
+"Auto Save is currently managing GitHub synchronization."
+
+Do not allow duplicate manual saves while Auto Save is active.
+
+---
+
+# 4. Save Status
+
+Display a GitHub Sync Status card showing:
+
+Repository Status
+
+Last Successful Sync
+
+Pending Changes
+
+Auto Save Status
+
+Current Branch
+
+Latest Commit Message
+
+Examples:
+
+GitHub
+Connected
+
+Last Sync
+2 minutes ago
+
+Pending Changes
+3
+
+Auto Save
+Enabled
+
+---
+
+# 5. What Must Be Saved
+
+Every editable item in the Admin Panel must persist.
+
+Examples:
+
+- Players
+- Tiers
+- Regions
+- Points
+- Gamemode icons
+- Website settings
+- Mining settings
+- Exchange settings
+- Users
+- Events
+- Homepage text
+- Statistics
+- World Cup banner
+- Footer
+- Navigation
+- BlueCoin economy
+- Gems economy
+- Any future editable content
+
+Refreshing the website must always show the latest saved data.
+
+---
+
+# 6. Dirty State Tracking
+
+The Admin Panel should intelligently detect changes.
+
+Examples:
+
+Added a player → Dirty
+
+Edited a tier → Dirty
+
+Deleted a player → Dirty
+
+Changed homepage text → Dirty
+
+Changed exchange rate → Dirty
+
+If nothing changed:
+
+Do not create commits.
+
+---
+
+# 7. User Experience
+
+Show clear indicators.
+
+Examples:
+
+● Unsaved Changes
+
+⟳ Saving...
+
+✓ Saved Successfully
+
+⚠ Save Failed
+
+The save process should feel polished and professional.
+
+---
+
+# 8. Architecture
+
+Implement this as a proper GitHub synchronization system rather than a browser-only save.
+
+Use a backend or GitHub API integration so changes are written back to the repository, making them persistent across refreshes and deployments.
+
+Keep the implementation modular so additional editable data can be added in the future without changing the synchronization system.

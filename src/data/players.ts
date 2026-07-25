@@ -1,0 +1,663 @@
+export interface PlayerRanks {
+  [key: string]: string | null | undefined
+  mace?: string | null
+  sword?: string | null
+  crystal?: string | null
+  uhc?: string | null
+  axe?: string | null
+  nethpot?: string | null
+  diapot?: string | null
+}
+
+export const REGIONS = [
+  "North America",
+  "South America",
+  "Europe",
+  "Asia",
+  "Oceania",
+  "Africa",
+  "Middle East",
+] as const
+
+export type Region = typeof REGIONS[number]
+
+export interface Player {
+  name: string
+  head: string
+  region: Region
+  ranks: PlayerRanks
+}
+
+const players: Player[] = [
+  {
+    name: "_Hollowshade_",
+    head: "https://mc-heads.net/avatar/_Hollowshade_",
+    region: "Asia",
+    ranks: {
+      sword: "LT4",
+      mace: "LT3",
+    },
+  },
+  {
+    name: "A3MIR",
+    head: "https://mc-heads.net/avatar/A3MIR",
+    region: "Europe",
+    ranks: {
+      mace: "HT3",
+    },
+  },
+  {
+    name: "adambobjh22",
+    head: "https://mc-heads.net/avatar/adambobjh22",
+    region: "Europe",
+    ranks: {
+      crystal: "LT4",
+    },
+  },
+  {
+    name: "AliBicimss",
+    head: "https://mc-heads.net/avatar/AliBicimss",
+    region: "Europe",
+    ranks: {
+      nethpot: "LT3",
+    },
+  },
+  {
+    name: "bananastylze",
+    head: "https://mc-heads.net/avatar/bananastylze",
+    region: "North America",
+    ranks: {
+      sword: "HT4",
+    },
+  },
+  {
+    name: "Bav3r1",
+    head: "https://mc-heads.net/avatar/Bav3r1",
+    region: "Asia",
+    ranks: {
+      crystal: "HT4",
+    },
+  },
+  {
+    name: "Becanaldo_",
+    head: "https://mc-heads.net/avatar/Becanaldo_",
+    region: "Asia",
+    ranks: {
+      sword: "LT3",
+      mace: "HT4",
+    },
+  },
+  {
+    name: "BlackTagX",
+    head: "https://mc-heads.net/avatar/BlackTagX",
+    region: "Asia",
+    ranks: {
+      sword: "HT4",
+      axe: "LT4",
+      uhc: "HT5",
+      crystal: "LT5",
+      mace: "LT4",
+      nethpot: "HT4",
+      diapot: "HT4",
+    },
+  },
+  {
+    name: "Blitzor_",
+    head: "https://mc-heads.net/avatar/Blitzor_",
+    region: "Asia",
+    ranks: {
+      nethpot: "LT3",
+    },
+  },
+  {
+    name: "Blue_Gaming08",
+    head: "https://mc-heads.net/avatar/Blue_Gaming08",
+    region: "Asia",
+    ranks: {
+      axe: "HT4",
+      uhc: "LT4",
+      crystal: "HT4",
+      nethpot: "LT4",
+    },
+  },
+  {
+    name: "Caardss",
+    head: "https://mc-heads.net/avatar/Caardss",
+    region: "Asia",
+    ranks: {
+      sword: "HT4",
+    },
+  },
+  {
+    name: "cakechan",
+    head: "https://mc-heads.net/avatar/cakechan",
+    region: "Asia",
+    ranks: {
+      mace: "HT4",
+    },
+  },
+  {
+    name: "CloudScope",
+    head: "https://mc-heads.net/avatar/CloudScope",
+    region: "North America",
+    ranks: {
+      crystal: "LT3",
+      diapot: "HT3",
+    },
+  },
+  {
+    name: "ClownLegPiece",
+    head: "https://mc-heads.net/avatar/ClownLegPiece",
+    region: "North America",
+    ranks: {
+      crystal: "HT4",
+    },
+  },
+  {
+    name: "cobwebmsater",
+    head: "https://mc-heads.net/avatar/cobwebmsater",
+    region: "Europe",
+    ranks: {
+      uhc: "HT4",
+    },
+  },
+  {
+    name: "Cyan_Gaming07",
+    head: "https://mc-heads.net/avatar/Cyan_Gaming07",
+    region: "Asia",
+    ranks: {
+      sword: "LT5",
+      axe: "LT5",
+      uhc: "LT5",
+      crystal: "LT5",
+      mace: "LT5",
+      nethpot: "LT5",
+      diapot: "LT5",
+    },
+  },
+  {
+    name: "D3n1s1",
+    head: "https://mc-heads.net/avatar/D3n1s1",
+    region: "Europe",
+    ranks: {
+      sword: "HT4",
+      axe: "LT4",
+      uhc: "LT5",
+      crystal: "LT4",
+      mace: "LT3",
+      nethpot: "LT3",
+      diapot: "HT4",
+    },
+  },
+  {
+    name: "D4rkzu",
+    head: "https://mc-heads.net/avatar/D4rkzu",
+    region: "North America",
+    ranks: {
+      crystal: "LT3",
+    },
+  },
+  {
+    name: "DarknzGamerz0101",
+    head: "https://mc-heads.net/avatar/DarknzGamerz0101",
+    region: "Asia",
+    ranks: {
+      sword: "HT4",
+      mace: "HT4",
+    },
+  },
+  {
+    name: "datwildchild",
+    head: "https://mc-heads.net/avatar/datwildchild",
+    region: "North America",
+    ranks: {
+      sword: "HT4",
+    },
+  },
+  {
+    name: "Die_Melone1",
+    head: "https://mc-heads.net/avatar/Die_Melone1",
+    region: "Asia",
+    ranks: {
+      crystal: "HT5",
+    },
+  },
+  {
+    name: "feet_lover420",
+    head: "https://mc-heads.net/avatar/feet_lover420",
+    region: "Europe",
+    ranks: {
+      axe: "LT4",
+      mace: "HT3",
+    },
+  },
+  {
+    name: "frag717",
+    head: "https://mc-heads.net/avatar/frag717",
+    region: "Europe",
+    ranks: {
+      crystal: "HT4",
+    },
+  },
+  {
+    name: "getgoonedon",
+    head: "https://mc-heads.net/avatar/getgoonedon",
+    region: "North America",
+    ranks: {
+      sword: "LT3",
+    },
+  },
+  {
+    name: "Hokfr",
+    head: "https://mc-heads.net/avatar/Hokfr",
+    region: "Asia",
+    ranks: {
+      sword: "LT4",
+    },
+  },
+  {
+    name: "Hxckster",
+    head: "https://mc-heads.net/avatar/Hxckster",
+    region: "Asia",
+    ranks: {
+      crystal: "HT4",
+    },
+  },
+  {
+    name: "IDO1299",
+    head: "https://mc-heads.net/avatar/IDO1299",
+    region: "Europe",
+    ranks: {
+      crystal: "HT5",
+    },
+  },
+  {
+    name: "IMBATMAN",
+    head: "https://mc-heads.net/avatar/IMBATMAN",
+    region: "Asia",
+    ranks: {
+      sword: "LT4",
+    },
+  },
+  {
+    name: "ItzInno",
+    head: "https://mc-heads.net/avatar/ItzInno",
+    region: "Asia",
+    ranks: {
+      crystal: "HT3",
+    },
+  },
+  {
+    name: "ItzMarlowww",
+    head: "https://mc-heads.net/avatar/ItzMarlowww",
+    region: "Europe",
+    ranks: {
+      axe: "HT4",
+      uhc: "LT4",
+      crystal: "HT4",
+      nethpot: "LT4",
+    },
+  },
+  {
+    name: "ItzV0id_MC",
+    head: "https://mc-heads.net/avatar/ItzV0id_MC",
+    region: "Europe",
+    ranks: {
+      crystal: "LT3",
+    },
+  },
+  {
+    name: "jrizzo141",
+    head: "https://mc-heads.net/avatar/jrizzo141",
+    region: "North America",
+    ranks: {
+      sword: "LT3",
+    },
+  },
+  {
+    name: "K0N12",
+    head: "https://mc-heads.net/avatar/K0N12",
+    region: "Asia",
+    ranks: {
+      diapot: "LT3",
+    },
+  },
+  {
+    name: "Kiqyu",
+    head: "https://mc-heads.net/avatar/Kiqyu",
+    region: "Europe",
+    ranks: {
+      sword: "HT3",
+    },
+  },
+  {
+    name: "ko2o",
+    head: "https://mc-heads.net/avatar/ko2o",
+    region: "Europe",
+    ranks: {
+      sword: "LT4",
+    },
+  },
+  {
+    name: "laz_rexx",
+    head: "https://mc-heads.net/avatar/laz_rexx",
+    region: "North America",
+    ranks: {
+      crystal: "HT5",
+    },
+  },
+  {
+    name: "Letahrt",
+    head: "https://mc-heads.net/avatar/Letahrt",
+    region: "North America",
+    ranks: {
+      uhc: "LT4",
+      mace: "LT2",
+      nethpot: "HT4",
+      diapot: "LT4",
+    },
+  },
+  {
+    name: "Matthew10999",
+    head: "https://mc-heads.net/avatar/Matthew10999",
+    region: "Asia",
+    ranks: {
+      crystal: "HT4",
+    },
+  },
+  {
+    name: "mohanazo",
+    head: "https://mc-heads.net/avatar/mohanazo",
+    region: "Asia",
+    ranks: {
+      sword: "HT4",
+      crystal: "HT4",
+      mace: "HT4",
+      nethpot: "HT4",
+    },
+  },
+  {
+    name: "mondoster",
+    head: "https://mc-heads.net/avatar/mondoster",
+    region: "Europe",
+    ranks: {
+      mace: "LT4",
+    },
+  },
+  {
+    name: "nike_kz",
+    head: "https://mc-heads.net/avatar/nike_kz",
+    region: "Europe",
+    ranks: {
+      sword: "LT3",
+      axe: "HT4",
+      uhc: "LT4",
+      crystal: "LT5",
+      mace: "HT5",
+      nethpot: "LT3",
+      diapot: "LT3",
+    },
+  },
+  {
+    name: "nikkgming896",
+    head: "https://mc-heads.net/avatar/nikkgming896",
+    region: "Asia",
+    ranks: {
+      sword: "HT5",
+      axe: "LT4",
+      uhc: "HT5",
+      crystal: "LT5",
+      mace: "HT5",
+      nethpot: "HT5",
+      diapot: "LT4",
+    },
+  },
+  {
+    name: "noctharyx",
+    head: "https://mc-heads.net/avatar/noctharyx",
+    region: "Asia",
+    ranks: {
+      crystal: "LT3",
+    },
+  },
+  {
+    name: "Not_Darsh_Mehta",
+    head: "https://mc-heads.net/avatar/Not_Darsh_Mehta",
+    region: "Asia",
+    ranks: {
+      axe: "HT5",
+    },
+  },
+  {
+    name: "NotKenz0d",
+    head: "https://mc-heads.net/avatar/NotKenz0d",
+    region: "Asia",
+    ranks: {
+      crystal: "LT4",
+    },
+  },
+  {
+    name: "Nyxveil7",
+    head: "https://mc-heads.net/avatar/Nyxveil7",
+    region: "Oceania",
+    ranks: {
+      sword: "HT4",
+      axe: "HT4",
+      uhc: "HT5",
+      crystal: "LT4",
+      mace: "HT5",
+      nethpot: "HT4",
+      diapot: "HT4",
+    },
+  },
+  {
+    name: "oStingray",
+    head: "https://mc-heads.net/avatar/oStingray",
+    region: "North America",
+    ranks: {
+      crystal: "HT4",
+    },
+  },
+  {
+    name: "oWashed__",
+    head: "https://mc-heads.net/avatar/oWashed__",
+    region: "Asia",
+    ranks: {
+      uhc: "HT4",
+    },
+  },
+  {
+    name: "Prime__",
+    head: "https://mc-heads.net/avatar/Prime__",
+    region: "Europe",
+    ranks: {
+      mace: "LT3",
+    },
+  },
+  {
+    name: "PrinceMark",
+    head: "https://mc-heads.net/avatar/PrinceMark",
+    region: "Asia",
+    ranks: {
+      crystal: "LT4",
+    },
+  },
+  {
+    name: "quiezer",
+    head: "https://mc-heads.net/avatar/quiezer",
+    region: "North America",
+    ranks: {
+      sword: "LT3",
+    },
+  },
+  {
+    name: "RealKairo_",
+    head: "https://mc-heads.net/avatar/RealKairo_",
+    region: "Asia",
+    ranks: {
+      mace: "LT4",
+    },
+  },
+  {
+    name: "sentialbeing",
+    head: "https://mc-heads.net/avatar/sentialbeing",
+    region: "North America",
+    ranks: {
+      sword: "HT5",
+      axe: "LT4",
+    },
+  },
+  {
+    name: "smoretastic",
+    head: "https://mc-heads.net/avatar/smoretastic",
+    region: "North America",
+    ranks: {
+      uhc: "LT4",
+    },
+  },
+  {
+    name: "SomeRandomDude54",
+    head: "https://mc-heads.net/avatar/SomeRandomDude54",
+    region: "Europe",
+    ranks: {
+      sword: "HT4",
+      axe: "HT4",
+      mace: "HT4",
+      nethpot: "LT3",
+      diapot: "LT3",
+    },
+  },
+  {
+    name: "stinklezinger4",
+    head: "https://mc-heads.net/avatar/stinklezinger4",
+    region: "Asia",
+    ranks: {
+      sword: "HT4",
+      mace: "LT3",
+    },
+  },
+  {
+    name: "SWAGFORLIFE",
+    head: "https://mc-heads.net/avatar/SWAGFORLIFE",
+    region: "Asia",
+    ranks: {
+      crystal: "HT4",
+      nethpot: "LT3",
+    },
+  },
+  {
+    name: "Tegress",
+    head: "https://mc-heads.net/avatar/Tegress",
+    region: "North America",
+    ranks: {
+      sword: "LT4",
+      crystal: "HT5",
+      mace: "HT2",
+    },
+  },
+  {
+    name: "TrionMC_",
+    head: "https://mc-heads.net/avatar/TrionMC_",
+    region: "Europe",
+    ranks: {
+      crystal: "LT4",
+      nethpot: "HT5",
+    },
+  },
+  {
+    name: "Txeqym",
+    head: "https://mc-heads.net/avatar/Txeqym",
+    region: "Europe",
+    ranks: {
+      axe: "HT4",
+    },
+  },
+  {
+    name: "vertex16_",
+    head: "https://mc-heads.net/avatar/vertex16_",
+    region: "Europe",
+    ranks: {
+      axe: "LT3",
+    },
+  },
+  {
+    name: "vockzy7",
+    head: "https://mc-heads.net/avatar/vockzy7",
+    region: "Europe",
+    ranks: {
+      crystal: "LT3",
+    },
+  },
+  {
+    name: "Win_g",
+    head: "https://mc-heads.net/avatar/Win_g",
+    region: "Asia",
+    ranks: {
+      crystal: "LT4",
+    },
+  },
+  {
+    name: "Wyll_xx",
+    head: "https://mc-heads.net/avatar/Wyll_xx",
+    region: "Asia",
+    ranks: {
+      crystal: "LT3",
+    },
+  },
+  {
+    name: "WyoCold",
+    head: "https://mc-heads.net/avatar/WyoCold",
+    region: "Asia",
+    ranks: {
+      sword: "HT4",
+    },
+  },
+  {
+    name: "xstop",
+    head: "https://mc-heads.net/avatar/xstop",
+    region: "North America",
+    ranks: {
+      uhc: "LT5",
+    },
+  },
+  {
+    name: "Zano_0",
+    head: "https://mc-heads.net/avatar/Zano_0",
+    region: "Europe",
+    ranks: {
+      crystal: "LT2",
+    },
+  },
+  {
+    name: "zenith_fr",
+    head: "https://mc-heads.net/avatar/zenith_fr",
+    region: "Asia",
+    ranks: {
+      nethpot: "LT3",
+    },
+  },
+  {
+    name: "Zyr3n",
+    head: "https://mc-heads.net/avatar/Zyr3n",
+    region: "Europe",
+    ranks: {
+      sword: "HT4",
+      axe: "HT4",
+      uhc: "LT3",
+      crystal: "HT4",
+      mace: "LT4",
+      nethpot: "HT4",
+      diapot: "LT4",
+    },
+  },
+  {
+    name: "zyzy",
+    head: "https://mc-heads.net/avatar/zyzy",
+    region: "Asia",
+    ranks: {
+      sword: "HT4",
+    },
+  },
+]
+
+export default players

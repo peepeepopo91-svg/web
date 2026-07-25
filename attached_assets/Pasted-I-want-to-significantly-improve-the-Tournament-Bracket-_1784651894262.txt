@@ -1,0 +1,260 @@
+I want to significantly improve the **Tournament Bracket System**. The current implementation is too limited and should be redesigned into a professional, highly customizable, and responsive tournament bracket similar to what you would expect from a modern esports platform.
+
+The bracket system should prioritize **usability, flexibility, responsiveness, and administrator control**.
+
+---
+
+# 1. Fully Responsive Bracket
+
+The bracket should automatically adapt to the user's screen size.
+
+My goal is that users should **not need to scroll horizontally or vertically just to view the bracket under normal circumstances.**
+
+Requirements:
+
+* Automatically scale the bracket to fit within the available browser viewport.
+* Maintain readability while scaling.
+* Dynamically adjust spacing, match card sizes, fonts, and connector lines.
+* Make efficient use of available screen space.
+* Work correctly on desktop, laptops, tablets, and mobile devices.
+* Automatically recalculate the layout whenever the browser window is resized.
+
+The bracket should always attempt to fit naturally within the visible page instead of forcing users to scroll.
+
+If a tournament becomes exceptionally large (where fitting everything is physically impossible), intelligently reduce spacing and scale the layout as much as possible before introducing scrolling. Scrolling should be the absolute last resort.
+
+---
+
+# 2. Automatic Layout Engine
+
+The bracket should intelligently calculate its own layout.
+
+It should automatically determine:
+
+* Match spacing
+* Vertical spacing
+* Horizontal spacing
+* Match card sizes
+* Connector positions
+* Round spacing
+* Text scaling
+
+Everything should adapt automatically according to:
+
+* Number of teams
+* Number of rounds
+* Tournament type
+* Screen size
+* Browser zoom
+
+No manual positioning should ever be required.
+
+---
+
+# 3. Auto-Adjust According to Participants
+
+The bracket should automatically resize and reorganize itself based on the number of participants.
+
+Examples:
+
+* 4 Teams
+* 8 Teams
+* 16 Teams
+* 32 Teams
+* 64 Teams
+* 128 Teams
+* Any custom number of teams
+
+It should automatically:
+
+* Generate the correct number of rounds.
+* Handle byes when the participant count is not a perfect power of two.
+* Balance the bracket correctly.
+* Keep the layout clean regardless of tournament size.
+
+No hardcoded limits.
+
+---
+
+# 4. Powerful Bracket Editor
+
+Greatly expand administrator control over the bracket.
+
+Administrators should be able to:
+
+* Drag and drop teams.
+* Swap two teams.
+* Move teams between matches.
+* Edit player names.
+* Edit team names.
+* Edit match titles.
+* Change match order.
+* Re-seed teams.
+* Randomize bracket.
+* Generate seeded bracket.
+* Lock bracket.
+* Unlock bracket.
+* Reset bracket.
+* Regenerate bracket before the tournament starts.
+* Advance teams manually.
+* Reverse an advancement.
+* Edit scores.
+* Change winners.
+* Reopen completed matches.
+* Merge brackets if required.
+* Add notes to individual matches.
+
+Every action should immediately update the live bracket.
+
+---
+
+# 5. Multiple Bracket Themes
+
+Create a comprehensive bracket theme system.
+
+I want to be able to completely change the appearance of the bracket without modifying code.
+
+Provide multiple professionally designed themes.
+
+Examples:
+
+* Modern Esports
+* Minimal
+* Dark
+* Light
+* Blue Network
+* Glassmorphism
+* Neon
+* Tournament Classic
+* Professional Broadcast
+* Championship
+* Clean Flat Design
+
+Each theme should include:
+
+* Different match card designs.
+* Different connector styles.
+* Different fonts.
+* Different colors.
+* Different backgrounds.
+* Different animations.
+* Different hover effects.
+* Different winner highlighting.
+
+The entire bracket should update instantly when changing themes.
+
+---
+
+# 6. Bracket Appearance Customization
+
+Beyond predefined themes, allow administrators to customize:
+
+* Background
+* Card colors
+* Border radius
+* Shadows
+* Animations
+* Fonts
+* Font sizes
+* Connector thickness
+* Connector colors
+* Match spacing
+* Round spacing
+* Card width
+* Card height
+* Winner colors
+* Loser colors
+* Hover animations
+* Transition speeds
+* Corner styles
+* Icons
+* Accent colors
+
+Changes should be previewed live before saving.
+
+---
+
+# 7. Match Cards
+
+Improve the match cards.
+
+Display:
+
+* Team names
+* Player names
+* Team logos (optional)
+* Player avatars (optional)
+* Current score
+* Winner
+* Match status
+* Match number
+* Gamemode
+* Arena
+* Scheduled time
+
+Winning teams should be visually highlighted.
+
+---
+
+# 8. Smart Scaling
+
+Implement intelligent scaling.
+
+When the tournament grows larger:
+
+* Reduce spacing.
+* Reduce unnecessary padding.
+* Optimize connector routing.
+* Scale fonts appropriately.
+* Maintain readability.
+* Preserve alignment.
+
+Never allow the bracket to become cluttered.
+
+---
+
+# 9. Live Preview
+
+While editing the bracket, administrators should see a live preview of every change before saving.
+
+No page refresh should be required.
+
+---
+
+# 10. Export Options
+
+Allow administrators to export the bracket as:
+
+* PNG
+* JPEG
+* PDF
+
+The exported version should preserve the selected theme and layout.
+
+---
+
+# 11. Performance
+
+The bracket system must remain fast even for very large tournaments.
+
+Optimize rendering for:
+
+* 128+ teams
+* Large tournament archives
+* Frequent live updates
+
+Avoid unnecessary re-rendering and layout recalculations.
+
+---
+
+# 12. Future-Proof Architecture
+
+Design the bracket system so new tournament formats and new visual themes can be added later without major rewrites.
+
+Keep the rendering engine, layout engine, and theme system modular and independent.
+
+---
+
+# Goal
+
+Create a world-class tournament bracket system that automatically adapts to any number of teams, intelligently fits the available browser space, gives administrators complete control over editing and customization, supports multiple professional themes, and delivers a polished esports-quality experience. The bracket should be responsive, highly configurable, visually impressive, and scalable enough to support both small community tournaments and very large competitive events with minimal manual effort.

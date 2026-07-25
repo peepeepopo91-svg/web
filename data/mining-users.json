@@ -1,0 +1,54 @@
+{
+  "adambobjh22": {
+    "username": "adambobjh22",
+    "createdAt": 1784395095478,
+    "lastCheckedAt": 1784395095478,
+    "balance": 0,
+    "gems": 0,
+    "rigs": [],
+    "rewardHistory": [],
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1784395095478,
+    "miningExpiresAt": 1784447014507,
+    "miningRenewedAt": 1784403814507
+  },
+  "bananastylze": {
+    "username": "bananastylze",
+    "createdAt": 1784395600221,
+    "lastCheckedAt": 1784395600221,
+    "balance": 0,
+    "gems": 0,
+    "rigs": [],
+    "rewardHistory": [],
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1784395600221,
+    "miningExpiresAt": 1784447014507,
+    "miningRenewedAt": 1784403814507
+  },
+  "blacktagx": {
+    "username": "BlackTagX",
+    "createdAt": 1784396383849,
+    "lastCheckedAt": 1784396383849,
+    "balance": 0,
+    "gems": 0,
+    "rigs": [],
+    "rewardHistory": [],
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1784396383849,
+    "miningExpiresAt": 1784447014507,
+    "miningRenewedAt": 1784403814507
+  },
+  "blue_gaming08": {
+    "username": "Blue_Gaming08",
+    "createdAt": 1784396752305,
+    "lastCheckedAt": 1784399360748,
+    "balance": 0,
+    "gems": 0,
+    "rigs": [],
+    "rewardHistory": [],
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1784483243029,
+    "miningExpiresAt": 1784447014507,
+    "miningRenewedAt": 1784403814507
+  }
+}

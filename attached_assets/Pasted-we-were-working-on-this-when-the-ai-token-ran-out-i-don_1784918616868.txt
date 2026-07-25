@@ -1,0 +1,83 @@
+we were working on this when the ai token ran out. i dont know to what extent the ai worked on this, check and continue the work from where it left
+
+The user wants:
+
+    Redesign all 5 banner layout styles so each has 4 distinct sub-designs matching each thickness (xs, sm, md, lg)
+    Add a "scroll to hide" feature where the banner slides up and hides when scrolling up on homepage
+    Add a toggle button for the scroll-to-hide feature in admin
+
+Let me plan the redesign:
+
+5 Styles × 4 Thicknesses = 20 distinct layouts
+
+The key insight: each thickness should look naturally designed for that size, not just the same layout with different padding.
+Style × Thickness Matrix:
+
+Style: mega (Default/Blue)
+
+    xs: Single line with badge, title, inline countdown, and one button
+    sm: Two-line layout with badge/title on top, subtitle below, compact countdown, two buttons
+    md: Wider layout featuring an icon, text block, boxed countdown, and buttons
+    lg: Full bar with large icon, title and subtitle plus description, big countdown boxes, and buttons
+
+Style: neon (Grid/Glow)
+
+    xs: Title with neon inline timer and button over grid background
+    sm: Icon, title, glowing countdown chips, and button
+    md: Neon icon with text, glowing countdown boxes, and buttons
+    lg: Large layout (continuing the pattern)
+
+Style: split (Split/Image)
+
+    xs: Pill badge with title, subtle countdown, button, and soft gradient on the right
+    sm: Icon with title and subtitle, countdown, buttons, gradient accent on the right
+    md: Text on the left side paired with a countdown card on the right
+    lg: Large text block on the left, image filling the right side, countdown, and buttons
+
+Style: countdown (Spotlight)
+
+    xs: Radial glow effect with title, compact countdown, and button
+    sm: Title and subtitle with compact countdown boxes and button
+    md: Center-weighted layout with large countdown and buttons below
+    lg: Prominent countdown, title, description, and buttons
+
+Style: minimal (Clean/Subtle)
+
+    xs: Badge and title with one button on a dark subtle background
+    sm: Icon chip with title, subtitle, and button
+    md: Wider minimal layout with a divider and countdown
+    lg: Full minimal design with metadata, countdown, and description
+
+Since there are twenty layouts total, I'm going to need to restructure HomepageBanners.tsx significantly. I'll create a dedicated render function for each style that handles all four responsive sizes, then use the height prop to determine which layout to display. For the scroll-to-hide functionality, I'll add a hideOnScroll boolean flag to the event config.
+
+Now I'm working through how to implement the scroll behavior—the banner sits inside the fixed navbar header, so when it hides, the entire header needs to shift. I can either collapse the banner with max-height and overflow-hidden transitions, or use transform: translateY to slide it up while adjusting the navbar's position accordingly.
+
+Setting up scroll detection... I'm wrapping the banner in a container that uses max-height with a smooth transition to hide and show it based on scroll state. I'll add a hideOnScroll boolean to the event config in the store and homepage data, then create a toggle in the admin panel. Now I'm thinking through the design for twenty different banner layouts.
+
+I'm setting up the EventBanner component to route to style-specific implementations based on the selected style, passing all the necessary props like event data, colors, buttons, and countdown state to each variant. Continuing through the medium and large breakpoints for MegaBanner, showing how the countdown timer and buttons stack vertically on larger screens, then moving into the NeonBanner variant which uses a scanline background effect with glowing time elements. Finishing the CountdownBanner with a radial glow effect behind centered text, a bold timer, and compact button placement. Then moving into MinimalBanner, which strips everything back to essentials—just a border, badge, and title at the smallest size, expanding to include subtle backgrounds, dot separators, and full metadata at larger breakpoints. This is going to require a significant restructuring of how these components are organized.
+
+I'll create a BannerProps interface and build separate layout functions for each style variant, then write out the full EventBanner replacement for HomepageBanners.tsx. For the scroll-to-hide functionality, I need to add a hideOnScroll flag to the EventConfig, implement scroll detection in the Navbar with CSS transitions, and expose a toggle in HomepageManager. The main challenge is keeping 20 distinct layouts clean and manageable without bloating the code, so I'll design them carefully but stay practical about implementation.
+
+Writing the EventBanner section... I'm ready to implement these changes across the codebase. I need to update the store to add the hideOnScroll flag, completely redesign the EventBanner component with the new 5×4 grid layout, add scroll detection to the navbar for conditional hiding, wire up the toggle in the manager, and update the JSON data structure. Let me start writing the EventBanner rewrite...
+
+I'm defining the shared countdown display components that handle different visual formats—inline text, chip-based, and stacked box layouts—then building out the five distinct banner style variants that will use these countdown components.
+
+Now I'm setting up the main EventBanner export that orchestrates everything: it manages the hooks and conditional logic, derives the necessary props, and routes to the appropriate banner style based on configuration.
+
+For the scroll behavior in the navbar, I'm tracking scroll position to detect when the user scrolls down past a threshold, which will hide the banner, and show it again when scrolling back up.
+
+Adding scroll animation... Writing the EventBanner layouts... Continuing with the NEON variant at larger breakpoints where the full grid background and glowing elements come into play, then moving into the SPLIT design that layers a gradient with optional imagery on the right side, scaling from compact timer layouts up to full image fills at larger sizes, and starting to outline the COUNTDOWN variant. Writing component code... Writing component markup... Writing component markup... I need to check what the current state of the file looks like after my previous edits to understand what sections are already in place and what needs to be replaced or added. Defining the banner prop types...
+
+Now I'm mapping out how each of the five distinct styles will look—Mega with its blue gradient and subtle blob, Neon with dark backgrounds and glowing borders, Split using diagonal gradients with side accents, Countdown emphasizing a radial glow around the timer, and Minimal keeping things stark and clean. Each style will then adapt its layout based on the height variant.
+
+Writing component code... Writing component variants... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Writing component markup... Finishing the button layout structure...
+
+I'm realizing I should just use primaryBtn consistently across all banner styles instead of trying to render it differently for the minimal xs variant. The button component already handles the styling based on showPrimaryButton, so there's no need to complicate things by treating it specially. Closing out the minimal banner layout with the countdown display, primary button, and dismiss button. Now I'm thinking through the main EventBanner function structure — I'll consolidate everything into a BP object to pass down, and I need to make sure the useCountdown hook runs before any early returns so I can pass the countdown state consistently to the banner component.
+
+Setting up the function to handle the dismissed state, countdown, and various visibility checks including the hideWhenExpired condition, then extracting the styling properties with their defaults...
+
+Constructing the button elements... Writing component markup... I need to be careful not to duplicate the useDismissedEvent hook since it's already in the file from my previous changes. Let me review what's currently in HomepageBanners.tsx to understand exactly what needs to be replaced in the EventBanner section. I need to be careful here since I already added useDismissedEvent in the previous edit, so I should only replace from the constants onwards. Let me identify exactly what needs to be replaced: the H_PAD, H_ICON, and H_TITLE constants along with the old EventBanner implementation, keeping everything before that intact. For the Navbar scroll behavior, I'm adding state to track whether the banner should be hidden, then setting up a scroll listener that hides the banner when scrolling down past 80 pixels but shows it again when scrolling back up or near the top of the page.
+
+In the render, I'm wrapping the EventBanner in a container that smoothly transitions its max-height and opacity based on the hidden state, creating a collapse animation.
+
+Now I'm planning the implementation across five files: updating the store to track the hideOnScroll flag, rewriting the EventBanner section in HomepageBanners, adding scroll detection to Navbar, creating a toggle in HomepageManager, and adding the field to the homepage config. The main work is refactoring HomepageBanners to handle the scroll behavior properly.

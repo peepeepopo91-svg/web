@@ -1,0 +1,371 @@
+The BlueCoin Mining system is working great, but I need the following improvements and bug fixes. Do NOT redesign the UI—keep the existing Blue Tiers design, animations, and layout. Only improve the functionality.
+
+## 1. Fix Daily Exchange Limit Counter
+
+The daily exchange counter is displaying decimal values.
+
+Example:
+
+1.2222222222222223 / 3
+
+This is incorrect.
+
+The counter should always display whole numbers only.
+
+Example:
+
+Before any exchanges:
+3 / 3
+
+After 1 exchange:
+2 / 3
+
+After 2 exchanges:
+1 / 3
+
+After 3 exchanges:
+0 / 3
+
+Do not use floating point calculations for the remaining exchange count.
+
+Track exchanges as integers.
+
+The exchange limit should still reset every new day.
+
+---
+
+## 2. Fix Block Mining Countdown
+
+The block mining countdown is currently updating only once every 10 seconds.
+
+This makes the timer jump from values like:
+
+59:50
+59:40
+59:30
+
+Instead of:
+
+59:59
+59:58
+59:57
+59:56
+...
+
+Fix the timer so it updates every single second.
+
+Requirements:
+
+- Update once per second.
+- Smooth countdown.
+- Every user should see the same timer.
+- The timer must continue using the shared server-side/fixed block timer.
+- No jumping or skipping seconds.
+
+---
+
+# 3. Create a Complete Hidden Admin Panel
+
+Create a professional Admin Panel that allows the owner to manage the entire Blue Tiers website directly from the website instead of editing GitHub files.
+
+This should become the central management system for Blue Tiers.
+
+The Admin Panel should NOT appear in the main navigation bar.
+
+Instead:
+
+Add a small "Admin Panel" link inside the footer's Quick Links section.
+
+Only authenticated admins can access it.
+
+---
+
+# Admin Authentication
+
+The Admin Panel must have its own secure login.
+
+Require ALL THREE fields:
+
+Username
+
+Password 1
+
+Password 2
+
+The admin can only log in if all three values are correct.
+
+Store these credentials in a separate YAML configuration file so they are easy to change later.
+
+Example:
+
+admin:
+  username: admin
+  password1: firstPassword
+  password2: secondPassword
+
+Do NOT reuse the normal user login.
+
+This is a completely separate administrator authentication system.
+
+---
+
+# Dashboard
+
+After logging in, display a beautiful dashboard.
+
+Show statistics such as:
+
+- Total Ranked Players
+- Total Active Miners
+- Total BlueCoin in circulation
+- Total Gems in circulation
+- Registered Users
+- Mining Rigs
+- Active Mining Sessions
+- Exchange Transactions Today
+- Online Users
+- Website Status
+
+Use animated statistic cards.
+
+---
+
+# Tier List Management
+
+The admin must be able to:
+
+✓ Add player
+
+✓ Edit player
+
+✓ Delete player
+
+✓ Change player name
+
+✓ Change Minecraft head
+
+✓ Change region
+
+✓ Change every gamemode tier
+
+✓ Change average tier
+
+✓ Change player points
+
+✓ Search players
+
+✓ Filter players
+
+✓ Bulk edit players
+
+✓ Import players
+
+✓ Export players
+
+Everything should update automatically on the public rankings.
+
+---
+
+# Gamemode Management
+
+Allow the admin to:
+
+- Add gamemode
+- Remove gamemode
+- Rename gamemode
+- Change icon
+- Upload new PNG icon
+- Reorder gamemodes
+
+---
+
+# Mining Management
+
+Allow the admin to:
+
+- Give BlueCoin
+- Remove BlueCoin
+- Give Gems
+- Remove Gems
+- Give Mining Rig
+- Remove Mining Rig
+- Repair rigs
+- Break rigs
+- Change rig durability
+- Change rig hashrate
+- Change rig prices
+- Add new rig tiers
+- Remove rig tiers
+
+---
+
+# Economy Management
+
+Allow changing:
+
+- BlueCoin value
+- Exchange limits
+- Transaction fees
+- Base exchange rate
+- Dynamic market settings
+- Mining rewards
+- Block reward
+- Block time
+- Finder bonus
+- Equal split percentage
+- Hashrate percentage
+
+Everything should be editable through forms.
+
+---
+
+# User Management
+
+Allow the admin to:
+
+- View all users
+- Search users
+- Edit users
+- Delete users
+- Reset passwords
+- Change usernames
+- Add users
+- Remove users
+- Ban users
+- Unban users
+
+---
+
+# Website Content Manager
+
+Allow editing directly from the panel:
+
+- Homepage text
+- Hero title
+- Hero subtitle
+- Server IP
+- Discord invite
+- World Cup banner
+- Countdown date
+- Footer
+- Statistics
+- Feature cards
+
+No GitHub edits should be required.
+
+---
+
+# Event Manager
+
+Allow creating new events.
+
+Editable:
+
+- Event title
+- Description
+- Button text
+- Button link
+- Countdown date
+- Banner visibility
+
+---
+
+# Site Settings
+
+Allow editing:
+
+- Website name
+- Logo
+- Favicon
+- Theme colors
+- Background
+- Animations
+- Particle effects
+- Footer
+- Navigation
+
+---
+
+# File Uploads
+
+Allow uploading directly from the panel:
+
+- Logos
+- Gamemode icons
+- Backgrounds
+- Player images
+- Other assets
+
+---
+
+# Activity Logs
+
+Create an Admin Logs page.
+
+Log every action.
+
+Example:
+
+Added player Steve
+
+Deleted Alex
+
+Changed Sword tier
+
+Updated exchange rate
+
+Created event
+
+Changed homepage
+
+Each log should include:
+
+- Time
+- Date
+- Administrator
+- Action performed
+
+---
+
+# Confirmation Dialogs
+
+Require confirmation before dangerous actions such as:
+
+- Delete player
+- Delete user
+- Delete rig
+- Reset economy
+- Reset rankings
+
+---
+
+# UI
+
+The Admin Panel should feel like a premium dashboard similar to modern SaaS applications.
+
+Use:
+
+- Glassmorphism
+- Blue gradients
+- Sidebar navigation
+- Animated cards
+- Search
+- Tables
+- Charts
+- Toast notifications
+- Confirmation modals
+- Smooth animations
+
+Everything should be responsive and polished.
+
+---
+
+# Architecture
+
+Build the Admin Panel so it can later be connected to a real backend/database.
+
+Avoid hardcoded values.
+
+Everything should be modular and configurable.
+
+The goal is for the owner to manage the entire Blue Tiers website from the Admin Panel without needing to edit GitHub files for routine changes.

@@ -1,0 +1,437 @@
+I want you to completely redesign the GitHub Sync section of the Admin Panel into a professional GitHub Sync Center.
+
+This must become the ONLY way the website writes changes to GitHub.
+
+The goal is to make GitHub synchronization completely automatic, reliable, transparent, and self-testing.
+
+========================================
+GITHUB SYNC CENTER
+========================================
+
+Replace the current GitHub save system with a full GitHub Sync dashboard.
+
+Show:
+
+• Repository Status
+• Branch
+• Current Commit Hash
+• Last Sync Time
+• GitHub Username
+• Connected Repository
+• GitHub Token Status
+• Remote Status
+• Local Changes
+• Unsynced Commits
+• Sync Health
+
+Everything should update automatically.
+
+========================================
+BEFORE PUSHING
+========================================
+
+When I click "Push Changes to GitHub", DO NOT immediately push.
+
+Instead perform this exact pipeline.
+
+STEP 1
+Checking GitHub connection...
+
+Verify:
+
+✓ GitHub token exists
+✓ Repository exists
+✓ Branch exists
+✓ Internet connection
+✓ GitHub API accessible
+✓ Write permission
+
+Show every result live.
+
+========================================
+STEP 2
+Checking local repository...
+
+Display:
+
+Working Tree:
+Clean / Modified
+
+Files changed:
+- data/players.json
+- data/site.json
+etc
+
+Commits waiting:
+6
+
+Current branch:
+main
+
+========================================
+STEP 3
+Fetch latest GitHub changes
+
+Run internally:
+
+git fetch origin
+
+Show:
+
+Checking for new commits...
+
+If GitHub contains new commits:
+
+Show
+
+"Remote repository has changed."
+
+Display the new commits.
+
+========================================
+STEP 4
+Automatic Rebase
+
+Instead of failing with:
+
+Fetch First
+
+Automatically perform
+
+git pull --rebase origin main
+
+Show a progress bar.
+
+Example
+
+Fetching...
+Receiving objects...
+Resolving...
+Rebasing commit 1/6...
+Rebasing commit 2/6...
+Finished.
+
+========================================
+STEP 5
+Conflict Detection
+
+If a conflict happens:
+
+DO NOT continue.
+
+Instead open a Conflict Resolution window.
+
+Example
+
+Conflict detected
+
+File:
+data/players.json
+
+Reason:
+Player ZyrenBoy exists in both versions.
+
+Buttons
+
+Merge Automatically
+View Difference
+Cancel
+
+========================================
+AUTOMATIC JSON MERGING
+========================================
+
+For JSON files like:
+
+players.json
+site.json
+economy.json
+event.json
+
+DO NOT use Git's raw text merge.
+
+Instead
+
+Load JSON
+
+Merge objects intelligently
+
+Player names are unique.
+
+If same player exists:
+
+merge fields instead of duplicating.
+
+Sort alphabetically.
+
+Validate.
+
+Save.
+
+Continue rebase automatically.
+
+This should eliminate almost every players.json conflict.
+
+========================================
+STEP 6
+VALIDATION
+
+Before pushing
+
+Run
+
+✓ JSON validation
+
+✓ Duplicate player validation
+
+✓ Missing fields
+
+✓ Missing regions
+
+✓ Invalid tiers
+
+✓ Broken icons
+
+✓ Broken images
+
+✓ Broken links
+
+✓ Invalid repository
+
+✓ Missing GitHub token
+
+If any fail
+
+Stop.
+
+Show exact reason.
+
+========================================
+STEP 7
+BUILD TEST
+
+Build the website automatically.
+
+If build fails
+
+DO NOT PUSH.
+
+Instead show
+
+Build Failed
+
+File:
+...
+
+Line:
+
+Reason:
+
+========================================
+STEP 8
+LIVE TEST
+
+Start the website.
+
+Verify
+
+✓ Home loads
+
+✓ Rankings load
+
+✓ Admin loads
+
+✓ Mining page loads
+
+✓ Players visible
+
+✓ Search works
+
+✓ Popup works
+
+✓ No console errors
+
+If anything fails
+
+Stop.
+
+========================================
+STEP 9
+PUSH
+
+Only after ALL previous tests pass.
+
+Run
+
+git push origin main
+
+Show
+
+Uploading...
+
+Compressing...
+
+Writing...
+
+Remote accepted.
+
+Push Complete.
+
+========================================
+STEP 10
+VERIFY
+
+After push
+
+Fetch repository again.
+
+Verify
+
+Current commit equals GitHub commit.
+
+Verify branch synchronized.
+
+Display
+
+Repository is fully synchronized.
+
+========================================
+SYNC HISTORY
+
+Create a history page.
+
+Show
+
+Date
+
+Time
+
+Commit Hash
+
+Files Changed
+
+Commit Message
+
+Status
+
+Duration
+
+========================================
+ROLLBACK
+
+Allow selecting any previous commit.
+
+Buttons
+
+Preview
+
+Restore
+
+Restore should create a NEW commit that restores the selected state instead of rewriting history.
+
+========================================
+MANUAL COMMANDS
+
+Inside GitHub Sync Center create an expandable "Advanced Git" section.
+
+Allow
+
+Fetch
+
+Pull
+
+Rebase
+
+Push
+
+Commit
+
+View Log
+
+View Diff
+
+View Status
+
+Reset (soft)
+
+Reset (mixed)
+
+Never expose hard reset or force push without a confirmation dialog.
+
+========================================
+REAL TIME LOG
+
+While syncing show a terminal-like live log.
+
+Example
+
+[12:31:05]
+Connecting...
+
+[12:31:06]
+Authenticated.
+
+[12:31:06]
+Fetching origin...
+
+[12:31:07]
+Remote has 2 new commits.
+
+[12:31:08]
+Starting rebase...
+
+[12:31:09]
+Merged players.json automatically.
+
+[12:31:10]
+Running validation...
+
+[12:31:11]
+Running production build...
+
+[12:31:14]
+Running website tests...
+
+[12:31:17]
+Pushing...
+
+[12:31:18]
+Push successful.
+
+Commit:
+0868dfb
+
+Everything synchronized successfully.
+
+========================================
+AUTOMATIC TESTING
+
+Before considering this task complete:
+
+1. Create a temporary player.
+
+2. Save using the Admin Panel.
+
+3. Push using the new GitHub Sync Center.
+
+4. Verify the player exists in players.json.
+
+5. Verify GitHub contains the new commit.
+
+6. Verify the Rankings page shows the player.
+
+7. Refresh the website.
+
+8. Verify the player still exists.
+
+9. Delete the temporary player.
+
+10. Push again.
+
+11. Verify GitHub updated correctly.
+
+12. Verify no duplicate players exist.
+
+13. Verify every JSON file remains valid.
+
+Only finish once the complete workflow passes without any manual intervention.

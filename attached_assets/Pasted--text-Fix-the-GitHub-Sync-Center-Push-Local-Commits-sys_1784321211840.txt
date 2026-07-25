@@ -1,0 +1,333 @@
+```text
+Fix the GitHub Sync Center "Push Local Commits" system.
+
+When I click **Push Local Commits**, it fails even though Git status shows that pushing should be possible.
+
+Current UI status:
+
+```
+
+Working tree — 2 file(s)
+
+M data/players.json
+?? data/backups/
+
+↑ 2 local commit(s) ready to push
+
+Local is ahead of remote. No conflicts expected.
+
+```
+
+Then after clicking **Push Local Commits**:
+
+```
+
+✗ Fix failed
+
+Error:
+NetworkError when attempting to fetch resource.
+
+```
+
+The push system is incorrectly reporting a network failure and not completing the Git operation.
+
+---
+
+## Problems to investigate:
+
+### 1. "Push Local Commits" is confusing commit state with working tree state
+
+The UI says:
+
+```
+
+↑ 2 local commit(s) ready to push
+
+```
+
+but also shows:
+
+```
+
+M data/players.json
+?? data/backups/
+
+```
+
+This means there are uncommitted changes.
+
+The system should handle this correctly.
+
+Before pushing commits:
+
+- Check if there are unstaged changes.
+- Check if there are untracked files.
+- Show whether they need to be committed first.
+
+Example:
+
+```
+
+Git Status:
+
+Commits ready to push:
+2
+
+Uncommitted changes:
+2 files
+
+Action required:
+Commit changes before pushing
+
+```
+
+Do not attempt to push incomplete state.
+
+---
+
+## 2. Fix the NetworkError handling
+
+The error:
+
+```
+
+NetworkError when attempting to fetch resource.
+
+```
+
+is too generic.
+
+Find the actual failing request.
+
+Possible causes:
+- GitHub API request failed
+- Authentication expired
+- CORS issue
+- Server endpoint crashed
+- Backend fetch failed
+- Timeout
+- Invalid response
+
+The UI should display the real error.
+
+Example:
+
+Instead of:
+
+```
+
+Fix failed
+NetworkError when attempting to fetch resource
+
+```
+
+Show:
+
+```
+
+Push failed.
+
+Operation:
+GitHub push
+
+Reason:
+GitHub API request failed
+
+Status:
+401 Unauthorized
+
+Details:
+Token expired
+
+```
+
+or:
+
+```
+
+Push failed.
+
+Backend endpoint:
+POST /api/github/push
+
+Reason:
+Server returned 500
+
+Error: <actual backend error>
+
+````
+
+---
+
+## 3. Add proper backend error handling
+
+The GitHub push endpoint should:
+
+- Catch fetch errors
+- Catch Git errors
+- Return structured JSON responses
+
+Example:
+
+```json
+{
+  "success": false,
+  "error": "github_api_failed",
+  "message": "Unable to connect to GitHub",
+  "details": "Connection timeout"
+}
+````
+
+The frontend should display this.
+
+---
+
+## 4. Verify authentication before pushing
+
+Before running push:
+
+Check:
+
+* GitHub token exists
+* Token is valid
+* Repository is connected
+* Branch exists
+* Remote URL is correct
+
+Show:
+
+```
+GitHub Connection:
+
+Repository:
+connected
+
+Authentication:
+valid
+
+Branch:
+main
+
+Remote:
+origin/main
+```
+
+---
+
+## 5. Fix handling of backup files
+
+The status shows:
+
+```
+?? data/backups/
+```
+
+The repair system created backups, but Git does not know about them.
+
+Decide the correct behavior:
+
+Option A:
+Automatically add backups:
+
+```
+git add data/backups/
+```
+
+Option B:
+Ignore backups:
+
+Add to `.gitignore`:
+
+```
+data/backups/
+```
+
+The system should not randomly leave generated files untracked.
+
+---
+
+## 6. Add push diagnostics
+
+Before pushing, show:
+
+```
+Push Diagnostics
+
+Branch:
+main
+
+Commits ahead:
+2
+
+Commits behind:
+0
+
+Modified files:
+1
+
+Untracked files:
+1
+
+GitHub connection:
+✅ Connected
+
+Ready:
+Yes
+```
+
+After pushing:
+
+```
+Push successful
+
+Pushed commits:
+2
+
+Files updated:
+3
+
+Commit:
+abc123
+```
+
+---
+
+## 7. Handle failure recovery
+
+If push fails:
+
+Do not leave the user confused.
+
+Show:
+
+```
+Push failed.
+
+No commits were lost.
+
+Current state:
+✅ Local commits preserved
+✅ Working tree unchanged
+
+Suggested action:
+Retry push
+```
+
+---
+
+## Final goal:
+
+The "Push Local Commits" button should reliably:
+
+1. Detect commits ready to push.
+2. Detect uncommitted/untracked files.
+3. Commit or warn appropriately.
+4. Validate GitHub connection.
+5. Push successfully.
+6. Display real errors instead of generic NetworkError messages.
+7. Never lose local commits or data.
+
+The user should not need terminal Git commands to understand or fix sync problems.
+
+```
+```

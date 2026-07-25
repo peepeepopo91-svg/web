@@ -1,0 +1,364 @@
+The GitHub Sync / Push system is broken and needs to be fixed completely.
+
+The system is NOT pushing all changed files to GitHub. I discovered that 52 files were pending to commit, but the GitHub Sync Center failed to detect or push them. I had to manually fix everything through the terminal, which caused many Git errors, rebase conflicts, and data corruption issues.
+
+The biggest problem is data/players.json. The sync system is not handling Git conflicts correctly and is allowing merge conflict markers and duplicated JSON data to enter the file.
+
+The expected behavior:
+- Clicking "Push to GitHub" should detect every changed, deleted, renamed, and untracked file.
+- It should commit all pending files.
+- It should validate important data files before pushing.
+- It should safely handle Git divergence and conflicts.
+- It should never corrupt JSON files.
+
+---
+
+## What happened:
+
+Git status initially showed:
+
+
+~/workspace$ git status
+
+On branch main
+Your branch and 'origin/main' have diverged,
+
+and have 3 and 19 different commits each, respectively.
+
+nothing to commit, working tree clean
+
+
+The system incorrectly reported that there were no changes even though GitHub was missing files.
+
+I had to manually run:
+
+
+git pull --rebase origin main
+
+
+This caused:
+
+
+Auto-merging data/players.json
+CONFLICT (content): Merge conflict in data/players.json
+
+
+The conflict happened repeatedly because multiple commits modified players.json.
+
+---
+
+## Critical players.json corruption issue:
+
+The merge system inserted Git conflict markers directly into JSON.
+
+Example:
+
+```json
+{
+  "name": "DarknzGamerz0101",
+  "head": "https://mc-heads.net/avatar/DarknzGamerz0101",
+  "region": "Asia",
+  "ranks": {
+<<<<<<< HEAD
+    "mace": "NONE",
+    "sword": "HT4",
+    "axe": "NONE",
+    "uhc": "NONE",
+    "nethpot": "NONE",
+    "diapot": "NONE",
+    "crystal": "NONE"
+  }
+},
+{
+  "name": "BlackTagX",
+  "head": "https://mc-heads.net/avatar/BlackTagX",
+  "region": "Asia",
+  "ranks": {
+    "mace": "NONE",
+    "sword": "LT4",
+    "axe": "LT4",
+    "uhc": "HT5",
+    "nethpot": "HT4",
+    "diapot": "HT5",
+    "crystal": "LT5"
+=======
+>>>>>>> 27308e1 (Add server-side data file management and update player data)
+    "mace": "LT4",
+    "sword": "HT4",
+    "axe": "LT4",
+    "uhc": "HT5",
+    "nethpot": "HT4",
+    "diapot": "HT4",
+    "crystal": "LT5"
+  }
+}
+
+The conflict markers appeared randomly throughout the file, not only where expected.
+
+Another example:
+
+"ranks": {
+  "mace": "NONE",
+  "sword": "NONE",
+  "axe": "NONE",
+  "uhc": "NONE",
+  "nethpot": "NONE",
+  "diapot": "NONE",
+  "crystal": "LT4"
+  "sword": "NONE",
+  "uhc": "NONE",
+  "crystal": "LT4",
+<<<<<<< HEAD
+  "mace": "NONE",
+  "sword": "NONE",
+  "axe": "NONE"
+=======
+>>>>>>> commit
+}
+
+This caused:
+
+Duplicate keys
+Missing commas
+Broken JSON syntax
+Missing players
+Duplicate players
+Invalid data structure
+
+The system must NEVER allow this.
+
+Required fixes:
+1. Fix Git change detection
+
+The GitHub Sync Center must correctly detect:
+
+Modified files
+New files
+Deleted files
+Renamed files
+Untracked files
+Files that exist locally but not remotely
+
+It should compare:
+
+Local repository
+vs
+origin/main
+
+and show the actual difference.
+
+Example:
+
+Git Status:
+
+Branch: main
+
+Local commits: +3
+Remote commits: +0
+
+Modified files: 52
+
+Untracked files: 0
+
+Ready to push
+2. Add pre-push validation
+
+Before any commit/push:
+
+Validate:
+
+data/players.json
+data/sync-history.json
+
+If invalid:
+
+Stop the push
+Show the exact JSON error
+Show the line number
+Prevent committing corrupted data
+
+Example:
+
+Push blocked.
+
+Invalid JSON:
+data/players.json
+
+Error:
+Unexpected token } at line 154
+3. Prevent Git conflict markers
+
+Before committing any file:
+
+Search for:
+
+<<<<<<<
+=======
+>>>>>>>
+
+If found:
+
+Block the commit
+Automatically attempt recovery
+Ask for manual resolution only if automatic recovery fails
+
+No JSON file should ever contain Git conflict markers.
+
+4. Add automatic JSON conflict resolution
+
+For files like:
+
+data/players.json
+
+Do not use normal Git text merging.
+
+Create a custom JSON merge system.
+
+The structure:
+
+{
+"name": "player",
+"head": "...",
+"region": "...",
+"ranks": {
+ "mace": "HT5",
+ "sword": "LT4"
+}
+}
+
+When the same player exists in both versions:
+
+Merge both objects
+Preserve player information
+Preserve rank changes
+Do not duplicate players
+Do not delete players
+Prefer newer rank data when conflicts exist
+
+Example:
+
+Version A:
+
+{
+"name":"Player",
+"ranks":{
+"sword":"HT4"
+}
+}
+
+Version B:
+
+{
+"name":"Player",
+"ranks":{
+"crystal":"LT5"
+}
+}
+
+Result:
+
+{
+"name":"Player",
+"ranks":{
+"sword":"HT4",
+"crystal":"LT5"
+}
+}
+5. Improve GitHub Sync Center UI
+
+Add a diagnostics panel:
+
+GitHub Sync Diagnostics
+
+Branch:
+main
+
+Remote:
+origin/main
+
+Commits ahead:
+3
+
+Commits behind:
+0
+
+Pending files:
+52
+
+JSON validation:
+✅ players.json
+✅ sync-history.json
+
+Last push:
+Successful
+
+Last error:
+None
+
+Show:
+
+Last successful push time
+Last failed push reason
+Git errors
+Merge conflicts
+Files affected
+6. Handle branch divergence automatically
+
+If:
+
+Your branch and origin/main have diverged
+
+The system should:
+
+Fetch remote changes
+Compare commits
+Safely merge/rebase
+Resolve JSON files intelligently
+Validate files
+Continue automatically
+Push
+
+The user should not need terminal commands.
+
+What I manually had to do:
+
+I repeatedly ran:
+
+git add data/players.json
+git rebase --continue
+
+because every commit caused another players.json conflict.
+
+Eventually:
+
+git status
+
+On branch main
+
+Your branch is ahead of 'origin/main' by 3 commits.
+
+nothing to commit, working tree clean
+
+Then:
+
+git push --force-with-lease origin main
+
+worked.
+
+The application should perform this entire workflow automatically.
+
+Final goal:
+
+The GitHub Sync Center must become a reliable production-level Git manager.
+
+It should:
+
+Detect all changes
+Commit all files
+Validate JSON
+Prevent corruption
+Automatically resolve safe conflicts
+Handle branch divergence
+Push successfully
+
+No manual terminal Git commands should be required anymore.

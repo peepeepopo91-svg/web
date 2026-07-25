@@ -1,0 +1,12 @@
+{
+  "buttonLabel": "New player? Click here to get access",
+  "sectionTitle": "How to get your mining credentials",
+  "steps": [
+    "Join the Blue Network Discord using the button below.",
+    "Head to the mining section of the server.",
+    "Open a request-credential ticket ... a staff member will create your account.",
+    "You will receive your login credentials and your first 200 Blue Coins for free."
+  ],
+  "discordUrl": "https://discord.gg/DmEPAb3NFU",
+  "discordButtonLabel": "Join Discord to Request Access"
+}

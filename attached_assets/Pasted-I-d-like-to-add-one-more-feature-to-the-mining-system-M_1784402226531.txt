@@ -1,0 +1,81 @@
+I'd like to add one more feature to the mining system.
+
+### Mining Renewal System (Every 12 Hours)
+
+Implement a **12-hour mining renewal system**.
+
+#### How it should work
+
+* Every player must manually renew their mining every **12 hours**.
+* While mining is active, all rigs generate Blue Coins normally.
+* Once the 12-hour period expires:
+
+  * All mining income pauses immediately.
+  * Players stop earning Blue Coins until they renew.
+  * Existing Blue Coins, Gems, rigs, upgrades, and all progress remain untouched.
+
+#### Renew Button
+
+Add a prominent **"Renew Mining"** button on the Mining page.
+
+When clicked:
+
+* Reset the 12-hour timer.
+* Instantly reactivate all mining rigs.
+* Resume mining from where it left off.
+
+The renewal should be immediate and should not require refreshing the page.
+
+#### User Interface
+
+Display a clear countdown timer showing the remaining mining time, for example:
+
+* **Mining Active**
+* **Time Remaining: 11h 43m 12s**
+
+When mining expires:
+
+* Replace the active status with a clear warning such as:
+
+  * **Mining Expired**
+  * **Renew to continue earning Blue Coins.**
+* Visually disable or indicate that mining is inactive until renewed.
+
+#### Server-Side Enforcement
+
+This system must be **fully server-authoritative**.
+
+* Never rely on the client's clock.
+* Store the mining expiration timestamp on the server.
+* Calculate remaining time using the server's current time.
+* Changing the player's device time, timezone, or browser time must have **no effect** on the renewal timer.
+
+#### Offline Behavior
+
+The renewal timer must continue counting down even when the player is offline.
+
+Examples:
+
+* If a player logs off with 6 hours remaining and returns 8 hours later, their mining should be expired.
+* If they return before the timer expires, they should receive all offline mining rewards earned during the remaining active period, then mining should stop exactly when the timer reaches zero.
+
+#### Admin Panel
+
+Add mining renewal information to the Mining Grand Section, including:
+
+* Mining Status (Active / Expired)
+* Time Remaining
+* Expiration Time
+* Last Renewal Time
+
+Allow administrators to:
+
+* Renew mining for a player.
+* Extend or reduce the remaining time.
+* Reset the timer if needed.
+
+#### Performance
+
+Implement this efficiently using timestamps rather than updating every player's timer every second. The countdown displayed in the UI can update locally for a smooth experience, but the server must always be the authoritative source for the actual expiration time.
+
+The goal is to create a reliable, cheat-proof renewal system that encourages players to return every 12 hours while preserving all existing mining functionality.

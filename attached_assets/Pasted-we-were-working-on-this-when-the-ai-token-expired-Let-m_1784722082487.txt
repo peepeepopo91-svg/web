@@ -1,0 +1,71 @@
+we were working on this when the ai token expired:
+
+Let me plan a comprehensive expansion. I'll add these new tabs and features:
+
+New tabs to add (from 7 to ~17):
+
+    ✅ overview (enhance)
+    ✅ ad-setup (enhance - add more providers, waterfall)
+    ✅ renew (enhance)
+    ✅ page-ads (enhance - per-page custom HTML)
+    ✅ revenue (enhance - payout, revenue share)
+    ✅ analytics (enhance - A/B stats, per-source)
+    frequency controls for daily caps, cooldowns, and session limits
+    scheduling with time-based rules, quiet hours, and event boosts
+    player UX settings including thank you messages, ad labels, fatigue protection, and opt-out options
+    compliance management for GDPR, COPPA, CCPA, and consent text
+    direct sponsorship slots
+    revenue goals and milestone tracking
+    webhooks and alert notifications
+    geographic targeting by country
+    A/B testing configuration
+    affiliate link management
+    referral program settings
+    advanced features to enhance
+
+Now I'm expanding the AdsConfig interface and building out the earningsServer.ts and EarningsManager.tsx files. I need to update the DEFAULT_CONFIG in data/ads-config.json with all the new fields, then design the complete AdsConfig structure with core settings, ad provider configuration, and renewal modes.
+
+Defining the config schema... Adding scheduling controls, player experience settings, and compliance requirements...
+
+Now I'm defining sponsor slots, revenue goals with milestones, and notification systems for webhooks and alerts. I'm also setting up geographic filtering with allowlist/blocklist modes and A/B testing configuration to track variant performance.
+
+Adding more feature flags... Writing the tab structure... I need to think through what data actually belongs in the config file versus what's computed at runtime. The sponsor list, affiliate links, and A/B test statistics should all be persisted in the JSON config. Before I start writing the server and manager components, I should clarify which new server functions I need to add beyond the existing getAdsConfig, saveAdsConfig, trackAdEvent, and resetAdsStats.
+
+For managing sponsors and affiliate links, I can keep things simple by routing everything through saveAdsConfig since the entire config gets saved atomically. The specialized functions I really need are trackAffiliateClick for logging clicks, addPayoutRecord for recording payouts, exportEarningsData for generating downloadable reports, and resetAbTestStats for clearing test data. This keeps the API surface clean while still supporting all the earnings dashboard functionality.
+
+
+we were checking for codes error when the token expired:
+
+src/components/Badge.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/CTAButton.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/CountdownTimer.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/EventBanner.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/admin/AdminBracketEditor.tsx(129,21): error TS6133: 'name' is declared but its value is never read.
+src/components/admin/AdminBracketEditor.tsx(533,35): error TS2322: Type 'MatchStatus' is not assignable to type '"live" | "completed" | "pending" | "scheduled"'.
+src/components/admin/AdminLayout.tsx(66,57): error TS2322: Type '(s: AdminSection) => void' is not assignable to type '(s: string) => void'.
+src/components/admin/ContentManager.tsx(2,61): error TS6133: 'CONTENT_DEFAULTS' is declared but its value is never read.
+src/components/admin/EarningsManager.tsx(4,44): error TS6133: 'useId' is declared but its value is never read.
+src/components/admin/EarningsManager.tsx(6,27): error TS6196: 'Milestone' is declared but never used.
+src/components/admin/EarningsManager.tsx(6,38): error TS6196: 'WaterfallProvider' is declared but never used.
+src/components/admin/EarningsManager.tsx(1025,66): error TS2322: Type 'string' is not assignable to type 'number'.
+src/components/admin/EarningsManager.tsx(1026,67): error TS2322: Type 'string' is not assignable to type 'number'.
+src/components/admin/EarningsManager.tsx(1027,68): error TS2322: Type 'string' is not assignable to type 'number'.
+src/components/admin/EarningsManager.tsx(1051,62): error TS2322: Type 'string' is not assignable to type 'number'.
+src/components/admin/EarningsManager.tsx(1285,42): error TS2322: Type 'string' is not assignable to type 'number'.
+src/components/admin/EarningsManager.tsx(1309,64): error TS2322: Type 'string' is not assignable to type 'number'.
+src/components/admin/EarningsManager.tsx(1517,38): error TS2322: Type 'string' is not assignable to type 'number'.
+src/components/admin/EventManager.tsx(1,31): error TS6133: 'useRef' is declared but its value is never read.
+src/components/admin/EventManager.tsx(245,9): error TS6133: 'isStarted' is declared but its value is never read.
+src/components/admin/EventManager.tsx(547,61): error TS2322: Type '{ ringColor: "#00BFFF" | "#F5A623" | "#FF4D4F" | "#52C41A" | "#7B2FBE" | "#FA8C16"; } | {}' is not assignable to type 'CSSProperties | undefined'.
+src/components/admin/GamemodeManager.tsx(99,9): error TS6133: 'unusedKeys' is declared but its value is never read.
+src/components/admin/GitHubSyncCenter.tsx(20,3): error TS6133: 'addSyncHistoryEntry' is declared but its value is never read.
+src/components/admin/GitHubSyncCenter.tsx(22,3): error TS6133: 'validateAllData' is declared but its value is never read.
+src/components/admin/GitHubSyncCenter.tsx(2046,10): error TS6133: 'StatusCard' is declared but its value is never read.
+src/components/admin/ShopManager.tsx(241,34): error TS2353: Object literal may only specify known properties, and 'rarity' does not exist in type '{ id: string; name?: string | undefined; description?: string | undefined; price?: number | undefined; icon?: string | undefined; enabled?: boolean | undefined; featured?: boolean | undefined; purchaseLimit?: number | ... 1 more ... | undefined; stock?: number | ... 1 more ... | undefined; }'.
+src/components/admin/TournamentManager.tsx(1,31): error TS6133: 'useMemo' is declared but its value is never read.
+src/components/admin/TournamentManager.tsx(8,3): error TS6133: 'generateBracket' is declared but its value is never read.
+src/components/admin/TournamentManager.tsx(8,33): error TS6133: 'updateBracketSlot' is declared but its value is never read.
+src/components/admin/TournamentManager.tsx(1069,146): error TS2322: Type 'MatchStatus' is not assignable to type '"live" | "completed" | "pending" | "scheduled"'.
+
+
+check and continue from where we left

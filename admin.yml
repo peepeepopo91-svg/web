@@ -1,0 +1,11 @@
+admin:
+  username: admin
+  password1: >-
+    scrypt:6fe1fd48a5542740e002ef05e0e85ad8:fe5baebee89b591eadcd1e245daa56c4c931214fff6ffa9e27573359d94ff2c378ae52bbeef9625f88df3e226cb661133f8c320e5966b012c1e616e78a6c89b1
+  password2: >-
+    scrypt:d60aa13aae6722ced6416bfc45adf0a9:d4d439ba4d75fc0105de4e6c2088ca11d2bfcde18ccc8140568fe2008a41c021ac8d11be8075c4a09f717b78f98ebac615cc50f6d0b4ab1843b001d7466e019e
+  sessionInvalidBefore: 0
+settings:
+  maxAttempts: 20
+  lockoutMinutes: 15
+  sessionHours: 8

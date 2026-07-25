@@ -1,0 +1,317 @@
+```
+# What Was Just Being Worked On
+
+Four bugs were identified in the bracket system, and fixes were started but **NOT finished** (the session ended mid-work).
+
+Here is exactly what still needs fixing:
+
+---
+
+# Bug 1 — 9 Teams Registered but Only 8 Show in the Bracket
+
+## Root Cause
+
+`getMs()` in:
+
+```
+
+src/components/tournament/TournamentBracket.tsx
+
+````
+
+filters out **all** bye matches:
+
+```ts
+.filter((m): m is Match => !!m && m.status !== 'bye')
+````
+
+With 9 teams, the bracket pads to 16 slots.
+
+Team 9 receives a bye (auto-advance), but because the bye match is filtered out entirely, Team 9 never appears in the bracket.
+
+## Fix
+
+Include bye matches that have a real team advancing (`winnerId !== null`):
+
+```ts
+.filter((m): m is Match =>
+  !!m && (m.status !== 'bye' || m.winnerId !== null)
+)
+```
+
+Then, inside `MatchCard`:
+
+* If `match.status === 'bye'`
+* Render a special slim card
+* Show only the advancing team
+* Display an **"AUTO BYE →"** badge
+* Do **not** render it like a normal match card
+
+Apply the **same fix** to `getMs()` in:
+
+```
+src/components/admin/AdminBracketEditor.tsx
+```
+
+---
+
+# Bug 2 — "Quarter-Finals" and "Semi-Finals" Labels Still Showing
+
+## Root Cause
+
+Inside `TournamentBracket.tsx` (`BracketView`):
+
+```ts
+const showLabel =
+  !col.name.toLowerCase().startsWith('round of')
+```
+
+This only hides labels beginning with **"Round of..."**
+
+As a result:
+
+* Quarter-Finals
+* Semi-Finals
+
+still render.
+
+The same issue exists in:
+
+```
+src/components/admin/AdminBracketEditor.tsx
+```
+
+where the condition is:
+
+```ts
+!name.toLowerCase().includes('round of')
+```
+
+## Fix
+
+Remove **ALL** round labels from the side columns.
+
+The Finals already has its own dedicated `FinalsColumn` component that displays the **GRAND FINAL** label.
+
+Simply change:
+
+```ts
+showLabel = false
+```
+
+for all side columns in both files.
+
+In `AdminBracketEditor.tsx`, inside `RoundCol`, remove this entire block:
+
+```tsx
+{!name.toLowerCase().includes('round of') && (
+    // label pill
+)}
+```
+
+or simply make it always return `null`.
+
+---
+
+# Bug 3 — Changing Bracket Theme Doesn't Update the Admin Preview
+
+## Root Cause
+
+The admin bracket editor:
+
+```
+src/components/admin/AdminBracketEditor.tsx
+```
+
+still has hardcoded amber/gold colors for:
+
+* Bracket container
+* Connectors
+* Round labels
+
+When selecting another theme (for example **Neon**) from the Display Settings panel, the preview remains amber.
+
+## Fix
+
+Create a theme lookup table inside:
+
+```
+AdminBracketEditor.tsx
+```
+
+mapping each `BracketThemeId` to the required visual colors:
+
+* Container background
+* Border
+* Connector color
+* Connector dot color
+
+Apply those values to:
+
+### Bracket Container
+
+The outer `<div>` (currently hardcoded amber around line ~602).
+
+### Connector Component
+
+Add props:
+
+* `connColor`
+* `connDot`
+
+and pass the themed colors.
+
+### Round Label Pills
+
+If labels remain, update them to use the selected theme colors.
+
+The **admin editing/highlight color should remain amber**.
+
+That highlight is intentional for the admin UI.
+
+The `BracketThemeId` type already exists in:
+
+```
+src/data/tournament.ts
+```
+
+The complete theme definitions already exist inside:
+
+```
+src/components/tournament/TournamentBracket.tsx
+```
+
+in the `THEMES` array.
+
+Either:
+
+* Export that shared theme data, **or**
+* Duplicate only the necessary colors into `AdminBracketEditor.tsx`.
+
+---
+
+# Bug 4 — Right Side of Bracket Overflows Outside the Container
+
+## Root Cause
+
+Inside `BracketView`:
+
+```ts
+const naturalW =
+  leftW + finalsW + rightW
+```
+
+This calculation does **not** include the outer padding:
+
+```
+OUTER_PAD * 2
+```
+
+(24px × 2 = 48px)
+
+The inner flex container uses that padding, so the actual content becomes wider than `naturalW`.
+
+As a result:
+
+* Scaling is incorrect.
+* The right-side bracket extends outside the container.
+
+## Fix
+
+Change:
+
+```ts
+const naturalW =
+  leftW + finalsW + rightW
+```
+
+to:
+
+```ts
+const naturalW =
+  leftW + finalsW + rightW + OUTER_PAD * 2
+```
+
+---
+
+# Key Files
+
+| File                                              | Purpose                                                             |
+| ------------------------------------------------- | ------------------------------------------------------------------- |
+| `src/components/tournament/TournamentBracket.tsx` | Public bracket viewer (all 4 bugs affect this)                      |
+| `src/components/admin/AdminBracketEditor.tsx`     | Admin bracket editor (bugs 1, 2, and 3 affect this)                 |
+| `src/data/tournament.ts`                          | Types including `BracketThemeId` and `BracketDisplaySettings`       |
+| `src/server/tournamentServer.ts`                  | Server functions including `updateBracketDisplay()` (already added) |
+| `data/tournaments.json`                           | Tournament data including the `bracketDisplay` field                |
+
+---
+
+# What Was Already Completed (Before This Session Ended)
+
+✅ `BracketDisplaySettings` type added to:
+
+```
+src/data/tournament.ts
+```
+
+Includes:
+
+* Theme
+* Scale mode
+* Manual scale
+
+---
+
+✅ `updateBracketDisplay()` server function added to:
+
+```
+src/server/tournamentServer.ts
+```
+
+---
+
+✅ Public `TournamentBracket`:
+
+* Theme selector removed
+* Scale controls removed
+* Reads display settings directly from tournament data
+
+---
+
+✅ Admin Bracket Editor now includes a new:
+
+**🎨 Display Settings**
+
+with:
+
+* Theme picker
+* Auto/Manual scale toggle
+* Manual scale slider
+* Save button
+
+---
+
+✅ Manual Scale Mode
+
+Wraps the bracket with:
+
+```css
+overflow-x: auto;
+```
+
+to allow horizontal scrolling.
+
+---
+
+✅ Auto Scale Mode
+
+Uses:
+
+```css
+transform: scale(...)
+```
+
+to automatically shrink the bracket so it fits the available space.
+
+```
+```

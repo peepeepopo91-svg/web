@@ -1,0 +1,296 @@
+The GitHub synchronization system is still fundamentally broken and must be completely fixed. I do not want another workaround or placeholder implementation. I want a real, reliable GitHub persistence system that survives page refreshes and updates the repository correctly.
+
+================================================================
+1. FIX THE ENTIRE GITHUB SAVE SYSTEM
+================================================================
+
+The current save pipeline is broken.
+
+Previously, I discovered the repository had an unfinished merge conflict in data/players.json containing Git conflict markers (<<<<<<<, =======, >>>>>>>). After resolving it manually and successfully pushing through Git, the Admin Panel's "Save to GitHub" feature still does not work.
+
+When I click "Save to GitHub", it fails during:
+
+✓ Preparing data...
+✓ Validating JSON...
+✓ Detecting modified files...
+✗ Authenticating with GitHub...
+
+Error:
+
+"GITHUB_TOKEN is not configured. Add it as a Replit Secret named GITHUB_TOKEN."
+
+The repository itself is accessible and Git works manually, so find the REAL reason the Admin Panel cannot authenticate.
+
+Do NOT assume the token is missing.
+
+Inspect:
+
+- Frontend
+- Backend/server functions
+- Environment variable loading
+- Replit Secrets
+- Server runtime
+- API routes
+- Authentication flow
+- GitHub API requests
+- Repository permissions
+- Branch configuration
+- Deployment/runtime environment
+
+Determine exactly why the backend cannot access GITHUB_TOKEN.
+
+If the architecture is incorrect, redesign it into a proper working implementation instead of patching the existing one.
+
+Never fake success.
+
+================================================================
+2. DEBUG THE ENTIRE SAVE PIPELINE
+================================================================
+
+Trace every step:
+
+- Save button
+- Dirty state
+- Data collection
+- JSON generation
+- Backend endpoint
+- Authentication
+- Environment variables
+- GitHub API
+- SHA lookup
+- Commit creation
+- Response validation
+- Repository verification
+- Reloading data
+
+If any step fails:
+
+Display:
+
+- HTTP status
+- Endpoint
+- Function name
+- Stack trace
+- GitHub response
+- Exact technical reason
+
+Do not display generic messages like:
+
+"Network Error"
+
+or
+
+"Save Failed"
+
+================================================================
+3. FIX DUPLICATE PLAYER CREATION
+================================================================
+
+Currently, whenever I add ONE player through the Admin Panel, TWO identical players are created.
+
+This should never happen.
+
+Find the root cause.
+
+Possible causes include:
+
+- Event firing twice
+- Duplicate state updates
+- Duplicate API requests
+- Duplicate array insertion
+- React Strict Mode side effects
+- Saving twice
+- Double form submission
+
+Fix the actual issue.
+
+Clicking "Add Player" once must create exactly ONE player.
+
+Never two.
+
+================================================================
+4. ADD A FULL REPOSITORY SYNC BUTTON
+================================================================
+
+Inside the GitHub Sync section, add a large button:
+
+Sync Everything to GitHub
+
+This is different from the section save buttons.
+
+Purpose:
+
+Take ALL current admin-managed data stored in the application/database/browser state and synchronize it to GitHub in one operation.
+
+This includes:
+
+- Players
+- Gamemodes
+- Website Settings
+- Homepage
+- Events
+- Economy
+- Mining configuration
+- User configuration
+- Regions
+- Tier configuration
+- Any future admin-managed data
+
+Everything should be synchronized.
+
+================================================================
+5. LIVE SYNC PROGRESS
+================================================================
+
+When "Sync Everything to GitHub" is clicked, display a professional progress window.
+
+Show every step live.
+
+Example:
+
+✓ Loading current application data...
+
+✓ Detecting modified sections...
+
+✓ Preparing players.json...
+
+✓ Preparing gamemodes.json...
+
+✓ Preparing economy.json...
+
+✓ Preparing events.json...
+
+✓ Validating JSON...
+
+✓ Connecting to GitHub...
+
+✓ Authenticating...
+
+✓ Reading latest repository...
+
+✓ Retrieving file SHAs...
+
+✓ Uploading players.json...
+
+✓ Uploading gamemodes.json...
+
+✓ Uploading economy.json...
+
+✓ Uploading events.json...
+
+✓ Creating commits...
+
+✓ Verifying commits...
+
+✓ Refreshing repository state...
+
+✓ Synchronization completed successfully.
+
+Every step should appear only after the previous one succeeds.
+
+================================================================
+6. VERIFY EVERYTHING
+================================================================
+
+Do not assume synchronization succeeded.
+
+Actually verify:
+
+✓ Repository updated
+
+✓ Files updated
+
+✓ Commits created
+
+✓ Latest commit SHA retrieved
+
+✓ Branch updated
+
+✓ GitHub accepted every request
+
+If any verification fails:
+
+Stop immediately.
+
+Display the real error.
+
+================================================================
+7. END-TO-END TESTING
+================================================================
+
+After implementing the fixes, perform a complete real test.
+
+Using ONLY the Admin Panel:
+
+Create this player:
+
+Username:
+ZyrenBoy
+
+Gamemode:
+Mace
+
+Tier:
+LT5
+
+Leave all remaining values as sensible defaults.
+
+Then:
+
+1. Save to GitHub.
+
+2. Verify a real GitHub commit was created.
+
+3. Verify data/players.json inside the repository now contains ZyrenBoy.
+
+4. Refresh the Admin Panel.
+
+Verify ZyrenBoy still exists.
+
+5. Open the public Rankings page.
+
+Verify ZyrenBoy appears.
+
+6. Search for ZyrenBoy.
+
+Verify search works.
+
+7. Open his profile.
+
+Verify:
+
+Mace = LT5
+
+Only pass this test if every step succeeds.
+
+================================================================
+8. FINAL ACCEPTANCE CRITERIA
+================================================================
+
+Do not mark this task complete unless ALL of the following are true:
+
+✓ GitHub authentication works.
+
+✓ Save to GitHub works.
+
+✓ Sync Everything to GitHub works.
+
+✓ No duplicate players are created.
+
+✓ Real GitHub commits are created.
+
+✓ Repository files are updated.
+
+✓ Refreshing the website preserves changes.
+
+✓ Public Rankings display the new data.
+
+✓ No console errors.
+
+✓ No network errors.
+
+✓ No hidden merge conflicts.
+
+✓ No fake success messages.
+
+Continue debugging, testing, and verifying until every one of these requirements is satisfied.
