@@ -50,5 +50,28 @@
     "exchangeResetAt": 1784483243029,
     "miningExpiresAt": 1784447014507,
     "miningRenewedAt": 1784403814507
+  },
+  "cyan_gaming07": {
+    "username": "Cyan_Gaming07",
+    "createdAt": 1785087682534,
+    "lastCheckedAt": 1785087894742,
+    "balance": 50,
+    "gems": 0,
+    "rigs": [
+      {
+        "id": "starter_ms237k3w_gc3p",
+        "tierId": "starter",
+        "name": "Starter Pack",
+        "durability": 9998.9188973064,
+        "status": "mining",
+        "miningSince": 1785087844405,
+        "purchasedAt": 1785087839372
+      }
+    ],
+    "rewardHistory": [],
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1785174157088,
+    "miningExpiresAt": 1785131001533,
+    "miningRenewedAt": 1785087801533
   }
 }
