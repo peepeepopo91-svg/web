@@ -50,5 +50,16 @@
     "exchangeResetAt": 1784483243029,
     "miningExpiresAt": 1784447014507,
     "miningRenewedAt": 1784403814507
+  },
+  "aaa": {
+    "username": "aaa",
+    "createdAt": 1785078706591,
+    "lastCheckedAt": 1785078706591,
+    "balance": 100,
+    "gems": 0,
+    "rigs": [],
+    "rewardHistory": [],
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1785078706591
   }
 }
