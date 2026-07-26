@@ -82,5 +82,9 @@
   "ctaNote": "Free forever · Fabric mod · Client-side only",
   "aboutTitle": "About Blue Tiers",
   "aboutBody": "Blue Tiers is a competitive Minecraft PvP ranking platform designed to provide accurate, reliable player rankings across multiple gamemodes. Compete against other players, climb the leaderboards, and showcase your skill — now visible directly in-game with Blue Tier Tagger.",
-  "aboutCredit": "Made with 💙 by Blue Network"
+  "aboutCredit": "Made with 💙 by Blue Network",
+  "releaseCountdownEnabled": true,
+  "releaseDate": "2026-08-02T16:36:22.986Z",
+  "countdownHeading": "Coming Soon",
+  "countdownSubtext": "Blue Tier Tagger is almost here. Stay tuned."
 }
