@@ -689,6 +689,17 @@ export const getGitDiagnostics = createServerFn({ method: 'GET' }).handler(
       }
     }
 
+    // Verify we are inside a git repository
+    const repoCheck = git('rev-parse', '--git-dir')
+    if (!repoCheck.ok) {
+      return {
+        branch: 'n/a', headSha: 'n/a', ahead: 0, behind: 0,
+        isDiverged: false, modified: 0, untracked: 0, deleted: 0,
+        totalPending: 0, statusLines: [], jsonChecks: [],
+        gitError: 'No git repository found. GitHub sync only works in the Replit workspace (dev environment), not in a deployed production instance.',
+      }
+    }
+
     // Inject token into remote URL for fetch (best-effort, restore after)
     const originalUrl = git('remote', 'get-url', 'origin').out
     if (ghToken && originalUrl.startsWith('https://github.com/')) {
