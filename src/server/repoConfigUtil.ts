@@ -11,8 +11,8 @@ import type { RepoConfig }                        from './repoConfig'
 export const CONFIG_FILE = resolve(process.cwd(), 'data', 'github-config.json')
 
 export const DEFAULT_CONFIG: RepoConfig = {
-  owner:  'peepeepopo91-svg',
-  repo:   'rupa',
+  owner:  '',
+  repo:   '',
   branch: 'main',
 }
 

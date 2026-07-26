@@ -541,7 +541,7 @@ function AutoBackupPanel() {
 
 // ─── Git Diagnostics Panel ────────────────────────────────────────────────────
 
-function GitDiagnosticsPanel({ repoLabel = 'peepeepopo91-svg/rupa' }: { repoLabel?: string }) {
+function GitDiagnosticsPanel({ repoLabel = '—' }: { repoLabel?: string }) {
   const [diag,    setDiag]    = useState<GitDiagnostics | null>(null)
   const [loading, setLoading] = useState(false)
   const [fixing,  setFixing]  = useState(false)
@@ -997,7 +997,7 @@ function GitDiagnosticsPanel({ repoLabel = 'peepeepopo91-svg/rupa' }: { repoLabe
 
 // ─── Advanced Git Panel ───────────────────────────────────────────────────────
 
-function AdvancedGitPanel({ repoLabel = 'peepeepopo91-svg/rupa', branch = 'main' }: { repoLabel?: string; branch?: string }) {
+function AdvancedGitPanel({ repoLabel = '—', branch = 'main' }: { repoLabel?: string; branch?: string }) {
   const [log, setLog]         = useState<LogLine[]>([])
   const [running, setRunning] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<string | null>(null)
@@ -1328,6 +1328,228 @@ function SyncHistoryPanel({ history }: { history: SyncHistoryEntry[] }) {
         pageSize={SYNC_HISTORY_PAGE_SIZE}
         onPageChange={setPage}
       />
+    </div>
+  )
+}
+
+// ─── Token Manager Panel ──────────────────────────────────────────────────────
+
+// ─── Repository Config Panel ──────────────────────────────────────────────────
+
+function RepoConfigPanel({ onSaved }: { onSaved?: () => void }) {
+  const [draft,      setDraft]      = useState<RepoConfig>({ owner: '', repo: '', branch: 'main' })
+  const [loading,    setLoading]    = useState(true)
+  const [saving,     setSaving]     = useState(false)
+  const [testing,    setTesting]    = useState(false)
+  const [testResult, setTestResult] = useState<RepoConnectionTest | null>(null)
+  const [saveMsg,    setSaveMsg]    = useState<string | null>(null)
+  const [dirty,      setDirty]      = useState(false)
+
+  async function load() {
+    setLoading(true)
+    try {
+      const cfg = await getRepoConfig()
+      setDraft(cfg)
+    } catch { /* ignore */ }
+    finally { setLoading(false) }
+  }
+
+  useEffect(() => { load() }, [])
+
+  function handleField(field: keyof RepoConfig, value: string) {
+    setDraft(prev => ({ ...prev, [field]: value }))
+    setTestResult(null)
+    setSaveMsg(null)
+    setDirty(true)
+  }
+
+  async function handleTest() {
+    const owner  = draft.owner.trim()
+    const repo   = draft.repo.trim()
+    const branch = draft.branch.trim() || 'main'
+    if (!owner || !repo) return
+    setTesting(true)
+    setTestResult(null)
+    try {
+      const r = await testRepoConnection({ data: { owner, repo, branch } })
+      setTestResult(r)
+    } catch (e) {
+      setTestResult({
+        repoExists: false, branchExists: false, writePermission: false,
+        repoFullName: null, defaultBranch: null,
+        error: e instanceof Error ? e.message : 'Error',
+      })
+    } finally { setTesting(false) }
+  }
+
+  async function handleSave() {
+    const owner  = draft.owner.trim()
+    const repo   = draft.repo.trim()
+    const branch = draft.branch.trim() || 'main'
+    if (!owner || !repo) return
+    setSaving(true)
+    setSaveMsg(null)
+    try {
+      await saveRepoConfig({ data: { owner, repo, branch } })
+      setSaveMsg('✓ Repository saved.')
+      setDirty(false)
+      onSaved?.()
+    } catch (e) {
+      setSaveMsg(`✗ Save failed: ${e instanceof Error ? e.message : 'Unknown error'}`)
+    } finally { setSaving(false) }
+  }
+
+  const hasCoords = !!draft.owner.trim() && !!draft.repo.trim()
+  const canTest   = hasCoords && !testing && !saving
+  const canSave   = hasCoords && (testResult?.repoExists === true) && !saving
+
+  return (
+    <div className="glass rounded-2xl border border-white/8 overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-4 border-b border-white/5 flex items-center gap-3">
+        <span className="text-base">🗄️</span>
+        <h3 className="font-['Space_Grotesk'] font-bold text-white text-sm">Repository Settings</h3>
+        <span className="text-gray-600 text-[10px] ml-0.5">Target GitHub repo for all sync operations</span>
+        <div className="ml-auto">
+          <button
+            onClick={load}
+            disabled={loading}
+            className="px-3 py-1.5 rounded-lg text-[10px] text-gray-500 border border-white/8 hover:border-white/15 hover:text-gray-300 transition-all disabled:opacity-40"
+          >↻ Refresh</button>
+        </div>
+      </div>
+
+      <div className="px-6 py-5 space-y-5">
+
+        {/* Current config badge */}
+        {!loading && (
+          <div className={`rounded-xl border px-4 py-3 flex items-center gap-3 ${
+            draft.owner && draft.repo
+              ? 'border-[#00BFFF]/20 bg-[#00BFFF]/4'
+              : 'border-amber-500/20 bg-amber-500/4'
+          }`}>
+            <span className={`w-2 h-2 rounded-full shrink-0 ${draft.owner && draft.repo ? 'bg-[#00BFFF]' : 'bg-amber-400 animate-pulse'}`} />
+            <span className={`text-sm font-bold font-mono ${draft.owner && draft.repo ? 'text-[#00BFFF]' : 'text-amber-400'}`}>
+              {draft.owner && draft.repo
+                ? `${draft.owner}/${draft.repo} @ ${draft.branch || 'main'}`
+                : 'No repository configured'}
+            </span>
+          </div>
+        )}
+
+        {/* Fields */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Owner */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-widest text-gray-600 font-medium">
+              GitHub Owner
+            </label>
+            <input
+              type="text"
+              value={draft.owner}
+              onChange={e => handleField('owner', e.target.value)}
+              placeholder="e.g. octocat"
+              disabled={loading}
+              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-200 font-mono placeholder-gray-700 focus:border-[#00BFFF]/40 focus:outline-none focus:bg-black/60 transition-all disabled:opacity-40"
+            />
+          </div>
+
+          {/* Repo */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-widest text-gray-600 font-medium">
+              Repository Name
+            </label>
+            <input
+              type="text"
+              value={draft.repo}
+              onChange={e => handleField('repo', e.target.value)}
+              placeholder="e.g. my-site"
+              disabled={loading}
+              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-200 font-mono placeholder-gray-700 focus:border-[#00BFFF]/40 focus:outline-none focus:bg-black/60 transition-all disabled:opacity-40"
+            />
+          </div>
+
+          {/* Branch */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-widest text-gray-600 font-medium">
+              Branch
+            </label>
+            <input
+              type="text"
+              value={draft.branch}
+              onChange={e => handleField('branch', e.target.value)}
+              placeholder="main"
+              disabled={loading}
+              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-200 font-mono placeholder-gray-700 focus:border-[#00BFFF]/40 focus:outline-none focus:bg-black/60 transition-all disabled:opacity-40"
+            />
+          </div>
+        </div>
+
+        {/* Test result */}
+        {testResult && (
+          <div className={`rounded-xl border px-4 py-3 space-y-1.5 text-sm ${
+            testResult.repoExists
+              ? 'border-green-500/20 bg-green-500/4'
+              : 'border-red-500/20 bg-red-500/4'
+          }`}>
+            {testResult.error && (
+              <p className="text-red-400 text-[11px] font-mono">✗ {testResult.error}</p>
+            )}
+            {testResult.repoExists && (
+              <p className="text-green-400 text-[11px]">✓ Repo found: <span className="font-mono">{testResult.repoFullName}</span></p>
+            )}
+            {testResult.repoExists && (
+              <p className={`text-[11px] ${testResult.branchExists ? 'text-green-400' : 'text-amber-400'}`}>
+                {testResult.branchExists
+                  ? `✓ Branch '${draft.branch || 'main'}' exists`
+                  : `⚠ Branch '${draft.branch || 'main'}' not found — default is '${testResult.defaultBranch}'`}
+              </p>
+            )}
+            {testResult.repoExists && (
+              <p className={`text-[11px] ${testResult.writePermission ? 'text-green-400' : 'text-amber-400'}`}>
+                {testResult.writePermission ? '✓ Write access confirmed' : '⚠ No push permission — token may need repo scope'}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={handleTest}
+            disabled={!canTest}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold border border-white/12 text-gray-300 hover:border-[#00BFFF]/40 hover:text-[#00BFFF] hover:bg-[#00BFFF]/5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {testing
+              ? <><span className="w-3 h-3 border-2 border-gray-400/30 border-t-gray-400 rounded-full animate-spin" /> Testing…</>
+              : '⚡ Test Connection'
+            }
+          </button>
+
+          <button
+            onClick={handleSave}
+            disabled={!canSave}
+            title={!testResult?.repoExists ? 'Test the connection first to confirm the repo is reachable' : undefined}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-[#00BFFF]/15 to-[#0099FF]/15 border border-[#00BFFF]/30 text-[#00BFFF] hover:from-[#00BFFF]/25 hover:to-[#0099FF]/25 hover:border-[#00BFFF]/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {saving
+              ? <><span className="w-3 h-3 border-2 border-[#00BFFF]/30 border-t-[#00BFFF] rounded-full animate-spin" /> Saving…</>
+              : '✓ Save Repository'
+            }
+          </button>
+
+          {dirty && !canSave && !saveMsg && (
+            <span className="text-[10px] text-gray-600">Test the connection first</span>
+          )}
+        </div>
+
+        {saveMsg && (
+          <p className={`text-[11px] font-mono ${saveMsg.startsWith('✓') ? 'text-green-400' : 'text-red-400'}`}>
+            {saveMsg}
+          </p>
+        )}
+
+      </div>
     </div>
   )
 }
@@ -2075,6 +2297,9 @@ export function GitHubSyncCenter({ admin: _admin }: { admin: string }) {
 
       {/* ── Auto-Backup ──────────────────────────────────────────────────────── */}
       <AutoBackupPanel />
+
+      {/* ── Repository Settings ───────────────────────────────────────────────── */}
+      <RepoConfigPanel onSaved={refresh} />
 
       {/* ── Token Management ──────────────────────────────────────────────────── */}
       <TokenManagerPanel />
