@@ -77,7 +77,7 @@
   "d3n1s1": {
     "username": "D3n1s1",
     "createdAt": 1785094613983,
-    "lastCheckedAt": 1785095022929,
+    "lastCheckedAt": 1785095315825,
     "balance": 0,
     "gems": 5583.06,
     "rigs": [
@@ -85,7 +85,7 @@
         "id": "advanced_ms27cbfz_qd5l",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9995.427006172842,
+        "durability": 9989.777006172842,
         "status": "mining",
         "miningSince": 1785094953273,
         "purchasedAt": 1785094779887
@@ -94,7 +94,7 @@
         "id": "starter_ms27cupr_g3xn",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9995.4438973064,
+        "durability": 9989.280260942764,
         "status": "mining",
         "miningSince": 1785094807338,
         "purchasedAt": 1785094804863
@@ -103,7 +103,7 @@
         "id": "advanced_ms27dftu_ywo2",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9996.351388888892,
+        "durability": 9990.701388888892,
         "status": "mining",
         "miningSince": 1785094835294,
         "purchasedAt": 1785094832226
