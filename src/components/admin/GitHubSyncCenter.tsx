@@ -620,7 +620,7 @@ function GitDiagnosticsPanel() {
 
   if (!diag && !loading) return null
 
-  const hasIssue      = diag && (diag.isDiverged || diag.behind > 0 || diag.ahead > 0 || diag.totalPending > 0)
+  const hasIssue      = diag && !diag.apiMode && (diag.isDiverged || diag.behind > 0 || diag.ahead > 0 || diag.totalPending > 0)
   const jsonAllOk     = diag?.jsonChecks.every(j => j.ok) ?? true
   const conflictFiles = diag?.jsonChecks.filter(j => !j.ok) ?? []
 
@@ -630,17 +630,22 @@ function GitDiagnosticsPanel() {
         ? 'border-red-500/25'
         : hasIssue
           ? 'border-amber-500/20'
-          : 'border-white/8'
+          : diag?.apiMode
+            ? 'border-[#00BFFF]/15'
+            : 'border-white/8'
     }`}>
       <div className="px-6 py-4 border-b border-white/5 flex items-center gap-3">
         <div className={`w-2 h-2 rounded-full shrink-0 ${
-          !jsonAllOk ? 'bg-red-400 animate-pulse' :
-          hasIssue   ? 'bg-amber-400 animate-pulse' :
-          diag       ? 'bg-green-400' : 'bg-gray-600'
+          !jsonAllOk    ? 'bg-red-400 animate-pulse' :
+          hasIssue      ? 'bg-amber-400 animate-pulse' :
+          diag?.apiMode ? 'bg-[#00BFFF]' :
+          diag          ? 'bg-green-400' : 'bg-gray-600'
         }`} />
-        <h3 className="font-['Space_Grotesk'] font-bold text-white text-sm">Git Diagnostics</h3>
+        <h3 className="font-['Space_Grotesk'] font-bold text-white text-sm">
+          {diag?.apiMode ? 'GitHub Sync' : 'Git Diagnostics'}
+        </h3>
         <span className="text-gray-600 text-[10px] ml-0.5">
-          {loading ? '— refreshing…' : diag ? `branch: ${diag.branch} · ${diag.headSha}` : ''}
+          {loading ? '— refreshing…' : diag?.apiMode ? `API mode · branch: ${diag.branch} · ${diag.headSha}` : diag ? `branch: ${diag.branch} · ${diag.headSha}` : ''}
         </span>
         <div className="ml-auto flex items-center gap-2">
           {loading && <span className="text-gray-600 text-xs animate-pulse">Fetching…</span>}
@@ -657,7 +662,64 @@ function GitDiagnosticsPanel() {
       {diag && (
         <div className="px-6 py-4 space-y-4">
 
-          {/* Stats row */}
+          {/* ── API mode (production deployment — no local git) ────────────── */}
+          {diag.apiMode ? (
+            <>
+              {/* Info banner */}
+              <div className="rounded-xl border border-[#00BFFF]/15 bg-[#00BFFF]/4 px-4 py-3 space-y-1.5">
+                <p className="text-[#00BFFF] text-xs font-bold">⬆ Production mode — GitHub API sync</p>
+                <p className="text-gray-400 text-[11px] leading-relaxed">
+                  This site is running as a deployed app (no local git repo). Clicking the button below
+                  will push all current data files directly to the repository via the GitHub API
+                  in a single commit.
+                </p>
+                <div className="flex items-center gap-2 text-[10px] text-gray-600 pt-0.5">
+                  <span className="text-green-400 font-bold">✓</span>
+                  <span>Repository: peepeepopo91-svg/rupa</span>
+                  <span className="mx-1 text-gray-700">·</span>
+                  <span className="text-green-400 font-bold">✓</span>
+                  <span>Branch: {diag.branch}</span>
+                  <span className="mx-1 text-gray-700">·</span>
+                  <span className="text-gray-500">Last commit: {diag.headSha}</span>
+                </div>
+              </div>
+
+              {/* JSON health for API mode */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-white/2 border border-white/5 rounded-xl px-4 py-3">
+                  <p className="text-[9px] uppercase tracking-widest text-gray-600 mb-1">JSON health</p>
+                  <p className={`text-sm font-bold ${jsonAllOk ? 'text-green-400' : 'text-red-400'}`}>
+                    {jsonAllOk ? '✓ All valid' : `✗ ${conflictFiles.length} issue(s)`}
+                  </p>
+                  <p className="text-[10px] text-gray-700 mt-0.5 truncate">
+                    {jsonAllOk ? `${diag.jsonChecks.length} data files OK` : conflictFiles.map(f => f.file).join(', ')}
+                  </p>
+                </div>
+                <div className="bg-white/2 border border-white/5 rounded-xl px-4 py-3">
+                  <p className="text-[9px] uppercase tracking-widest text-gray-600 mb-1">Files to sync</p>
+                  <p className="text-sm font-bold text-[#00BFFF]">18</p>
+                  <p className="text-[10px] text-gray-700 mt-0.5">data/*.json + credentials</p>
+                </div>
+              </div>
+
+              {/* Push button */}
+              {!diag.gitError && (
+                <button
+                  onClick={runFix}
+                  disabled={fixing || loading || !jsonAllOk}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold text-[#00BFFF] border border-[#00BFFF]/25 bg-[#00BFFF]/8 hover:bg-[#00BFFF]/15 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {fixing
+                    ? <><span className="w-3 h-3 border-2 border-[#00BFFF]/30 border-t-[#00BFFF] rounded-full animate-spin" /> Syncing to GitHub…</>
+                    : '⬆ Push All Data to GitHub'
+                  }
+                </button>
+              )}
+            </>
+          ) : (
+          <>
+
+          {/* Stats row (git mode only) */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
               {
@@ -873,7 +935,10 @@ function GitDiagnosticsPanel() {
             </div>
           )}
 
-          {/* Fix output log */}
+          </>
+          )}
+
+          {/* Fix output log — shown for both git and API mode */}
           {fixLog.length > 0 && (
             <div
               ref={logRef}

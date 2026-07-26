@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync, mkdirSync, renameSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { z } from 'zod'
 import { load as yamlLoad, dump as yamlDump } from 'js-yaml'
-import { getRepoStatus } from './github'
+import { getRepoStatus, commitFiles } from './github'
 import { resolveTokenSource, persistToken, eraseToken } from './tokenStore'
 import {
   markAlreadyCommitted,
@@ -652,6 +652,8 @@ export interface GitDiagnostics {
   jsonChecks:   GitJsonCheck[]
   fetchError?:  string
   gitError?:    string
+  /** true when running in a deployed env with no local .git — sync uses GitHub API instead */
+  apiMode?:     boolean
 }
 
 export const getGitDiagnostics = createServerFn({ method: 'GET' }).handler(
@@ -689,14 +691,38 @@ export const getGitDiagnostics = createServerFn({ method: 'GET' }).handler(
       }
     }
 
-    // Verify we are inside a git repository
+    // Verify we are inside a git repository.
+    // In production (Replit deployment) there is no .git dir — fall back to the
+    // GitHub API for branch/commit status so the admin panel still works.
     const repoCheck = git('rev-parse', '--git-dir')
     if (!repoCheck.ok) {
-      return {
-        branch: 'n/a', headSha: 'n/a', ahead: 0, behind: 0,
-        isDiverged: false, modified: 0, untracked: 0, deleted: 0,
-        totalPending: 0, statusLines: [], jsonChecks: [],
-        gitError: 'No git repository found. GitHub sync only works in the Replit workspace (dev environment), not in a deployed production instance.',
+      const jsonChecks: GitJsonCheck[] = Object.values(FILE_MAP).map(({ file }) => {
+        const raw = readRaw(file)
+        if (!raw) return { file, ok: false, error: 'File not found' }
+        if (CONFLICT_RE.test(raw)) return { file, ok: false, error: 'Contains conflict markers' }
+        try { JSON.parse(raw); return { file, ok: true } }
+        catch (e) { return { file, ok: false, error: String(e).slice(0, 100) } }
+      })
+      try {
+        const status = await getRepoStatus()
+        return {
+          branch:       status.branch,
+          headSha:      status.latestCommit?.sha ?? 'unknown',
+          ahead: 0, behind: 0,
+          isDiverged: false, modified: 0, untracked: 0, deleted: 0,
+          totalPending: 0, statusLines: [], jsonChecks,
+          apiMode: true,
+          ...(status.connected ? {} : { gitError: 'Could not connect to GitHub API — check your token.' }),
+        }
+      } catch (e: any) {
+        return {
+          branch: 'main', headSha: 'unknown',
+          ahead: 0, behind: 0,
+          isDiverged: false, modified: 0, untracked: 0, deleted: 0,
+          totalPending: 0, statusLines: [], jsonChecks,
+          apiMode: true,
+          gitError: `GitHub API error: ${(e as Error).message}`,
+        }
       }
     }
 
@@ -753,6 +779,70 @@ export const getGitDiagnostics = createServerFn({ method: 'GET' }).handler(
   },
 )
 
+// ─── GitHub API push helper (production / no-.git environments) ───────────────
+// Reads every data file from disk and pushes them all in a single commit via
+// the GitHub Git Data API (no local git required).
+
+const SYNC_DATA_FILES = [
+  'data/ads-config.json',
+  'data/content.json',
+  'data/economy.json',
+  'data/event.json',
+  'data/gamemodes.json',
+  'data/growth.json',
+  'data/homepage.json',
+  'data/mining-access.json',
+  'data/mining-community.json',
+  'data/mining-users.json',
+  'data/players.json',
+  'data/shop-items.json',
+  'data/shop-purchases.json',
+  'data/sync-history.json',
+  'data/tier-tagger.json',
+  'data/tournaments.json',
+  'credentials.yml',
+  'admin.yml',
+]
+
+async function pushAllDataViaApi(logs: string[]): Promise<FixDivergenceResult> {
+  const { existsSync, readFileSync: fsRead } = await import('node:fs')
+
+  const ghToken = resolveTokenSource()?.token ?? ''
+  if (!ghToken) {
+    logs.push('✗ GitHub token not configured — set it via the Token Management panel.')
+    return { success: false, action: 'error', logs, ahead: 0, behind: 0 }
+  }
+
+  const files: Array<{ path: string; content: string }> = []
+  for (const rel of SYNC_DATA_FILES) {
+    const abs = resolve(process.cwd(), rel)
+    if (existsSync(abs)) {
+      files.push({ path: rel, content: fsRead(abs, 'utf8') })
+    }
+  }
+
+  if (files.length === 0) {
+    logs.push('✗ No data files found to push.')
+    return { success: false, action: 'error', logs, ahead: 0, behind: 0 }
+  }
+
+  logs.push(`→ Pushing ${files.length} file(s) to GitHub via API…`)
+  files.forEach(f => logs.push(`  · ${f.path}`))
+
+  try {
+    const result = await commitFiles(
+      files,
+      `[admin] Sync data from production (${new Date().toISOString().slice(0, 10)})`,
+    )
+    logs.push(`✓ Committed and pushed — SHA: ${result.sha.slice(0, 7)}`)
+    markAlreadyCommitted()
+    return { success: true, action: 'push-only', logs, ahead: 0, behind: 0 }
+  } catch (e: any) {
+    logs.push(`✗ GitHub API push failed: ${(e as Error).message}`)
+    return { success: false, action: 'error', logs, ahead: 0, behind: 0 }
+  }
+}
+
 // ─── Fix Git Divergence — auto-rebase + resolve data conflicts + push ─────────
 // Handles the case where local git history diverged from origin/main.
 // Strategy: commit local changes → rebase -X theirs onto origin/main
@@ -785,6 +875,13 @@ export const fixGitDivergence = createServerFn({ method: 'POST' }).handler(
         ahead:   0,
         behind:  0,
       }
+    }
+
+    // ── Production (no .git) — use GitHub API instead of local git ─────────
+    const repoPresent = spawnSync('git', ['rev-parse', '--git-dir'], { cwd, encoding: 'utf8' })
+    if ((repoPresent.status ?? 1) !== 0) {
+      logs.push('ℹ Running in production (no local git repo) — using GitHub API sync')
+      return pushAllDataViaApi(logs)
     }
 
     // Use non-interactive env so git never blocks waiting for editor/credential input
@@ -1000,6 +1097,32 @@ export const backupMiningData = createServerFn({ method: 'POST' }).handler(
         success: false, alreadyBackedUp: false,
         logs: ['✗ GITHUB_TOKEN is not set — cannot push. Set it via the Token Management panel or as a Replit Secret.'],
         filesCommitted: [],
+      }
+    }
+
+    // ── Production (no .git) — push mining files via GitHub API ────────────
+    const repoPresent = spawnSync('git', ['rev-parse', '--git-dir'], { cwd, encoding: 'utf8' })
+    if ((repoPresent.status ?? 1) !== 0) {
+      logs.push('ℹ Running in production — using GitHub API to backup mining files')
+      const { existsSync, readFileSync: fsRead } = await import('node:fs')
+      const MINING_FILES_REL = ['data/mining-users.json', 'data/mining-community.json']
+      const files = MINING_FILES_REL
+        .filter(f => existsSync(resolve(cwd, f)))
+        .map(f => ({ path: f, content: fsRead(resolve(cwd, f), 'utf8') }))
+
+      if (files.length === 0) {
+        return { success: false, alreadyBackedUp: false, logs: [...logs, '✗ No mining files found.'], filesCommitted: [] }
+      }
+      logs.push(`→ Pushing ${files.length} mining file(s) via API…`)
+      try {
+        const msg = `Mining data snapshot (${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC)`
+        const result = await commitFiles(files, msg)
+        logs.push(`✓ Committed — SHA: ${result.sha.slice(0, 7)}`)
+        markAlreadyCommitted()
+        return { success: true, alreadyBackedUp: false, logs, filesCommitted: files.map(f => f.path) }
+      } catch (e: any) {
+        logs.push(`✗ API push failed: ${(e as Error).message}`)
+        return { success: false, alreadyBackedUp: false, logs, filesCommitted: [] }
       }
     }
 
