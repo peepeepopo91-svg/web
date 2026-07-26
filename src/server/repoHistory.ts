@@ -4,7 +4,7 @@
 
 import { createServerFn } from '@tanstack/react-start'
 import { resolveGitHubToken } from './tokenStore'
-import { readRepoConfig } from './repoConfig'
+import { readRepoConfig } from './repoConfigUtil'
 
 const BASE = 'https://api.github.com'
 
