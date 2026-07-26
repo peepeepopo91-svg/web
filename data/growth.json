@@ -84,6 +84,28 @@
         "Windows": 5
       },
       "peakConcurrent": 4
+    },
+    "2026-07-26": {
+      "pageViews": 5,
+      "uniqueSessions": 2,
+      "pages": {
+        "/": 5
+      },
+      "referrers": {
+        "Referral": 5
+      },
+      "devices": {
+        "Desktop": 5
+      },
+      "browsers": {
+        "Chrome": 1,
+        "Firefox": 4
+      },
+      "os": {
+        "Linux": 1,
+        "Windows": 4
+      },
+      "peakConcurrent": 2
     }
   }
 }
