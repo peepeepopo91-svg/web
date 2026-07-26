@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { load as yamlLoad, dump as yamlDump } from 'js-yaml'
 import { getRepoStatus, commitFiles } from './github'
 import { resolveTokenSource, persistToken, eraseToken } from './tokenStore'
+import { readRepoConfig } from './repoConfigUtil'
 import {
   markAlreadyCommitted,
   setBackupEnabled,
@@ -26,10 +27,7 @@ import type { HomepageConfig } from '../store/homepageStore'
 
 const DATA_DIR = resolve(process.cwd(), 'data')
 
-const OWNER  = 'peepeepopo91-svg'
-const REPO   = 'rupa'
-const BRANCH = 'main'
-const BASE   = 'https://api.github.com'
+const BASE = 'https://api.github.com'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -247,8 +245,9 @@ async function ghFetch(token: string, path: string, opts?: RequestInit): Promise
 // Fetch file content from GitHub (base64-encoded via Contents API)
 async function fetchRemoteFile(token: string, repoPath: string): Promise<string | null> {
   try {
+    const { owner, repo, branch } = readRepoConfig()
     const res = await fetch(
-      `${BASE}/repos/${OWNER}/${REPO}/contents/${repoPath}?ref=${BRANCH}`,
+      `${BASE}/repos/${owner}/${repo}/contents/${repoPath}?ref=${branch}`,
       { headers: buildGHHeaders(token) },
     )
     if (!res.ok) return null
@@ -363,14 +362,15 @@ export const validateAllData = createServerFn({ method: 'GET' }).handler(
     let repoReachable = false
     let branchExists  = false
     if (_resolved) {
+      const { owner, repo, branch } = readRepoConfig()
       try {
-        const repoRes = await fetch(`${BASE}/repos/${OWNER}/${REPO}`, {
+        const repoRes = await fetch(`${BASE}/repos/${owner}/${repo}`, {
           headers: buildGHHeaders(_resolved.token),
         })
         repoReachable = repoRes.ok
         if (repoReachable) {
           const branchRes = await fetch(
-            `${BASE}/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`,
+            `${BASE}/repos/${owner}/${repo}/git/refs/heads/${branch}`,
             { headers: buildGHHeaders(_resolved.token) },
           )
           branchExists = branchRes.ok
@@ -433,12 +433,13 @@ export const checkGitHubConnection = createServerFn({ method: 'GET' }).handler(
     } catch { /* offline */ }
 
     // Repo
+    const { owner: cfgOwner, repo: cfgRepo, branch: cfgBranch } = readRepoConfig()
     try {
-      const repoRes = await fetch(`${BASE}/repos/${OWNER}/${REPO}`, { headers: buildGHHeaders(token) })
+      const repoRes = await fetch(`${BASE}/repos/${cfgOwner}/${cfgRepo}`, { headers: buildGHHeaders(token) })
       if (repoRes.ok) {
         out.repoExists = true
-        const repo = await repoRes.json() as { permissions?: { push?: boolean } }
-        out.writePermission = repo.permissions?.push ?? false
+        const repoData = await repoRes.json() as { permissions?: { push?: boolean } }
+        out.writePermission = repoData.permissions?.push ?? false
       }
     } catch { /* */ }
 
@@ -446,7 +447,7 @@ export const checkGitHubConnection = createServerFn({ method: 'GET' }).handler(
     if (out.repoExists) {
       try {
         const brRes = await fetch(
-          `${BASE}/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`,
+          `${BASE}/repos/${cfgOwner}/${cfgRepo}/git/refs/heads/${cfgBranch}`,
           { headers: buildGHHeaders(token) },
         )
         out.branchExists = brRes.ok
@@ -585,7 +586,8 @@ export const fetchCommitHistory = createServerFn({ method: 'GET' }).handler(
   async (): Promise<CommitEntry[]> => {
     const token = resolveTokenSource()?.token
     if (!token) throw new Error('AUTH_ERROR: GITHUB_TOKEN not configured')
-    const list = await ghFetch(token, `/repos/${OWNER}/${REPO}/commits?sha=${BRANCH}&per_page=30`)
+    const { owner, repo, branch } = readRepoConfig()
+    const list = await ghFetch(token, `/repos/${owner}/${repo}/commits?sha=${branch}&per_page=30`)
     return (list as any[]).map(c => ({
       sha:      c.sha as string,
       shortSha: (c.sha as string).slice(0, 7),
@@ -605,20 +607,21 @@ export const restoreToCommit = createServerFn({ method: 'POST' })
     if (!token) throw new Error('AUTH_ERROR: GITHUB_TOKEN not configured')
 
     // Resolve full SHA if short
-    const targetCommit  = await ghFetch(token, `/repos/${OWNER}/${REPO}/git/commits/${data.sha}`)
+    const { owner, repo, branch } = readRepoConfig()
+    const targetCommit  = await ghFetch(token, `/repos/${owner}/${repo}/git/commits/${data.sha}`)
     const targetTreeSha = targetCommit.tree.sha as string
 
-    const ref      = await ghFetch(token, `/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`)
+    const ref      = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/${branch}`)
     const headSha  = ref.object.sha as string
 
     const message = data.message ?? `Revert to ${(data.sha as string).slice(0, 7)}`
 
-    const newCommit = await ghFetch(token, `/repos/${OWNER}/${REPO}/git/commits`, {
+    const newCommit = await ghFetch(token, `/repos/${owner}/${repo}/git/commits`, {
       method: 'POST',
       body:   JSON.stringify({ message, tree: targetTreeSha, parents: [headSha] }),
     })
 
-    await ghFetch(token, `/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`, {
+    await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
       method: 'PATCH',
       body:   JSON.stringify({ sha: newCommit.sha }),
     })

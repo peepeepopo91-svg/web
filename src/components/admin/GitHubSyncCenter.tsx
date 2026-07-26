@@ -40,6 +40,13 @@ import {
   type TokenInfo,
   type TokenTestResult,
 } from '../../server/dataFiles'
+import {
+  getRepoConfig,
+  saveRepoConfig,
+  testRepoConnection,
+  type RepoConfig,
+  type RepoConnectionTest,
+} from '../../server/repoConfig'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -534,7 +541,7 @@ function AutoBackupPanel() {
 
 // ─── Git Diagnostics Panel ────────────────────────────────────────────────────
 
-function GitDiagnosticsPanel() {
+function GitDiagnosticsPanel({ repoLabel = 'peepeepopo91-svg/rupa' }: { repoLabel?: string }) {
   const [diag,    setDiag]    = useState<GitDiagnostics | null>(null)
   const [loading, setLoading] = useState(false)
   const [fixing,  setFixing]  = useState(false)
@@ -675,7 +682,7 @@ function GitDiagnosticsPanel() {
                 </p>
                 <div className="flex items-center gap-2 text-[10px] text-gray-600 pt-0.5">
                   <span className="text-green-400 font-bold">✓</span>
-                  <span>Repository: peepeepopo91-svg/rupa</span>
+                  <span>Repository: {repoLabel}</span>
                   <span className="mx-1 text-gray-700">·</span>
                   <span className="text-green-400 font-bold">✓</span>
                   <span>Branch: {diag.branch}</span>
@@ -874,7 +881,7 @@ function GitDiagnosticsPanel() {
                 <span>GitHub token configured</span>
                 <span className="mx-1 text-gray-700">·</span>
                 <span className="text-green-400 font-bold">✓</span>
-                <span>Repository: peepeepopo91-svg/rupa</span>
+                <span>Repository: {repoLabel}</span>
                 <span className="mx-1 text-gray-700">·</span>
                 <span className="text-green-400 font-bold">✓</span>
                 <span>Branch: {diag.branch}</span>
@@ -990,7 +997,7 @@ function GitDiagnosticsPanel() {
 
 // ─── Advanced Git Panel ───────────────────────────────────────────────────────
 
-function AdvancedGitPanel() {
+function AdvancedGitPanel({ repoLabel = 'peepeepopo91-svg/rupa', branch = 'main' }: { repoLabel?: string; branch?: string }) {
   const [log, setLog]         = useState<LogLine[]>([])
   const [running, setRunning] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<string | null>(null)
@@ -1047,7 +1054,7 @@ function AdvancedGitPanel() {
       action: () => runOp('status', async () => {
         push('Checking repository status…', 'step')
         const cmp = await compareLocalToRemote()
-        push(`Branch: main  Repository: peepeepopo91-svg/rupa`, 'info')
+        push(`Branch: ${branch}  Repository: ${repoLabel}`, 'info')
         push('', 'dim')
         cmp.forEach(c => {
           if (c.isSame) push(`  = ${c.file} (up to date)`, 'dim')
@@ -1069,7 +1076,7 @@ function AdvancedGitPanel() {
       action: () => runOp('log', async () => {
         push('Fetching commit log…', 'step')
         const commits = await fetchCommitHistory()
-        push(`Commit log for peepeepopo91-svg/rupa@main:`, 'info')
+        push(`Commit log for ${repoLabel}@${branch}:`, 'info')
         push('', 'dim')
         commits.slice(0, 10).forEach(c => {
           push(`${c.shortSha}  ${c.message.slice(0, 55).padEnd(55)}  ${fmtDate(c.date)}`, 'info')
@@ -1697,6 +1704,7 @@ export function GitHubSyncCenter({ admin: _admin }: { admin: string }) {
   const [connChecks,  setConnChecks]  = useState<ConnectionChecks | null>(null)
   const [commits,     setCommits]     = useState<CommitEntry[]>([])
   const [syncHistory, setSyncHistory] = useState<SyncHistoryEntry[]>([])
+  const [repoConfig,  setRepoConfig]  = useState<RepoConfig | null>(null)
   const [, setTick]                   = useState(0)
 
   const [loadingStatus, setLoadingStatus] = useState(true)
@@ -1717,14 +1725,16 @@ export function GitHubSyncCenter({ admin: _admin }: { admin: string }) {
   const refresh = useCallback(async () => {
     setLoadingStatus(true)
     try {
-      const [status, conn, hist] = await Promise.all([
+      const [status, conn, hist, cfg] = await Promise.all([
         fetchRepoStatus(),
         checkGitHubConnection(),
         fetchSyncHistory(),
+        getRepoConfig(),
       ])
       setRepoStatus(status as RepoStatus)
       setConnChecks(conn)
       setSyncHistory(hist)
+      setRepoConfig(cfg)
     } catch { /* ignore */ }
     finally { setLoadingStatus(false) }
   }, [])
@@ -1834,7 +1844,7 @@ export function GitHubSyncCenter({ admin: _admin }: { admin: string }) {
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/4 border border-white/8 text-[10px] font-mono text-gray-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#00BFFF]/60" />
-                peepeepopo91-svg/rupa
+                {repoConfig ? `${repoConfig.owner}/${repoConfig.repo}` : 'loading…'}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-purple-500/8 border border-purple-500/15 text-[10px] font-mono text-purple-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-purple-400/60" />
@@ -1878,7 +1888,7 @@ export function GitHubSyncCenter({ admin: _admin }: { admin: string }) {
             {/* Row 1 */}
             <SyncStatCell
               label="Repository"
-              value="peepeepopo91-svg/rupa"
+              value={repoConfig ? `${repoConfig.owner}/${repoConfig.repo}` : '…'}
               valueClass="text-gray-200 text-[11px]"
               icon={
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#00BFFF]">
@@ -2061,7 +2071,7 @@ export function GitHubSyncCenter({ admin: _admin }: { admin: string }) {
       </div>
 
       {/* ── Git Diagnostics ──────────────────────────────────────────────────── */}
-      <GitDiagnosticsPanel />
+      <GitDiagnosticsPanel repoLabel={repoConfig ? `${repoConfig.owner}/${repoConfig.repo}` : 'loading…'} />
 
       {/* ── Auto-Backup ──────────────────────────────────────────────────────── */}
       <AutoBackupPanel />
@@ -2103,7 +2113,10 @@ export function GitHubSyncCenter({ admin: _admin }: { admin: string }) {
         open={advancedOpen}
         onToggle={() => setAdvancedOpen(v => !v)}
       >
-        <AdvancedGitPanel />
+        <AdvancedGitPanel
+          repoLabel={repoConfig ? `${repoConfig.owner}/${repoConfig.repo}` : 'loading…'}
+          branch={repoConfig?.branch ?? 'main'}
+        />
       </CollapsibleSection>
 
     </div>

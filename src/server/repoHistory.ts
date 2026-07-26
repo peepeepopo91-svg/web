@@ -4,11 +4,9 @@
 
 import { createServerFn } from '@tanstack/react-start'
 import { resolveGitHubToken } from './tokenStore'
+import { readRepoConfig } from './repoConfig'
 
-const OWNER  = 'peepeepopo91-svg'
-const REPO   = 'rupa'
-const BRANCH = 'main'
-const BASE   = 'https://api.github.com'
+const BASE = 'https://api.github.com'
 
 function getToken(): string {
   const token = resolveGitHubToken()
@@ -88,7 +86,8 @@ export interface ResetResult {
 /** Fetch current repository information from GitHub. */
 export const getRepoInfo = createServerFn({ method: 'GET' }).handler(async (): Promise<RepoInfo> => {
   const token = resolveGitHubToken()
-  const base = { owner: OWNER, repo: REPO, branch: BRANCH, remoteUrl: `https://github.com/${OWNER}/${REPO}` }
+  const { owner, repo, branch } = readRepoConfig()
+  const base = { owner, repo, branch, remoteUrl: `https://github.com/${owner}/${repo}` }
 
   if (!token) {
     return { ...base, commitCount: 0, headSha: '', headShort: '', lastMessage: '', lastDate: '', lastAuthor: '', treeSha: '', authAvailable: false, repoAccessible: false }
@@ -96,12 +95,12 @@ export const getRepoInfo = createServerFn({ method: 'GET' }).handler(async (): P
 
   try {
     // HEAD commit info
-    const headData = await ghFetch(`/repos/${OWNER}/${REPO}/commits/${BRANCH}`)
+    const headData = await ghFetch(`/repos/${owner}/${repo}/commits/${branch}`)
     const headSha: string = headData.sha
     const treeSha: string = headData.commit.tree.sha
 
     // Commit count via Link header pagination trick
-    const countRes = await ghFetchRaw(`/repos/${OWNER}/${REPO}/commits?sha=${BRANCH}&per_page=1`)
+    const countRes = await ghFetchRaw(`/repos/${owner}/${repo}/commits?sha=${branch}&per_page=1`)
     let commitCount = 1
     if (countRes.ok) {
       const link = countRes.headers.get('Link') || ''
@@ -110,13 +109,13 @@ export const getRepoInfo = createServerFn({ method: 'GET' }).handler(async (): P
     }
 
     // Repo metadata for URL
-    const repoData = await ghFetch(`/repos/${OWNER}/${REPO}`)
+    const repoData = await ghFetch(`/repos/${owner}/${repo}`)
 
     return {
-      owner: OWNER,
-      repo: REPO,
-      branch: BRANCH,
-      remoteUrl: repoData.html_url ?? `https://github.com/${OWNER}/${REPO}`,
+      owner,
+      repo,
+      branch,
+      remoteUrl: repoData.html_url ?? `https://github.com/${owner}/${repo}`,
       commitCount,
       headSha,
       headShort: headSha.slice(0, 7),
@@ -143,12 +142,13 @@ export const getRepoInfo = createServerFn({ method: 'GET' }).handler(async (): P
 export const createBackupBranch = createServerFn({ method: 'POST' })
   .inputValidator((data: unknown) => data as { timestamp: string })
   .handler(async ({ data }): Promise<BackupResult> => {
+    const { owner, repo, branch } = readRepoConfig()
     const branchName = `backup-history-${data.timestamp}`
     try {
-      const ref = await ghFetch(`/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`)
+      const ref = await ghFetch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`)
       const sha: string = ref.object.sha
 
-      await ghFetch(`/repos/${OWNER}/${REPO}/git/refs`, {
+      await ghFetch(`/repos/${owner}/${repo}/git/refs`, {
         method: 'POST',
         body: JSON.stringify({ ref: `refs/heads/${branchName}`, sha }),
       })
@@ -168,20 +168,21 @@ export const performHistoryReset = createServerFn({ method: 'POST' })
   .inputValidator((data: unknown) => data as { commitMessage: string; oldCommitCount: number; backupBranchName?: string })
   .handler(async ({ data }): Promise<ResetResult> => {
     const steps: ResetStep[] = []
+    const { owner, repo, branch } = readRepoConfig()
 
     try {
       // Step 1 — Verify repository state
-      const ref = await ghFetch(`/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`)
+      const ref = await ghFetch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`)
       const currentSha: string = ref.object.sha
       steps.push({ id: 'verify', label: 'Repository state verified', status: 'ok', detail: `HEAD: ${currentSha.slice(0, 7)}` })
 
       // Step 2 — Capture current file tree
-      const headCommit = await ghFetch(`/repos/${OWNER}/${REPO}/git/commits/${currentSha}`)
+      const headCommit = await ghFetch(`/repos/${owner}/${repo}/git/commits/${currentSha}`)
       const treeSha: string = headCommit.tree.sha
       steps.push({ id: 'tree', label: 'Current file tree captured', status: 'ok', detail: `Tree: ${treeSha.slice(0, 7)}` })
 
       // Step 3 — Create orphan commit (parents: [])
-      const newCommit = await ghFetch(`/repos/${OWNER}/${REPO}/git/commits`, {
+      const newCommit = await ghFetch(`/repos/${owner}/${repo}/git/commits`, {
         method: 'POST',
         body: JSON.stringify({
           message: data.commitMessage,
@@ -193,14 +194,14 @@ export const performHistoryReset = createServerFn({ method: 'POST' })
       steps.push({ id: 'commit', label: 'New initial commit created', status: 'ok', detail: `SHA: ${newSha.slice(0, 7)}` })
 
       // Step 4 — Force-update branch ref
-      await ghFetch(`/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`, {
+      await ghFetch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
         method: 'PATCH',
         body: JSON.stringify({ sha: newSha, force: true }),
       })
-      steps.push({ id: 'push', label: `Force pushed to ${BRANCH}`, status: 'ok', detail: `${currentSha.slice(0, 7)} → ${newSha.slice(0, 7)}` })
+      steps.push({ id: 'push', label: `Force pushed to ${branch}`, status: 'ok', detail: `${currentSha.slice(0, 7)} → ${newSha.slice(0, 7)}` })
 
       // Step 5 — Verify sync
-      const verifyRef = await ghFetch(`/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`)
+      const verifyRef = await ghFetch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`)
       const verifiedSha: string = verifyRef.object.sha
       if (verifiedSha !== newSha) throw new Error(`Verification mismatch: expected ${newSha.slice(0, 7)}, got ${verifiedSha.slice(0, 7)}`)
       steps.push({ id: 'verify2', label: 'Synchronization verified', status: 'ok', detail: `Remote HEAD: ${verifiedSha.slice(0, 7)}` })
@@ -211,7 +212,7 @@ export const performHistoryReset = createServerFn({ method: 'POST' })
         oldCommitCount: data.oldCommitCount,
         newCommitSha: newSha,
         newCommitShort: newSha.slice(0, 7),
-        branch: BRANCH,
+        branch,
         backupBranch: data.backupBranchName,
       }
     } catch (e: any) {
@@ -222,7 +223,7 @@ export const performHistoryReset = createServerFn({ method: 'POST' })
         oldCommitCount: data.oldCommitCount,
         newCommitSha: '',
         newCommitShort: '',
-        branch: BRANCH,
+        branch,
         error: e.message,
       }
     }

@@ -1,13 +1,12 @@
 // ─── GitHub Git Data API — server-only ───────────────────────────────────────
 // Uses the low-level Git Data API to create a single atomic commit for
 // multiple file changes. Never exposes GITHUB_TOKEN to the client.
+// Repository target is read from data/github-config.json at call time.
 
 import { resolveGitHubToken } from './tokenStore'
+import { readRepoConfig }     from './repoConfigUtil'
 
-const OWNER  = 'peepeepopo91-svg'
-const REPO   = 'rupa'
-const BRANCH = 'main'
-const BASE   = 'https://api.github.com'
+const BASE = 'https://api.github.com'
 
 function getToken(): string {
   const token = resolveGitHubToken()
@@ -17,9 +16,9 @@ function getToken(): string {
 
 function buildHeaders(): Record<string, string> {
   return {
-    Authorization: `Bearer ${getToken()}`,
-    Accept: 'application/vnd.github+json',
-    'Content-Type': 'application/json',
+    Authorization:          `Bearer ${getToken()}`,
+    Accept:                 'application/vnd.github+json',
+    'Content-Type':         'application/json',
     'X-GitHub-Api-Version': '2022-11-28',
   }
 }
@@ -41,18 +40,20 @@ export async function commitFiles(
 ): Promise<{ sha: string }> {
   if (files.length === 0) throw new Error('commitFiles: no files provided')
 
+  const { owner, repo, branch } = readRepoConfig()
+
   // 1. Current HEAD commit SHA
-  const ref = await ghFetch(`/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`)
+  const ref     = await ghFetch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`)
   const headSha: string = ref.object.sha
 
   // 2. Current commit's tree SHA
-  const headCommit = await ghFetch(`/repos/${OWNER}/${REPO}/git/commits/${headSha}`)
+  const headCommit   = await ghFetch(`/repos/${owner}/${repo}/git/commits/${headSha}`)
   const baseTreeSha: string = headCommit.tree.sha
 
   // 3. Create a blob for each file (in parallel)
   const blobs = await Promise.all(
     files.map(f =>
-      ghFetch(`/repos/${OWNER}/${REPO}/git/blobs`, {
+      ghFetch(`/repos/${owner}/${repo}/git/blobs`, {
         method: 'POST',
         body: JSON.stringify({ content: f.content, encoding: 'utf-8' }),
       }),
@@ -60,7 +61,7 @@ export async function commitFiles(
   )
 
   // 4. Create a new tree
-  const newTree = await ghFetch(`/repos/${OWNER}/${REPO}/git/trees`, {
+  const newTree = await ghFetch(`/repos/${owner}/${repo}/git/trees`, {
     method: 'POST',
     body: JSON.stringify({
       base_tree: baseTreeSha,
@@ -68,19 +69,19 @@ export async function commitFiles(
         path: f.path,
         mode: '100644',
         type: 'blob',
-        sha: blobs[i].sha,
+        sha:  blobs[i].sha,
       })),
     }),
   })
 
   // 5. Create the commit
-  const newCommit = await ghFetch(`/repos/${OWNER}/${REPO}/git/commits`, {
+  const newCommit = await ghFetch(`/repos/${owner}/${repo}/git/commits`, {
     method: 'POST',
     body: JSON.stringify({ message, tree: newTree.sha, parents: [headSha] }),
   })
 
   // 6. Advance the branch ref
-  await ghFetch(`/repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`, {
+  await ghFetch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
     method: 'PATCH',
     body: JSON.stringify({ sha: newCommit.sha }),
   })
@@ -91,24 +92,29 @@ export async function commitFiles(
 // ─── Repo status (latest commit) ─────────────────────────────────────────────
 
 export interface RepoStatus {
-  connected: boolean
-  branch: string
+  connected:    boolean
+  branch:       string
+  owner:        string
+  repo:         string
   latestCommit: { message: string; sha: string; date: string } | null
 }
 
 export async function getRepoStatus(): Promise<RepoStatus> {
+  const { owner, repo, branch } = readRepoConfig()
   try {
-    const data = await ghFetch(`/repos/${OWNER}/${REPO}/commits/${BRANCH}`)
+    const data = await ghFetch(`/repos/${owner}/${repo}/commits/${branch}`)
     return {
       connected: true,
-      branch: BRANCH,
+      branch,
+      owner,
+      repo,
       latestCommit: {
         message: data.commit.message,
-        sha: (data.sha as string).slice(0, 7),
-        date: data.commit.author.date,
+        sha:     (data.sha as string).slice(0, 7),
+        date:    data.commit.author.date,
       },
     }
   } catch {
-    return { connected: false, branch: BRANCH, latestCommit: null }
+    return { connected: false, branch, owner, repo, latestCommit: null }
   }
 }
