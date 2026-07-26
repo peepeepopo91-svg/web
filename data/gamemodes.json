@@ -4,48 +4,48 @@
     "label": "Mace",
     "icon": "/icons/mace.png",
     "fallback": "🔨",
-    "iconSize": 36
+    "iconSize": 30
   },
   {
     "key": "sword",
     "label": "Sword",
     "icon": "/icons/sword.png",
     "fallback": "⚔",
-    "iconSize": 24
+    "iconSize": 22
   },
   {
     "key": "axe",
     "label": "Axe",
     "icon": "/icons/axe.png",
     "fallback": "🪓",
-    "iconSize": 34
+    "iconSize": 30
   },
   {
     "key": "crystal",
     "label": "Crystal",
     "icon": "/icons/crystal.png",
     "fallback": "💎",
-    "iconSize": 31
+    "iconSize": 26
   },
   {
     "key": "uhc",
     "label": "UHC",
     "icon": "/icons/uhc.png",
     "fallback": "🏆",
-    "iconSize": 33
+    "iconSize": 29
   },
   {
     "key": "nethpot",
     "label": "Nethpot",
     "icon": "/icons/nethpot.png",
     "fallback": "🧪",
-    "iconSize": 31
+    "iconSize": 27
   },
   {
     "key": "diapot",
     "label": "Diapot",
     "icon": "/icons/diapot.png",
     "fallback": "⚗",
-    "iconSize": 33
+    "iconSize": 28
   }
 ]
