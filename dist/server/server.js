@@ -76,7 +76,7 @@ function getResponse() {
 }
 var HEADERS = { TSS_SHELL: "X-TSS_SHELL" };
 async function getStartManifest(matchedRoutes) {
-  const { tsrStartManifest } = await import("./assets/_tanstack-start-manifest_v-LcRrnnPg.js");
+  const { tsrStartManifest } = await import("./assets/_tanstack-start-manifest_v-DMpVz563.js");
   const startManifest = tsrStartManifest();
   const rootRoute = startManifest.routes[rootRouteId] = startManifest.routes[rootRouteId] || {};
   rootRoute.assets = rootRoute.assets || [];
@@ -349,6 +349,18 @@ const manifest = {
     functionName: "duplicateTournament_createServerFn_handler",
     importer: () => import("./assets/tournamentServer-DWyzOkul.js")
   },
+  "95844de006e2c9e2d7e983992605c64a3bd53c2c2493a031f1201548f14295ca": {
+    functionName: "recordPageView_createServerFn_handler",
+    importer: () => import("./assets/growthServer-C4qetAod.js")
+  },
+  "23540e98c4b6ee3b45af87467ac670e6c58fe789d85b5a414633bff74fdfe852": {
+    functionName: "heartbeatSession_createServerFn_handler",
+    importer: () => import("./assets/growthServer-C4qetAod.js")
+  },
+  "ac8e1029c9877c230f6e80aedc0bb5bb727246e5f9989f4b559a55dccfe8a0ad": {
+    functionName: "getGrowthStats_createServerFn_handler",
+    importer: () => import("./assets/growthServer-C4qetAod.js")
+  },
   "1cd5592b008228410e370e8fdc87f51b9cbd66cb105cb8bbc964ab8ddb0ce73d": {
     functionName: "validateAdminCredentials_createServerFn_handler",
     importer: () => import("./assets/adminAuth-BctiYdmc.js")
@@ -376,18 +388,6 @@ const manifest = {
   "53c321d975df4a591bbd4a2e7e8381e368580bccea0f3accc62ac1e31636fb4e": {
     functionName: "checkAdminToken_createServerFn_handler",
     importer: () => import("./assets/adminAuth-BctiYdmc.js")
-  },
-  "95844de006e2c9e2d7e983992605c64a3bd53c2c2493a031f1201548f14295ca": {
-    functionName: "recordPageView_createServerFn_handler",
-    importer: () => import("./assets/growthServer-C4qetAod.js")
-  },
-  "23540e98c4b6ee3b45af87467ac670e6c58fe789d85b5a414633bff74fdfe852": {
-    functionName: "heartbeatSession_createServerFn_handler",
-    importer: () => import("./assets/growthServer-C4qetAod.js")
-  },
-  "ac8e1029c9877c230f6e80aedc0bb5bb727246e5f9989f4b559a55dccfe8a0ad": {
-    functionName: "getGrowthStats_createServerFn_handler",
-    importer: () => import("./assets/growthServer-C4qetAod.js")
   },
   "09ab9a99c03428f041005f7ff3c91460b1fdb4575960c02120a4e5ff70f520da": {
     functionName: "getEconomyConfig_createServerFn_handler",
@@ -452,10 +452,6 @@ const manifest = {
   "8d5f143a680dcec8b626745cb47685992d8086e2e59ff3b07c97174e40abdbd4": {
     functionName: "adminResetRenewal_createServerFn_handler",
     importer: () => import("./assets/miningServer-97COSAx6.js")
-  },
-  "8ebbe34d9c3cf8d74d5c419c61649060ec2211be4f88f412177da3ea729967ce": {
-    functionName: "validateCredentials_createServerFn_handler",
-    importer: () => import("./assets/auth-7I7WVozf.js")
   },
   "62bb95e491f70187696af701a08661091cd73ae081ddd6e137bc93b3795769bd": {
     functionName: "getShopItems_createServerFn_handler",
@@ -528,6 +524,10 @@ const manifest = {
   "70ee23244a1cf7dcbbb4c2b3d194f1c659076ba93fded5d65385deab0c9c3d0a": {
     functionName: "exportEarningsData_createServerFn_handler",
     importer: () => import("./assets/earningsServer-rWDZ6ymZ.js")
+  },
+  "8ebbe34d9c3cf8d74d5c419c61649060ec2211be4f88f412177da3ea729967ce": {
+    functionName: "validateCredentials_createServerFn_handler",
+    importer: () => import("./assets/auth-7I7WVozf.js")
   },
   "c6db069f27f7f8f7aa788b0f630ee3e9cdc9b10047ec1783d1514b41bdd96316": {
     functionName: "getRepoInfo_createServerFn_handler",
@@ -1294,7 +1294,7 @@ var baseManifestPromise;
 var cachedFinalManifestPromise;
 async function loadEntries() {
   const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-    import("./assets/router-4Yeb1nX_.js").then((n) => n.S),
+    import("./assets/router-D8sMuNrU.js").then((n) => n.S),
     import("./assets/start-HYkvq4Ni.js"),
     import("./assets/__23tanstack-start-plugin-adapters-Cwee5PKy.js")
   ]);

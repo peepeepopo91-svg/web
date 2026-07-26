@@ -86,23 +86,24 @@
       "peakConcurrent": 4
     },
     "2026-07-26": {
-      "pageViews": 11,
-      "uniqueSessions": 5,
+      "pageViews": 13,
+      "uniqueSessions": 6,
       "pages": {
-        "/": 11
+        "/": 13
       },
       "referrers": {
-        "Referral": 11
+        "Referral": 12,
+        "Direct": 1
       },
       "devices": {
-        "Desktop": 11
+        "Desktop": 13
       },
       "browsers": {
-        "Chrome": 2,
-        "Firefox": 9
+        "Chrome": 3,
+        "Firefox": 10
       },
       "os": {
-        "Linux": 3,
+        "Linux": 5,
         "Windows": 8
       },
       "peakConcurrent": 2
