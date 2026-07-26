@@ -7,7 +7,7 @@
 
 import { serve } from 'srvx/node'
 import { readFile, stat } from 'node:fs/promises'
-import { join, extname } from 'node:path'
+import { join, extname, resolve } from 'node:path'
 
 // Dynamically import the built TanStack Start SSR bundle
 const { default: tsServer } = await import('./dist/server/server.js')
@@ -89,6 +89,29 @@ serve({
     // ── SSE endpoints ───────────────────────────────────────────────────────
     if ((url.pathname === '/api/mining-events' || url.pathname === '/api/tournament-events') && req.method === 'GET') {
       return handleSSE(req)
+    }
+
+    // ── Player API ──────────────────────────────────────────────────────────
+    // GET /api/<playername> → player tiers as JSON
+    const playerMatch = url.pathname.match(/^\/api\/([^/]+)$/)
+    if (playerMatch && req.method === 'GET') {
+      const name = decodeURIComponent(playerMatch[1])
+      const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      try {
+        const raw = await readFile(resolve(process.cwd(), 'data/players.json'), 'utf-8')
+        const players = JSON.parse(raw)
+        const player = players.find(p => p.name.toLowerCase() === name.toLowerCase())
+        if (!player) {
+          return new Response(JSON.stringify({ error: 'Player not found', player: name }), { status: 404, headers })
+        }
+        const tiers = {}
+        for (const [mode, tier] of Object.entries(player.ranks)) {
+          tiers[mode] = (tier === 'NONE' || tier === 'None' || tier === 'none') ? null : tier
+        }
+        return new Response(JSON.stringify({ player: player.name, region: player.region, tiers }), { status: 200, headers })
+      } catch {
+        return new Response(JSON.stringify({ error: 'Failed to read player data' }), { status: 500, headers })
+      }
     }
 
     // ── Static files ────────────────────────────────────────────────────────
