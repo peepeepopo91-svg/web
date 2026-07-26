@@ -42,10 +42,15 @@ function GamemodeIcon({ gm, tier }: { gm: Gamemode; tier?: string | null }) {
           <img
             src={gm.icon}
             alt={gm.label}
-            width={18}
-            height={18}
-            className="w-[18px] h-[18px] object-contain"
-            style={{ imageRendering: 'pixelated', filter: ranked && hovered ? 'drop-shadow(0 0 4px rgba(0,191,255,0.6))' : 'none' }}
+            width={gm.iconSize ?? 18}
+            height={gm.iconSize ?? 18}
+            className="object-contain"
+            style={{
+              width: `${gm.iconSize ?? 18}px`,
+              height: `${gm.iconSize ?? 18}px`,
+              imageRendering: 'pixelated',
+              filter: ranked && hovered ? 'drop-shadow(0 0 4px rgba(0,191,255,0.6))' : 'none',
+            }}
             onError={() => setIconError(true)}
           />
         ) : (

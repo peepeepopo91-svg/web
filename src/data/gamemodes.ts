@@ -8,6 +8,8 @@ export interface Gamemode {
   icon: string
   /** Shown if the PNG fails to load. */
   fallback: string
+  /** Icon render size in pixels (applied to the img element). Default: 18. */
+  iconSize?: number
 }
 
 export const gamemodes: Gamemode[] = [

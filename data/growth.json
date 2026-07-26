@@ -86,25 +86,26 @@
       "peakConcurrent": 4
     },
     "2026-07-26": {
-      "pageViews": 40,
-      "uniqueSessions": 19,
+      "pageViews": 50,
+      "uniqueSessions": 22,
       "pages": {
-        "/": 34,
-        "/tier-tagger": 6
+        "/": 43,
+        "/tier-tagger": 6,
+        "/rankings": 1
       },
       "referrers": {
-        "Referral": 34,
-        "Direct": 6
+        "Referral": 35,
+        "Direct": 15
       },
       "devices": {
-        "Desktop": 40
+        "Desktop": 50
       },
       "browsers": {
-        "Chrome": 8,
-        "Firefox": 32
+        "Chrome": 9,
+        "Firefox": 41
       },
       "os": {
-        "Linux": 32,
+        "Linux": 42,
         "Windows": 8
       },
       "peakConcurrent": 11

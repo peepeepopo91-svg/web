@@ -816,11 +816,24 @@ async function pushAllDataViaApi(logs: string[]): Promise<FixDivergenceResult> {
     return { success: false, action: 'error', logs, ahead: 0, behind: 0 }
   }
 
-  const files: Array<{ path: string; content: string }> = []
+  const files: Array<{ path: string; content: string; encoding?: 'utf-8' | 'base64' }> = []
   for (const rel of SYNC_DATA_FILES) {
     const abs = resolve(process.cwd(), rel)
     if (existsSync(abs)) {
       files.push({ path: rel, content: fsRead(abs, 'utf8') })
+    }
+  }
+
+  // Include custom gamemode icon files from public/icons/ as base64 blobs
+  const { readdirSync } = await import('node:fs')
+  const iconsDir = resolve(process.cwd(), 'public', 'icons')
+  if (existsSync(iconsDir)) {
+    for (const fname of readdirSync(iconsDir)) {
+      if (/\.(png|jpg|jpeg|gif|webp)$/i.test(fname)) {
+        const abs = resolve(iconsDir, fname)
+        const b64 = (fsRead(abs) as unknown as Buffer).toString('base64')
+        files.push({ path: `public/icons/${fname}`, content: b64, encoding: 'base64' })
+      }
     }
   }
 

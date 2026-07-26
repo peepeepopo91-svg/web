@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { getGamemodes, saveGamemodes, resetGamemodes } from '../../store/playersStore'
 import type { Gamemode } from '../../data/gamemodes'
 import { addLog } from '../../store/adminStore'
+import { uploadGamemodeIcon } from '../../server/gamemodeIconServer'
 
 interface Props { admin: string }
 
@@ -41,6 +42,8 @@ export function GamemodeManager({ admin }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
   const [showConfirmReset, setShowConfirmReset] = useState(false)
   const [keyWasEdited, setKeyWasEdited] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   function showToastMsg(msg: string, type: 'success' | 'error' = 'success') {
     setToast({ msg, type })
@@ -112,6 +115,32 @@ export function GamemodeManager({ admin }: Props) {
     setShowConfirmReset(false)
     addLog(admin, 'gamemode:edit', 'Reset gamemodes to defaults')
     showToastMsg('Gamemodes reset to defaults.')
+  }
+
+  async function handleIconUpload(file: File) {
+    if (!editing) return
+    const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+    if (!['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) {
+      showToastMsg('Only PNG, JPG, GIF, or WebP images are supported.', 'error')
+      return
+    }
+    const key = editing.key || toDataKey(editing.label) || 'icon'
+    setUploading(true)
+    try {
+      const b64 = await new Promise<string>((res, rej) => {
+        const reader = new FileReader()
+        reader.onload = () => res(reader.result as string)
+        reader.onerror = rej
+        reader.readAsDataURL(file)
+      })
+      const result = await uploadGamemodeIcon({ data: { key, base64: b64, ext } })
+      setEditing(prev => prev ? { ...prev, icon: result.path } : prev)
+      showToastMsg('Icon uploaded successfully.')
+    } catch (e) {
+      showToastMsg(`Upload failed: ${(e as Error).message}`, 'error')
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (
@@ -197,28 +226,92 @@ export function GamemodeManager({ admin }: Props) {
               )}
             </div>
 
-            {[
-              { key: 'label',    label: 'Display Label', placeholder: 'Sword' },
-              { key: 'icon',     label: 'Icon Path',     placeholder: '/icons/Sword.png' },
-              { key: 'fallback', label: 'Fallback Emoji', placeholder: '⚔' },
-            ].map(f => (
-              <div key={f.key}>
-                <label className="text-xs text-gray-500 uppercase tracking-widest block mb-1.5">{f.label}</label>
-                <input
-                  type="text"
-                  value={(editing as any)[f.key]}
-                  onChange={e => setEditing(prev => {
-                    if (!prev) return prev
-                    const value = e.target.value
-                    const next = { ...prev, [f.key]: value }
-                    if (isNew && f.key === 'label' && !keyWasEdited) next.key = toDataKey(value)
-                    return next
-                  })}
-                  placeholder={f.placeholder}
-                  className="w-full bg-white/3 border border-white/10 hover:border-white/20 focus:border-[#00BFFF]/40 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-all placeholder-gray-700"
-                />
+            {/* Display Label */}
+            <div>
+              <label className="text-xs text-gray-500 uppercase tracking-widest block mb-1.5">Display Label</label>
+              <input
+                type="text"
+                value={editing.label}
+                onChange={e => setEditing(prev => {
+                  if (!prev) return prev
+                  const value = e.target.value
+                  const next = { ...prev, label: value }
+                  if (isNew && !keyWasEdited) next.key = toDataKey(value)
+                  return next
+                })}
+                placeholder="Sword"
+                className="w-full bg-white/3 border border-white/10 hover:border-white/20 focus:border-[#00BFFF]/40 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-all placeholder-gray-700"
+              />
+            </div>
+
+            {/* Icon */}
+            <div>
+              <label className="text-xs text-gray-500 uppercase tracking-widest block mb-2">Icon</label>
+              <div className="flex gap-3 mb-2.5">
+                {/* Live preview */}
+                <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
+                  {editing.icon
+                    ? <img src={editing.icon} alt="preview"
+                        style={{ width: `${editing.iconSize ?? 18}px`, height: `${editing.iconSize ?? 18}px`, imageRendering: 'pixelated' }}
+                        onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+                      />
+                    : <span className="text-2xl">{editing.fallback || '🎮'}</span>
+                  }
+                </div>
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="px-3 py-2 rounded-lg text-xs text-[#00BFFF] border border-[#00BFFF]/20 hover:bg-[#00BFFF]/10 transition-all disabled:opacity-50 text-left"
+                  >
+                    {uploading ? '⏳ Uploading…' : '⬆ Upload Image'}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/gif,image/webp"
+                    className="hidden"
+                    onChange={e => { const f = e.target.files?.[0]; if (f) handleIconUpload(f); e.target.value = '' }}
+                  />
+                  <input
+                    type="text"
+                    value={editing.icon}
+                    onChange={e => setEditing(prev => prev ? { ...prev, icon: e.target.value } : prev)}
+                    placeholder="/icons/Sword.png"
+                    className="w-full bg-white/3 border border-white/10 hover:border-white/20 focus:border-[#00BFFF]/40 rounded-xl px-3 py-2 text-white text-xs font-mono outline-none transition-all placeholder-gray-700"
+                  />
+                </div>
               </div>
-            ))}
+              {/* Size slider */}
+              <div className="bg-white/3 rounded-xl px-3 py-2.5 border border-white/8">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs text-gray-500">Icon Size</span>
+                  <span className="text-xs text-gray-300 font-mono">{editing.iconSize ?? 18}px</span>
+                </div>
+                <input
+                  type="range" min={12} max={40} step={1}
+                  value={editing.iconSize ?? 18}
+                  onChange={e => setEditing(prev => prev ? { ...prev, iconSize: Number(e.target.value) } : prev)}
+                  className="w-full accent-[#00BFFF]"
+                />
+                <div className="flex justify-between text-[10px] text-gray-600 mt-1">
+                  <span>12px</span><span>default: 18px</span><span>40px</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Fallback Emoji */}
+            <div>
+              <label className="text-xs text-gray-500 uppercase tracking-widest block mb-1.5">Fallback Emoji</label>
+              <input
+                type="text"
+                value={editing.fallback}
+                onChange={e => setEditing(prev => prev ? { ...prev, fallback: e.target.value } : prev)}
+                placeholder="⚔"
+                className="w-full bg-white/3 border border-white/10 hover:border-white/20 focus:border-[#00BFFF]/40 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-all placeholder-gray-700"
+              />
+            </div>
 
             <div className="flex gap-3 pt-2">
               <button onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-xl text-sm text-gray-400 border border-white/10 hover:bg-white/5">Cancel</button>

@@ -35,7 +35,7 @@ async function ghFetch(path: string, init?: RequestInit): Promise<any> {
 // ─── Batch commit (Git Data API tree approach) ────────────────────────────────
 
 export async function commitFiles(
-  files: Array<{ path: string; content: string }>,
+  files: Array<{ path: string; content: string; encoding?: 'utf-8' | 'base64' }>,
   message: string,
 ): Promise<{ sha: string }> {
   if (files.length === 0) throw new Error('commitFiles: no files provided')
@@ -55,7 +55,7 @@ export async function commitFiles(
     files.map(f =>
       ghFetch(`/repos/${owner}/${repo}/git/blobs`, {
         method: 'POST',
-        body: JSON.stringify({ content: f.content, encoding: 'utf-8' }),
+        body: JSON.stringify({ content: f.content, encoding: f.encoding ?? 'utf-8' }),
       }),
     ),
   )

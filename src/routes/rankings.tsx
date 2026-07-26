@@ -33,6 +33,25 @@ type SortMode = 'points-desc' | 'points-asc' | 'name-asc' | 'name-desc'
 
 const PLAYERS_PER_PAGE = 24
 
+function GamemodeFilterIcon({ gm }: { gm: Gamemode }) {
+  const [err, setErr] = useState(false)
+  if (!gm.icon || err) return <span>{gm.fallback}</span>
+  return (
+    <img
+      src={gm.icon}
+      alt={gm.label}
+      width={gm.iconSize ?? 14}
+      height={gm.iconSize ?? 14}
+      style={{
+        width: `${gm.iconSize ?? 14}px`,
+        height: `${gm.iconSize ?? 14}px`,
+        imageRendering: 'pixelated',
+      }}
+      onError={() => setErr(true)}
+    />
+  )
+}
+
 function RankingsPage() {
   const loaderData = Route.useLoaderData()
   const [players, setPlayers] = useState(loaderData.players)
@@ -297,7 +316,7 @@ function RankingsPage() {
                     : 'bg-white/3 text-gray-500 border border-white/8 hover:text-white hover:border-white/20'
                 }`}
               >
-                <span>{gm.fallback}</span>
+                <GamemodeFilterIcon gm={gm} />
                 {gm.label}
               </button>
             ))}
