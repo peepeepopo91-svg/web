@@ -1,6 +1,6 @@
 // ─── TierTaggerManager — Admin CMS for the Tier Tagger page ─────────────────
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   getTierTaggerConfig,
   saveTierTaggerConfig,
@@ -13,7 +13,7 @@ import { addLog } from '../../store/adminStore'
 
 interface Props { admin: string }
 
-type Tab = 'hero' | 'screenshots' | 'features' | 'steps' | 'download' | 'about'
+type Tab = 'hero' | 'screenshots' | 'features' | 'steps' | 'download' | 'release' | 'about'
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'hero',        label: 'Hero',        icon: '✨' },
@@ -21,6 +21,7 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'features',    label: 'Features',    icon: '⚡' },
   { id: 'steps',       label: 'Steps',       icon: '📦' },
   { id: 'download',    label: 'Download CTA', icon: '⬇️' },
+  { id: 'release',     label: 'Release',     icon: '🚀' },
   { id: 'about',       label: 'About',       icon: '💙' },
 ]
 
@@ -70,6 +71,135 @@ function Card({ title, desc, children }: { title: string; desc?: string; childre
         {desc && <p className="text-gray-600 text-xs mt-0.5">{desc}</p>}
       </div>
       {children}
+    </div>
+  )
+}
+
+// ─── Toggle switch ────────────────────────────────────────────────────────────
+
+function Toggle({ on, onChange, label, desc }: { on: boolean; onChange: (v: boolean) => void; label: string; desc?: string }) {
+  return (
+    <button
+      onClick={() => onChange(!on)}
+      className="w-full flex items-center justify-between gap-4 group"
+      type="button"
+    >
+      <div className="flex-1 text-left">
+        <p className="text-white text-sm font-semibold">{label}</p>
+        {desc && <p className="text-gray-600 text-xs mt-0.5">{desc}</p>}
+      </div>
+      <div
+        className="relative shrink-0 w-11 h-6 rounded-full transition-all duration-200"
+        style={{ background: on ? 'linear-gradient(135deg,#00BFFF,#0066FF)' : 'rgba(255,255,255,0.1)', boxShadow: on ? '0 0 16px rgba(0,191,255,0.35)' : 'none' }}
+      >
+        <div
+          className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-200"
+          style={{ left: on ? 22 : 2 }}
+        />
+      </div>
+    </button>
+  )
+}
+
+// ─── Mini countdown preview ───────────────────────────────────────────────────
+
+function useCountdown(targetIso: string) {
+  const [remaining, setRemaining] = useState(() =>
+    targetIso ? Math.max(0, new Date(targetIso).getTime() - Date.now()) : 0,
+  )
+  useEffect(() => {
+    if (!targetIso) { setRemaining(0); return }
+    function tick() { setRemaining(Math.max(0, new Date(targetIso).getTime() - Date.now())) }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [targetIso])
+  const t = Math.floor(remaining / 1000)
+  return {
+    days: Math.floor(t / 86400),
+    hours: Math.floor((t % 86400) / 3600),
+    minutes: Math.floor((t % 3600) / 60),
+    seconds: t % 60,
+    expired: remaining === 0,
+  }
+}
+
+function MiniDigitBlock({ value, label }: { value: number; label: string }) {
+  const str = String(value).padStart(2, '0')
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div
+        className="flex items-center justify-center"
+        style={{
+          width: 52, height: 56,
+          background: 'linear-gradient(160deg, rgba(0,191,255,0.1) 0%, rgba(0,0,0,0.5) 100%)',
+          border: '1px solid rgba(0,191,255,0.22)',
+          borderRadius: 10,
+          boxShadow: '0 0 16px rgba(0,191,255,0.1), inset 0 1px 0 rgba(255,255,255,0.05)',
+        }}
+      >
+        <span className="font-['Space_Grotesk'] font-black tabular-nums text-xl text-white" style={{ textShadow: '0 0 14px rgba(0,191,255,0.5)' }}>
+          {str}
+        </span>
+      </div>
+      <span className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/25">{label}</span>
+    </div>
+  )
+}
+
+function CountdownPreview({ releaseDate, heading, subtext }: { releaseDate: string; heading: string; subtext: string }) {
+  const { days, hours, minutes, seconds, expired } = useCountdown(releaseDate)
+
+  return (
+    <div
+      className="rounded-xl p-6 text-center space-y-4"
+      style={{
+        background: 'linear-gradient(135deg, #080D18 0%, #0D1525 50%, #080D18 100%)',
+        border: '1px solid rgba(0,191,255,0.2)',
+        boxShadow: '0 0 40px rgba(0,191,255,0.06)',
+      }}
+    >
+      <p className="text-[9px] uppercase tracking-widest text-gray-600">Live Preview</p>
+
+      {expired && releaseDate ? (
+        <div className="text-amber-400 text-xs">Release date has passed — download button will show</div>
+      ) : !releaseDate ? (
+        <div className="text-gray-600 text-xs">Set a release date to see the countdown</div>
+      ) : (
+        <>
+          {/* Lock badge */}
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"
+            style={{ background: 'rgba(0,191,255,0.07)', border: '1px solid rgba(0,191,255,0.2)', color: '#00BFFF' }}
+          >
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            {heading || 'Coming Soon'}
+          </div>
+
+          {/* Digits */}
+          <div className="flex items-end justify-center gap-2">
+            <MiniDigitBlock value={days}    label="Days" />
+            <span className="text-[#00BFFF]/35 font-black text-lg pb-4">:</span>
+            <MiniDigitBlock value={hours}   label="Hrs" />
+            <span className="text-[#00BFFF]/35 font-black text-lg pb-4">:</span>
+            <MiniDigitBlock value={minutes} label="Min" />
+            <span className="text-[#00BFFF]/35 font-black text-lg pb-4">:</span>
+            <MiniDigitBlock value={seconds} label="Sec" />
+          </div>
+
+          {/* Subtext */}
+          {subtext && (
+            <p className="text-white/30 text-[11px] max-w-xs mx-auto leading-relaxed">{subtext}</p>
+          )}
+          {releaseDate && (
+            <p className="text-[10px] font-semibold" style={{ color: 'rgba(0,191,255,0.45)', letterSpacing: '0.1em' }}>
+              {new Date(releaseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+          )}
+        </>
+      )}
     </div>
   )
 }
@@ -244,6 +374,30 @@ export function TierTaggerManager({ admin }: Props) {
     showMsg('Reset to defaults.', 'info')
   }
 
+  /** Set release date to N days from now, returned as datetime-local string */
+  function daysFromNow(n: number): string {
+    const d = new Date(Date.now() + n * 86400_000)
+    // datetime-local needs "YYYY-MM-DDTHH:mm"
+    const pad = (x: number) => String(x).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+  }
+
+  /** Convert datetime-local string to ISO */
+  function localToISO(local: string): string {
+    if (!local) return ''
+    return new Date(local).toISOString()
+  }
+
+  /** Convert ISO to datetime-local string for the input */
+  function isoToLocal(iso: string): string {
+    if (!iso) return ''
+    try {
+      const d = new Date(iso)
+      const pad = (x: number) => String(x).padStart(2, '0')
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+    } catch { return '' }
+  }
+
   return (
     <div className="space-y-5 max-w-3xl">
       {toast && <Toast msg={toast.msg} type={toast.type} />}
@@ -253,6 +407,12 @@ export function TierTaggerManager({ admin }: Props) {
         <div className="flex items-center gap-2">
           <span className="w-1 h-6 rounded-full bg-[#00BFFF] shadow-[0_0_8px_rgba(0,191,255,0.7)]" />
           <h2 className="font-['Space_Grotesk'] font-black text-white text-lg">Tier Tagger CMS</h2>
+          {form.releaseCountdownEnabled && (
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 border border-amber-500/25 text-amber-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              Countdown Active
+            </span>
+          )}
         </div>
         <div className="flex gap-2">
           {resetConfirm ? (
@@ -289,10 +449,15 @@ export function TierTaggerManager({ admin }: Props) {
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
               tab === t.id
-                ? 'bg-[#00BFFF]/12 border border-[#00BFFF]/25 text-[#00BFFF]'
+                ? t.id === 'release'
+                  ? 'bg-amber-500/12 border border-amber-500/25 text-amber-400'
+                  : 'bg-[#00BFFF]/12 border border-[#00BFFF]/25 text-[#00BFFF]'
                 : 'text-gray-500 border border-transparent hover:text-gray-300 hover:bg-white/3'
             }`}>
             <span>{t.icon}</span> {t.label}
+            {t.id === 'release' && form.releaseCountdownEnabled && tab !== 'release' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse ml-0.5" />
+            )}
           </button>
         ))}
       </div>
@@ -459,6 +624,114 @@ export function TierTaggerManager({ admin }: Props) {
             <p className="text-white/20 text-[10px] mt-3">{form.ctaNote}</p>
           </div>
         </Card>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          TAB: RELEASE
+      ══════════════════════════════════════════════════════════════════════ */}
+      {tab === 'release' && (
+        <div className="space-y-4">
+
+          {/* Master toggle card */}
+          <div
+            className="glass rounded-2xl border p-6 space-y-5 transition-all"
+            style={{ borderColor: form.releaseCountdownEnabled ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.08)' }}
+          >
+            <div className="pb-1 border-b border-white/5 flex items-center gap-3">
+              <h3 className="font-['Space_Grotesk'] font-bold text-white text-sm">Release Countdown</h3>
+              {form.releaseCountdownEnabled && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 border border-amber-500/25 text-amber-400">
+                  <span className="w-1 h-1 rounded-full bg-amber-400 animate-pulse" />
+                  Active
+                </span>
+              )}
+            </div>
+
+            <Toggle
+              on={form.releaseCountdownEnabled}
+              onChange={v => set('releaseCountdownEnabled', v)}
+              label="Show countdown instead of download buttons"
+              desc="When enabled, both download buttons on the public page are replaced with a live countdown timer. When the timer reaches zero, download buttons appear automatically."
+            />
+
+            {/* Release date picker */}
+            <div className="space-y-2">
+              <label className="block text-white text-sm font-semibold">Release Date & Time</label>
+              <p className="text-gray-600 text-xs">The exact moment the download goes live. The countdown counts to this date.</p>
+              <div className="flex gap-2 flex-wrap">
+                <input
+                  type="datetime-local"
+                  value={isoToLocal(form.releaseDate)}
+                  onChange={e => set('releaseDate', localToISO(e.target.value))}
+                  className="flex-1 min-w-0 bg-white/3 border border-white/10 hover:border-white/20 focus:border-amber-500/40 rounded-xl px-4 py-3 text-white text-sm outline-none transition-all"
+                  style={{ colorScheme: 'dark' }}
+                />
+              </div>
+
+              {/* Quick-set buttons */}
+              <div className="flex flex-wrap gap-2 pt-1">
+                <p className="w-full text-[10px] uppercase tracking-widest text-gray-600 font-medium">Quick set</p>
+                {[
+                  { label: '24 hours', days: 1 / 24 * 24 },
+                  { label: '3 days',   days: 3 },
+                  { label: '7 days',   days: 7 },
+                  { label: '14 days',  days: 14 },
+                  { label: '30 days',  days: 30 },
+                ].map(({ label, days }) => (
+                  <button
+                    key={label}
+                    onClick={() => set('releaseDate', new Date(Date.now() + days * 86400_000).toISOString())}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/10 text-gray-400 hover:border-amber-500/35 hover:text-amber-400 hover:bg-amber-500/5 transition-all"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Countdown text content */}
+          <Card title="Countdown Copy" desc="Text shown on the public page while the countdown is active">
+            <Field
+              label="Countdown Heading"
+              desc='Short label shown in the lock badge (e.g. "Coming Soon")'
+              value={form.countdownHeading}
+              onChange={v => set('countdownHeading', v)}
+              placeholder="Coming Soon"
+            />
+            <Field
+              label="Teaser Text"
+              desc="One sentence shown below the countdown digits"
+              value={form.countdownSubtext}
+              onChange={v => set('countdownSubtext', v)}
+              multiline
+              placeholder="Blue Tier Tagger is almost here. Stay tuned."
+            />
+          </Card>
+
+          {/* Live preview */}
+          <CountdownPreview
+            releaseDate={form.releaseDate}
+            heading={form.countdownHeading}
+            subtext={form.countdownSubtext}
+          />
+
+          {/* Status summary */}
+          <div className="rounded-xl border border-white/8 bg-white/[0.02] px-5 py-4 space-y-2">
+            <p className="text-[10px] uppercase tracking-widest text-gray-600 font-medium">Current status</p>
+            <div className="flex items-center gap-2.5">
+              <span className={`w-2 h-2 rounded-full shrink-0 ${form.releaseCountdownEnabled ? 'bg-amber-400 animate-pulse' : 'bg-green-400'}`} />
+              <span className="text-sm font-semibold text-white">
+                {form.releaseCountdownEnabled
+                  ? form.releaseDate
+                    ? `Countdown active · releasing ${new Date(form.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+                    : 'Countdown enabled but no date set — set a release date above'
+                  : 'Download buttons visible · countdown off'}
+              </span>
+            </div>
+          </div>
+
+        </div>
       )}
 
       {/* ══════════════════════════════════════════════════════════════════════

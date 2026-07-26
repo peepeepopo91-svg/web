@@ -48,6 +48,14 @@ export interface TierTaggerConfig {
   aboutTitle: string
   aboutBody: string
   aboutCredit: string
+  /** When true, both download buttons are replaced with a countdown timer */
+  releaseCountdownEnabled: boolean
+  /** ISO datetime string for the release moment */
+  releaseDate: string
+  /** Label shown above the countdown digits, e.g. "Coming Soon" */
+  countdownHeading: string
+  /** Teaser line shown below the countdown digits */
+  countdownSubtext: string
 }
 
 export const DEFAULT_TIER_TAGGER: TierTaggerConfig = {
@@ -90,6 +98,10 @@ export const DEFAULT_TIER_TAGGER: TierTaggerConfig = {
   aboutTitle: 'About Blue Tiers',
   aboutBody: 'Blue Tiers is a competitive Minecraft PvP ranking platform designed to provide accurate, reliable player rankings across multiple gamemodes. Compete against other players, climb the leaderboards, and showcase your skill — now visible directly in-game with Blue Tier Tagger.',
   aboutCredit: 'Made with 💙 by Blue Network',
+  releaseCountdownEnabled: false,
+  releaseDate: '',
+  countdownHeading: 'Coming Soon',
+  countdownSubtext: 'Blue Tier Tagger is almost here. Stay tuned.',
 }
 
 function safeGet<T>(key: string): T | null {

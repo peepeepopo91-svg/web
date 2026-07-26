@@ -1,13 +1,207 @@
 // ─── Tier Tagger landing page ─────────────────────────────────────────────────
 
+import { useState, useEffect } from 'react'
 import { useTierTaggerConfig, type TierTaggerConfig } from '../store/tierTaggerStore'
 
 interface Props {
   serverData?: Partial<TierTaggerConfig> | null
 }
 
+// ─── Countdown hook ───────────────────────────────────────────────────────────
+
+function useCountdown(targetIso: string) {
+  const [remaining, setRemaining] = useState(() =>
+    Math.max(0, new Date(targetIso).getTime() - Date.now()),
+  )
+
+  useEffect(() => {
+    if (!targetIso) { setRemaining(0); return }
+    function tick() {
+      setRemaining(Math.max(0, new Date(targetIso).getTime() - Date.now()))
+    }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [targetIso])
+
+  const totalSec = Math.floor(remaining / 1000)
+  return {
+    days:    Math.floor(totalSec / 86400),
+    hours:   Math.floor((totalSec % 86400) / 3600),
+    minutes: Math.floor((totalSec % 3600) / 60),
+    seconds: totalSec % 60,
+    expired: remaining === 0,
+  }
+}
+
+// ─── Digit block ──────────────────────────────────────────────────────────────
+
+function Digit({ value, label, size }: { value: number; label: string; size: 'lg' | 'sm' }) {
+  const str = String(value).padStart(2, '0')
+  if (size === 'lg') {
+    return (
+      <div className="flex flex-col items-center gap-2">
+        <div
+          className="relative flex items-center justify-center"
+          style={{
+            width: 76, height: 80,
+            background: 'linear-gradient(160deg, rgba(0,191,255,0.08) 0%, rgba(0,0,0,0.6) 100%)',
+            border: '1px solid rgba(0,191,255,0.22)',
+            borderRadius: 14,
+            boxShadow: '0 0 24px rgba(0,191,255,0.12), inset 0 1px 0 rgba(255,255,255,0.06)',
+          }}
+        >
+          {/* inner shine line */}
+          <div className="absolute top-0 inset-x-3 h-px" style={{ background: 'linear-gradient(90deg,transparent,rgba(0,191,255,0.4),transparent)' }} />
+          <span
+            className="font-['Space_Grotesk'] font-black tabular-nums"
+            style={{ fontSize: 34, color: '#fff', letterSpacing: '-0.02em', textShadow: '0 0 20px rgba(0,191,255,0.5)' }}
+          >
+            {str}
+          </span>
+        </div>
+        <span style={{ fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', fontWeight: 700, textTransform: 'uppercase' }}>
+          {label}
+        </span>
+      </div>
+    )
+  }
+  // sm
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div
+        className="flex items-center justify-center"
+        style={{
+          width: 42, height: 44,
+          background: 'linear-gradient(160deg, rgba(0,191,255,0.08) 0%, rgba(0,0,0,0.6) 100%)',
+          border: '1px solid rgba(0,191,255,0.2)',
+          borderRadius: 9,
+          boxShadow: '0 0 14px rgba(0,191,255,0.1)',
+        }}
+      >
+        <span
+          className="font-['Space_Grotesk'] font-black tabular-nums"
+          style={{ fontSize: 18, color: '#fff', letterSpacing: '-0.02em', textShadow: '0 0 12px rgba(0,191,255,0.4)' }}
+        >
+          {str}
+        </span>
+      </div>
+      <span style={{ fontSize: 8, letterSpacing: '0.18em', color: 'rgba(255,255,255,0.25)', fontWeight: 700, textTransform: 'uppercase' }}>
+        {label}
+      </span>
+    </div>
+  )
+}
+
+function Separator({ size }: { size: 'lg' | 'sm' }) {
+  return (
+    <div
+      className="flex flex-col gap-2 pb-4"
+      style={{ color: 'rgba(0,191,255,0.35)', fontWeight: 900, fontSize: size === 'lg' ? 22 : 14, letterSpacing: 0 }}
+    >
+      <span>:</span>
+    </div>
+  )
+}
+
+// ─── Release Countdown ────────────────────────────────────────────────────────
+
+interface CountdownProps {
+  heading: string
+  subtext: string
+  releaseDate: string
+  variant: 'hero' | 'cta'
+  // fallback rendered when expired
+  fallback: React.ReactNode
+}
+
+function ReleaseCountdown({ heading, subtext, releaseDate, variant, fallback }: CountdownProps) {
+  const { days, hours, minutes, seconds, expired } = useCountdown(releaseDate)
+
+  if (expired && releaseDate) return <>{fallback}</>
+
+  const releaseLabel = releaseDate
+    ? new Date(releaseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : null
+
+  if (variant === 'hero') {
+    return (
+      <div className="flex flex-col items-center gap-3">
+        {/* Badge */}
+        <div
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest"
+          style={{ background: 'rgba(0,191,255,0.08)', border: '1px solid rgba(0,191,255,0.2)', color: '#00BFFF' }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00BFFF] animate-pulse" />
+          {heading}
+        </div>
+
+        {/* Compact digits */}
+        <div className="flex items-end gap-1.5">
+          <Digit value={days}    label="Days" size="sm" />
+          <Separator size="sm" />
+          <Digit value={hours}   label="Hrs"  size="sm" />
+          <Separator size="sm" />
+          <Digit value={minutes} label="Min"  size="sm" />
+          <Separator size="sm" />
+          <Digit value={seconds} label="Sec"  size="sm" />
+        </div>
+
+        {releaseLabel && (
+          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em' }}>
+            Releasing {releaseLabel}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  // cta — full size
+  return (
+    <div className="flex flex-col items-center gap-6">
+      {/* Lock badge */}
+      <div
+        className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.2em]"
+        style={{ background: 'rgba(0,191,255,0.07)', border: '1px solid rgba(0,191,255,0.22)', color: '#00BFFF' }}
+      >
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        {heading}
+      </div>
+
+      {/* Digits */}
+      <div className="flex items-end gap-3">
+        <Digit value={days}    label="Days"    size="lg" />
+        <Separator size="lg" />
+        <Digit value={hours}   label="Hours"   size="lg" />
+        <Separator size="lg" />
+        <Digit value={minutes} label="Minutes" size="lg" />
+        <Separator size="lg" />
+        <Digit value={seconds} label="Seconds" size="lg" />
+      </div>
+
+      {/* Subtext */}
+      <div className="space-y-1.5 text-center">
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, maxWidth: 360, lineHeight: 1.6 }}>
+          {subtext}
+        </p>
+        {releaseLabel && (
+          <p style={{ fontSize: 11, color: 'rgba(0,191,255,0.5)', letterSpacing: '0.12em', fontWeight: 600 }}>
+            {releaseLabel}
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export function TierTaggerPage({ serverData }: Props = {}) {
   const cfg = useTierTaggerConfig(serverData)
+
+  const showCountdown = cfg.releaseCountdownEnabled && !!cfg.releaseDate
 
   return (
     <main className="min-h-screen" style={{ background: '#080c14' }}>
@@ -31,27 +225,64 @@ export function TierTaggerPage({ serverData }: Props = {}) {
             {cfg.subtitle}
           </p>
 
-          {/* CTA */}
+          {/* CTA — countdown or download */}
           <div className="flex flex-wrap gap-3 justify-center">
-            <a
-              href={cfg.downloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm text-white transition-all duration-200"
-              style={{ background: 'linear-gradient(135deg, #00BFFF, #0066FF)' }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              {cfg.downloadLabel}
-            </a>
-            <a
-              href={cfg.secondaryUrl}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm bg-white/5 border border-white/15 text-white/70 hover:text-white hover:border-white/30 transition-all duration-200"
-            >
-              {cfg.secondaryLabel}
-            </a>
+            {showCountdown ? (
+              <ReleaseCountdown
+                heading={cfg.countdownHeading}
+                subtext={cfg.countdownSubtext}
+                releaseDate={cfg.releaseDate}
+                variant="hero"
+                fallback={
+                  <a
+                    href={cfg.downloadUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm text-white transition-all duration-200"
+                    style={{ background: 'linear-gradient(135deg, #00BFFF, #0066FF)' }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    {cfg.downloadLabel}
+                  </a>
+                }
+              />
+            ) : (
+              <>
+                <a
+                  href={cfg.downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm text-white transition-all duration-200"
+                  style={{ background: 'linear-gradient(135deg, #00BFFF, #0066FF)' }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  {cfg.downloadLabel}
+                </a>
+                <a
+                  href={cfg.secondaryUrl}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm bg-white/5 border border-white/15 text-white/70 hover:text-white hover:border-white/30 transition-all duration-200"
+                >
+                  {cfg.secondaryLabel}
+                </a>
+              </>
+            )}
           </div>
+
+          {/* Secondary button always visible when countdown is active */}
+          {showCountdown && (
+            <div className="mt-4">
+              <a
+                href={cfg.secondaryUrl}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm bg-white/5 border border-white/15 text-white/70 hover:text-white hover:border-white/30 transition-all duration-200"
+              >
+                {cfg.secondaryLabel}
+              </a>
+            </div>
+          )}
         </div>
       </section>
 
@@ -192,41 +423,80 @@ export function TierTaggerPage({ serverData }: Props = {}) {
           className="relative rounded-2xl overflow-hidden px-8 md:px-16 py-14 text-center"
           style={{
             background: 'linear-gradient(135deg, #080D18 0%, #0D1525 50%, #080D18 100%)',
-            border: '1px solid rgba(0,191,255,0.18)',
-            boxShadow: '0 0 80px rgba(0,191,255,0.06)',
+            border: showCountdown ? '1px solid rgba(0,191,255,0.25)' : '1px solid rgba(0,191,255,0.18)',
+            boxShadow: showCountdown ? '0 0 100px rgba(0,191,255,0.1)' : '0 0 80px rgba(0,191,255,0.06)',
           }}
         >
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 0%, rgba(0,191,255,0.1) 0%, transparent 70%)' }} />
           <div className="absolute top-0 inset-x-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(0,191,255,0.6), transparent)' }} />
 
           <div className="relative">
-            <div className="text-4xl mb-5">📦</div>
-            <h2 className="font-['Space_Grotesk'] font-black text-3xl md:text-4xl text-white mb-3">
-              {cfg.ctaHeading}
-            </h2>
-            <p className="text-white/35 text-sm max-w-md mx-auto mb-8 leading-relaxed">
-              {cfg.ctaBody}
-            </p>
+            {showCountdown ? (
+              <>
+                <div className="text-4xl mb-5">⏳</div>
+                <h2 className="font-['Space_Grotesk'] font-black text-3xl md:text-4xl text-white mb-3">
+                  {cfg.ctaHeading}
+                </h2>
+                <p className="text-white/35 text-sm max-w-md mx-auto mb-10 leading-relaxed">
+                  {cfg.ctaBody}
+                </p>
+                <ReleaseCountdown
+                  heading={cfg.countdownHeading}
+                  subtext={cfg.countdownSubtext}
+                  releaseDate={cfg.releaseDate}
+                  variant="cta"
+                  fallback={
+                    <>
+                      <a
+                        href={cfg.ctaButtonUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-3 px-10 py-4 rounded-xl font-bold text-sm text-white transition-all duration-200"
+                        style={{ background: 'linear-gradient(135deg, #00BFFF, #0066FF)', boxShadow: '0 0 40px rgba(0,191,255,0.4)' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 56px rgba(0,191,255,0.6)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-1px)' }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 40px rgba(0,191,255,0.4)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)' }}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        {cfg.ctaButtonLabel}
+                      </a>
+                      <p className="text-white/20 text-[11px] mt-5">{cfg.ctaNote}</p>
+                    </>
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <div className="text-4xl mb-5">📦</div>
+                <h2 className="font-['Space_Grotesk'] font-black text-3xl md:text-4xl text-white mb-3">
+                  {cfg.ctaHeading}
+                </h2>
+                <p className="text-white/35 text-sm max-w-md mx-auto mb-8 leading-relaxed">
+                  {cfg.ctaBody}
+                </p>
 
-            <a
-              href={cfg.ctaButtonUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-10 py-4 rounded-xl font-bold text-sm text-white transition-all duration-200"
-              style={{
-                background: 'linear-gradient(135deg, #00BFFF, #0066FF)',
-                boxShadow: '0 0 40px rgba(0,191,255,0.4)',
-              }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 56px rgba(0,191,255,0.6)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-1px)' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 40px rgba(0,191,255,0.4)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)' }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              {cfg.ctaButtonLabel}
-            </a>
+                <a
+                  href={cfg.ctaButtonUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 px-10 py-4 rounded-xl font-bold text-sm text-white transition-all duration-200"
+                  style={{
+                    background: 'linear-gradient(135deg, #00BFFF, #0066FF)',
+                    boxShadow: '0 0 40px rgba(0,191,255,0.4)',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 56px rgba(0,191,255,0.6)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-1px)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 40px rgba(0,191,255,0.4)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)' }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  {cfg.ctaButtonLabel}
+                </a>
 
-            <p className="text-white/20 text-[11px] mt-5">{cfg.ctaNote}</p>
+                <p className="text-white/20 text-[11px] mt-5">{cfg.ctaNote}</p>
+              </>
+            )}
           </div>
         </div>
       </section>
