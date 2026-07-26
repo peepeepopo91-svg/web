@@ -83,6 +83,7 @@ function handleSSE(req) {
 
 serve({
   port: PORT,
+  hostname: '0.0.0.0',
   fetch: async (req) => {
     const url = new URL(req.url)
 
