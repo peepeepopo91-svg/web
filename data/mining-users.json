@@ -245,7 +245,7 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785145294767,
+    "lastCheckedAt": 1785145354776,
     "balance": 548,
     "gems": 0,
     "rigs": [
@@ -253,7 +253,7 @@
         "id": "starter_ms30viep_useq",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9993.771906565658,
+        "durability": 9992.509090909092,
         "status": "mining",
         "miningSince": 1785145000087,
         "purchasedAt": 1785144384241
