@@ -283,7 +283,14 @@ function applyDurabilityLoss(rig: UserRig, elapsedSeconds: number): UserRig {
 export function catchUpUser(
   user: User,
   now: number,
-  opts?: { community?: CommunityBlock; overrides?: EconomyOverrides },
+  opts?: {
+    community?: CommunityBlock
+    overrides?: EconomyOverrides
+    /** All currently-active miners (name + hashrate). When provided the block
+     *  reward is shared correctly across the network; omitting this falls back
+     *  to solo-miner behaviour (used for client-side estimates only). */
+    globalMiners?: ReadonlyArray<{ name: string; hashrate: number }>
+  },
 ): { user: User; community: CommunityBlock } {
   const community = opts?.community ?? getCommunityState()
 
@@ -323,16 +330,34 @@ export function catchUpUser(
         return sum + tier.hashrate
       }, 0)
 
+      // Use global network stats when provided (server-side path).
+      // Fall back to solo-miner values for client-side estimates.
+      const globalMiners        = opts?.globalMiners
+      const totalHashrate       = globalMiners && globalMiners.length > 0
+        ? globalMiners.reduce((s, m) => s + m.hashrate, 0)
+        : userHashrate
+      const activeMinerCount    = globalMiners && globalMiners.length > 0
+        ? globalMiners.length
+        : 1
+
       for (let i = 0; i < blocksPassed; i++) {
         const blockNum = community.blockNumber + i
-        const amount    = computeUserBlockReward(userHashrate, userHashrate, 1, true)
+
+        // Determine if this user won the finder bonus for this block.
+        const isWinner = globalMiners && globalMiners.length > 0
+          ? pickBlockWinner(globalMiners, blockNum).toLowerCase() === user.username.toLowerCase()
+          : true   // solo mode: always the winner
+
+        const amount = computeUserBlockReward(
+          userHashrate, totalHashrate, activeMinerCount, isWinner,
+        )
 
         balance += amount
         newRewards.push({
           blockNumber: blockNum,
           solvedAt: community.lastSolvedAt + (i + 1) * blockIntervalMs,
           amount,
-          type: 'finder',
+          type: isWinner ? 'finder' : 'hashrate_share',
         })
       }
     }

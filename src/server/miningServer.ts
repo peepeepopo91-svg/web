@@ -60,18 +60,6 @@ function loadMiningUsers(): Record<string, User> {
   return readJson<Record<string, User>>('mining-users.json') ?? {}
 }
 
-/** Returns the set of lowercase usernames that have a real login credential. */
-function loadCredentialedUsernames(): Set<string> {
-  try {
-    const raw    = readFileSync(resolve(process.cwd(), 'credentials.yml'), 'utf8')
-    const parsed = yamlLoad(raw) as { users?: Array<{ username: string }> }
-    return new Set(
-      (parsed?.users ?? []).map(u => u.username.toLowerCase())
-    )
-  } catch {
-    return new Set()
-  }
-}
 
 function loadCommunityState(): CommunityBlock {
   const saved = readJson<CommunityBlock>('mining-community.json')
@@ -127,8 +115,17 @@ export const serverCatchUp = createServerFn({ method: 'POST' })
     // It handles undefined/NaN/null for every field (including rig durabilities).
     const stored = normalizeUser({ ...rawUser } as Record<string, unknown>, serverNow)
 
+    // Build global miner list so rewards are shared across the network.
+    const globalMiners: Array<{ name: string; hashrate: number }> = []
+    for (const u of Object.values(users)) {
+      const h = u.rigs
+        .filter(r => r.status === 'mining')
+        .reduce((s, r) => s + (RIG_TIERS.find(t => t.id === r.tierId)?.hashrate ?? 0), 0)
+      if (h > 0) globalMiners.push({ name: u.username, hashrate: h })
+    }
+
     const { user: updatedUser, community: updatedCommunity } = catchUpUser(
-      stored, serverNow, { community, overrides: economy }
+      stored, serverNow, { community, overrides: economy, globalMiners }
     )
 
     users[key] = updatedUser
@@ -231,16 +228,11 @@ export const adminUpdateMiningUser = createServerFn({ method: 'POST' })
  */
 export const getLeaderboard = createServerFn({ method: 'GET' })
   .handler(async (): Promise<LeaderboardEntry[]> => {
-    const users       = loadMiningUsers()
-    const credUsernames = loadCredentialedUsernames()
+    const users = loadMiningUsers()
 
-    // Only include users that have a real login credential — filters out any
-    // stale NPC/bot entries that were injected by the old NPC pool system.
-    const realUsers = Object.values(users).filter(
-      u => credUsernames.has(u.username.toLowerCase())
-    )
-
-    const entries: LeaderboardEntry[] = realUsers.map(user => {
+    // Show all registered mining users — the old credential filter
+    // incorrectly excluded real players not yet added to credentials.yml.
+    const entries: LeaderboardEntry[] = Object.values(users).map(user => {
       const activeRigs  = user.rigs.filter(r => r.status === 'mining')
       const miningPower = activeRigs.reduce((sum, r) => {
         const tier = RIG_TIERS.find(t => t.id === r.tierId)

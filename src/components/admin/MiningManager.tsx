@@ -827,7 +827,13 @@ export function MiningManager({ admin }: Props) {
     if (!quiet) setLoading(true)
     try {
       const data = await getAllMiningUsers()
-      setUsers(data)
+      // Normalise keys to lowercase so that users[selected] always resolves,
+      // regardless of how the username was cased when first written to disk.
+      const normalised: Record<string, User> = {}
+      for (const [k, v] of Object.entries(data)) {
+        normalised[k.toLowerCase()] = v
+      }
+      setUsers(normalised)
       setLastSync(Date.now())
     } catch {
       if (!quiet) showMsg('Failed to load mining data from server', 'error')
