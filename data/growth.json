@@ -86,35 +86,56 @@
       "peakConcurrent": 4
     },
     "2026-07-26": {
-      "pageViews": 66,
-      "uniqueSessions": 33,
+      "pageViews": 54,
+      "uniqueSessions": 22,
       "pages": {
-        "/": 48,
-        "/tier-tagger": 7,
-        "/rankings": 7,
-        "/tournament": 1,
-        "/mining": 1,
-        "/exchange": 1,
-        "/shop": 1
+        "/": 46,
+        "/tier-tagger": 6,
+        "/rankings": 2
       },
       "referrers": {
-        "Referral": 38,
-        "Direct": 28
+        "Referral": 37,
+        "Direct": 17
       },
       "devices": {
-        "Desktop": 56,
-        "Mobile": 10
+        "Desktop": 54
       },
       "browsers": {
-        "Chrome": 19,
-        "Firefox": 47
+        "Chrome": 9,
+        "Firefox": 45
       },
       "os": {
-        "Linux": 48,
-        "Windows": 8,
-        "Android": 10
+        "Linux": 46,
+        "Windows": 8
       },
       "peakConcurrent": 11
+    },
+    "2026-07-27": {
+      "pageViews": 15,
+      "uniqueSessions": 6,
+      "pages": {
+        "/exchange": 2,
+        "/mining": 7,
+        "/": 3,
+        "/tournament": 3
+      },
+      "referrers": {
+        "Direct": 15
+      },
+      "devices": {
+        "Desktop": 10,
+        "Mobile": 5
+      },
+      "browsers": {
+        "Opera": 5,
+        "Chrome": 4,
+        "Firefox": 6
+      },
+      "os": {
+        "Windows": 10,
+        "Android": 5
+      },
+      "peakConcurrent": 2
     }
   }
 }
