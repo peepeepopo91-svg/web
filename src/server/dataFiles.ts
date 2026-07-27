@@ -1357,6 +1357,208 @@ export const pullRemoteFiles = createServerFn({ method: 'POST' }).handler(async 
   return { pulled }
 })
 
+// ─── GitHub Bridge: two-way sync ─────────────────────────────────────────────
+// These three functions power the dedicated two-way sync panel.
+// They work in production (no .git) via the GitHub Contents / Git Data APIs.
+
+export interface BridgeSectionStatus {
+  section:      string
+  file:         string
+  repoPath:     string
+  localExists:  boolean
+  remoteExists: boolean
+  isSame:       boolean
+  localBytes:   number
+  remoteBytes:  number
+}
+
+export interface GitHubBridgeStatus {
+  connected:    boolean
+  owner:        string
+  repo:         string
+  branch:       string
+  error?:       string
+  latestCommit: { sha: string; shortSha: string; message: string; date: string; author: string } | null
+  sections:     BridgeSectionStatus[]
+  localIcons:   string[]
+  remoteIcons:  string[]
+}
+
+export const getGitHubBridgeStatus = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<GitHubBridgeStatus> => {
+    const token = resolveTokenSource()?.token
+    if (!token) {
+      return {
+        connected: false, owner: '', repo: '', branch: '',
+        error: 'GitHub token not configured', latestCommit: null, sections: [], localIcons: [], remoteIcons: [],
+      }
+    }
+    const { owner, repo, branch } = readRepoConfig()
+
+    // Latest commit
+    let latestCommit: GitHubBridgeStatus['latestCommit'] = null
+    let connected = false
+    try {
+      const data = await ghFetch(token, `/repos/${owner}/${repo}/commits/${branch}`)
+      connected = true
+      latestCommit = {
+        sha:      data.sha as string,
+        shortSha: (data.sha as string).slice(0, 7),
+        message:  (data.commit.message as string).split('\n')[0].slice(0, 72),
+        date:     data.commit.author.date as string,
+        author:   data.commit.author.name as string,
+      }
+    } catch (e) {
+      return {
+        connected: false, owner, repo, branch,
+        error: (e as Error).message.slice(0, 120),
+        latestCommit: null, sections: [], localIcons: [], remoteIcons: [],
+      }
+    }
+
+    // Per-section comparison
+    const sections: BridgeSectionStatus[] = []
+    for (const [section, { file, repoPath }] of Object.entries(FILE_MAP)) {
+      const localRaw  = readRaw(file)
+      const remoteRaw = await fetchRemoteFile(token, repoPath)
+      let isSame = false
+      try { isSame = localRaw !== null && remoteRaw !== null && JSON.stringify(JSON.parse(localRaw)) === JSON.stringify(JSON.parse(remoteRaw)) } catch { /* */ }
+      sections.push({
+        section, file, repoPath,
+        localExists:  localRaw  !== null,
+        remoteExists: remoteRaw !== null,
+        isSame,
+        localBytes:   localRaw?.length  ?? 0,
+        remoteBytes:  remoteRaw?.length ?? 0,
+      })
+    }
+
+    // Local icon files
+    const { existsSync: exi, readdirSync: rds } = await import('node:fs')
+    const iconsDir = resolve(process.cwd(), 'public', 'icons')
+    const localIcons = exi(iconsDir)
+      ? rds(iconsDir).filter(f => /\.(png|jpg|jpeg|gif|webp)$/i.test(f))
+      : []
+
+    // Remote icon files
+    let remoteIcons: string[] = []
+    try {
+      const res = await fetch(
+        `${BASE}/repos/${owner}/${repo}/contents/public/icons?ref=${branch}`,
+        { headers: buildGHHeaders(token) },
+      )
+      if (res.ok) {
+        const files = await res.json() as Array<{ name: string; type: string }>
+        remoteIcons = files.filter(f => f.type === 'file' && /\.(png|jpg|jpeg|gif|webp)$/i.test(f.name)).map(f => f.name)
+      }
+    } catch { /* icons optional */ }
+
+    return { connected, owner, repo, branch, latestCommit, sections, localIcons, remoteIcons }
+  },
+)
+
+export interface PullResult {
+  sections:     Record<string, { pulled: boolean; content?: string; bytes?: number; error?: string }>
+  iconsPulled:  string[]
+  iconsSkipped: string[]
+}
+
+export const pullAllFromGitHub = createServerFn({ method: 'POST' }).handler(
+  async (): Promise<PullResult> => {
+    const token = resolveTokenSource()?.token
+    if (!token) throw new Error('AUTH_ERROR: GITHUB_TOKEN not configured')
+    const { owner, repo, branch } = readRepoConfig()
+
+    const sections: PullResult['sections'] = {}
+
+    // Pull each JSON section
+    for (const [section, { file, repoPath }] of Object.entries(FILE_MAP)) {
+      try {
+        const remote = await fetchRemoteFile(token, repoPath)
+        if (remote) {
+          const parsed = JSON.parse(remote)
+          const written = atomicWriteJson(file, parsed)
+          sections[section] = { pulled: true, content: remote, bytes: written.length }
+        } else {
+          sections[section] = { pulled: false, error: 'Not found in GitHub' }
+        }
+      } catch (e) {
+        sections[section] = { pulled: false, error: (e as Error).message.slice(0, 120) }
+      }
+    }
+
+    // Pull icon files from public/icons/ in the repo
+    const iconsPulled:  string[] = []
+    const iconsSkipped: string[] = []
+    try {
+      const listRes = await fetch(
+        `${BASE}/repos/${owner}/${repo}/contents/public/icons?ref=${branch}`,
+        { headers: buildGHHeaders(token) },
+      )
+      if (listRes.ok) {
+        const items = await listRes.json() as Array<{ name: string; download_url: string; type: string }>
+        const { mkdirSync: mkd, writeFileSync: wfs } = await import('node:fs')
+        const iconsDir = resolve(process.cwd(), 'public', 'icons')
+        mkd(iconsDir, { recursive: true })
+        for (const item of items) {
+          if (item.type !== 'file' || !/\.(png|jpg|jpeg|gif|webp)$/i.test(item.name)) continue
+          try {
+            const dl = await fetch(item.download_url)
+            if (dl.ok) {
+              wfs(resolve(iconsDir, item.name), Buffer.from(await dl.arrayBuffer()))
+              iconsPulled.push(item.name)
+            } else {
+              iconsSkipped.push(item.name)
+            }
+          } catch {
+            iconsSkipped.push(item.name)
+          }
+        }
+      }
+    } catch { /* icons are optional */ }
+
+    return { sections, iconsPulled, iconsSkipped }
+  },
+)
+
+export const pushAllToGitHub = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      sections: z.array(
+        z.object({
+          section:  z.enum(['players', 'gamemodes', 'content', 'event', 'economy', 'homepage', 'tier-tagger']),
+          jsonData: z.string(),
+        }),
+      ).optional(),
+    }),
+  )
+  .handler(async ({ data }): Promise<{ success: boolean; sha?: string; logs: string[]; error?: string }> => {
+    const logs: string[] = []
+
+    // 1. Write provided sections to disk
+    if (data.sections?.length) {
+      for (const { section, jsonData } of data.sections) {
+        const { file } = FILE_MAP[section as SectionKey]
+        try {
+          const parsed = JSON.parse(jsonData)
+          atomicWriteJson(file, parsed)
+          logs.push(`✓ Saved ${file} to disk`)
+        } catch (e) {
+          logs.push(`⚠ Could not save ${file}: ${(e as Error).message.slice(0, 60)}`)
+        }
+      }
+    }
+
+    // 2. Push everything (JSON + icons) to GitHub
+    const result = await pushAllDataViaApi(logs)
+    if (result.success) {
+      const shaLine = logs.find(l => l.includes('SHA:'))
+      const sha = shaLine?.match(/SHA: ([a-f0-9]+)/)?.[1]
+      return { success: true, sha, logs }
+    }
+    return { success: false, logs, error: logs.filter(l => l.startsWith('✗')).join('; ') }
+  })
+
 // ─── Repair engine — helpers ──────────────────────────────────────────────────
 
 /**

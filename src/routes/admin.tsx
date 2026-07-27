@@ -34,6 +34,7 @@ export type AdminSection =
   | 'site-growth'
   | 'logs'
   | 'github-sync'
+  | 'github-bridge'
   | 'repo-history'
   | 'credentials'
   | 'earnings'

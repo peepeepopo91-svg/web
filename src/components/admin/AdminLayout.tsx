@@ -9,6 +9,7 @@ import { EconomyManager }  from './EconomyManager'
 import { UserManager }     from './UserManager'
 import { ActivityLogs }    from './ActivityLogs'
 import { GitHubSyncCenter } from './GitHubSyncCenter'
+import { GitHubBridge }     from './GitHubBridge'
 import { RepoHistoryManager } from './RepoHistoryManager'
 import { ShopManager }         from './ShopManager'
 import { CredentialsManager }  from './CredentialsManager'
@@ -44,7 +45,8 @@ const NAV_ITEMS: { id: AdminSection; label: string; icon: string; desc: string }
   { id: 'logs',            label: 'Activity Logs', icon: '📊', desc: 'Audit trail'        },
   { id: 'repo-history', label: 'Repo History',  icon: '🕓', desc: 'Reset history' },
   { id: 'credentials',  label: 'Credentials',   icon: '🔐', desc: 'Manage admin auth' },
-  { id: 'github-sync',  label: 'GitHub Sync',   icon: '☁️',  desc: 'Sync Center' },
+  { id: 'github-bridge', label: 'GitHub Bridge', icon: '⇅',  desc: 'Two-way sync'  },
+  { id: 'github-sync',  label: 'GitHub Sync',   icon: '☁️',  desc: 'Advanced sync' },
 ]
 
 const SECTION_TITLES: Record<AdminSection, { title: string; subtitle: string }> = {
@@ -57,6 +59,7 @@ const SECTION_TITLES: Record<AdminSection, { title: string; subtitle: string }> 
   'shop-mgmt':       { title: 'Shop Management',       subtitle: 'Manage purchases, prices, refunds, and delivery' },
   'tournament-mgmt': { title: 'Tournament Management', subtitle: 'Create tournaments, manage teams, brackets, matches, prizes and announcements' },
   'logs':            { title: 'Activity Logs',         subtitle: 'Full audit trail of all admin actions' },
+  'github-bridge': { title: 'GitHub Bridge',               subtitle: 'Send your data to GitHub or get the latest data from GitHub — plain and simple' },
   'github-sync':  { title: 'GitHub Sync Center',         subtitle: 'Professional synchronization dashboard — push, validate, rollback' },
   'repo-history': { title: 'Repository History Management', subtitle: 'Reset commit history while preserving all project files' },
   'site-growth':  { title: 'Site Growth',              subtitle: 'Real-time analytics — visitors, users, mining, shop, and growth trends' },
@@ -78,6 +81,7 @@ function SectionContent({ section, admin, setSection }: { section: AdminSection;
     case 'shop-mgmt':       return <ShopManager admin={admin} />
     case 'tournament-mgmt': return <TournamentManager admin={admin} />
     case 'logs':            return <ActivityLogs admin={admin} />
+    case 'github-bridge': return <GitHubBridge admin={admin} />
     case 'github-sync':  return <GitHubSyncCenter admin={admin} />
     case 'repo-history': return <RepoHistoryManager admin={admin} />
     case 'credentials':  return <CredentialsManager admin={admin} />
