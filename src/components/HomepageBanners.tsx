@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, CalendarDays, Check, Clock3, ExternalLink, Megaphone, Sparkles, Ticket, X, Zap } from 'lucide-react'
-import type { AnnouncementConfig, EventConfig, EventBannerHeight } from '../store/homepageStore'
+import { ArrowRight, Megaphone, Sparkles, Ticket, X, Zap } from 'lucide-react'
+import type { AnnouncementConfig, EventConfig } from '../store/homepageStore'
 
 type BannerTone = 'info' | 'warning' | 'success' | 'event'
 
@@ -84,47 +84,6 @@ function useCountdown(endDate: string, preview: boolean) {
   }
 }
 
-function Countdown({ endDate, label, preview = false, accent, compact = false }: { endDate: string; label: string; preview?: boolean; accent: string; compact?: boolean }) {
-  if (!endDate && !preview) return null
-  const countdown = useCountdown(endDate, preview)
-  if (countdown.expired && !preview) {
-    return <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">Event closed</span>
-  }
-  const units = [
-    ['D', countdown.days],
-    ['H', countdown.hours],
-    ['M', countdown.minutes],
-    ['S', countdown.seconds],
-  ] as const
-
-  if (compact) {
-    return (
-      <div className="flex items-center gap-0.5">
-        {units.map(([unit, value], i) => (
-          <span key={unit} className="font-['Space_Grotesk'] text-xs font-bold tabular-nums">
-            <span className="text-white">{String(value).padStart(2, '0')}</span>
-            <span className="text-white/30">{unit}</span>
-            {i < 3 && <span className="text-white/20 mx-0.5">:</span>}
-          </span>
-        ))}
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: accent }}>{label || 'Ends in'}</span>
-      <div className="flex items-center gap-1.5">
-        {units.map(([unit, value]) => (
-          <div key={unit} className="min-w-[38px] rounded-lg border border-white/10 bg-black/25 px-2 py-1.5 text-center">
-            <div className="font-['Space_Grotesk'] text-lg font-bold text-white tabular-nums">{String(value).padStart(2, '0')}</div>
-            <div className="text-[8px] font-bold text-white/35">{unit}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 function AnnouncementIcon({ icon, tone }: { icon: string; tone: BannerTone }) {
   if (icon) return <span className="text-lg leading-none">{icon}</span>

@@ -8,7 +8,7 @@ import { PlayerProfileModal } from './PlayerProfileModal'
 export { tierColors }
 export { TIER_ORDER }
 
-function TierBadge({ tier }: { tier: string }) {
+export function TierBadge({ tier }: { tier: string }) {
   const colors = tierColors[tier]
   if (!colors) return null
   return (

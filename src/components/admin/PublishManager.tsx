@@ -160,25 +160,6 @@ function InfoBox({ icon = 'ℹ️', color = 'blue', children }: { icon?: string;
   )
 }
 
-function StepCard({ n, title, desc, done, link, linkLabel }: { n: number; title: string; desc: string; done?: boolean; link?: string; linkLabel?: string }) {
-  return (
-    <div className={`relative flex gap-4 p-4 rounded-2xl border transition-all ${done ? 'bg-green-500/5 border-green-500/20' : 'bg-white/2 border-white/8'}`}>
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm shrink-0 ${done ? 'bg-green-500 text-white' : 'bg-white/8 text-gray-400'}`}>
-        {done ? '✓' : n}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className={`font-bold text-sm ${done ? 'text-green-400' : 'text-white'}`}>{title}</p>
-        <p className="text-gray-500 text-xs mt-1 leading-relaxed">{desc}</p>
-        {link && (
-          <a href={link} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 mt-2 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-[#00BFFF]/10 text-[#00BFFF] border border-[#00BFFF]/20 hover:bg-[#00BFFF]/20 transition-all">
-            {linkLabel || 'Open ↗'}
-          </a>
-        )}
-      </div>
-    </div>
-  )
-}
 
 function ScoreGauge({ score }: { score: number }) {
   const r = 70; const circ = 2 * Math.PI * r
@@ -223,8 +204,6 @@ function OverviewTab({ cfg, sitemapDone, setTab }: { cfg: Cfg; sitemapDone: bool
   const { score, items } = calcScore({ ...cfg, sitemapDone })
   const passing = items.filter(i => i.pass).length
   const failing  = items.filter(i => !i.pass)
-
-  const scoreColor = score >= 80 ? '#22c55e' : score >= 60 ? '#f59e0b' : score >= 40 ? '#f97316' : '#ef4444'
 
   return (
     <div className="space-y-6">
@@ -617,7 +596,7 @@ function GoogleGuideTab({ cfg, sitemapDone, setTab }: { cfg: Cfg; sitemapDone: b
 
 // ─── SEO Booster Tab ──────────────────────────────────────────────────────────
 
-function SEOBoosterTab({ cfg, setTab }: { cfg: Cfg; setTab: (t: string) => void }) {
+function SEOBoosterTab({ cfg: _cfg, setTab }: { cfg: Cfg; setTab: (t: string) => void }) {
   const [copiedKw, setCopiedKw] = useState<string | null>(null)
 
   function copyText(text: string, id: string) {
@@ -1611,7 +1590,7 @@ function SchemaTab({ cfg }: { cfg: Cfg }) {
 
 // ─── Backlinks Tab ────────────────────────────────────────────────────────────
 
-function BacklinksTab({ cfg }: { cfg: Cfg }) {
+function BacklinksTab({ cfg: _cfg }: { cfg: Cfg }) {
   const [done, setDone] = useState<Record<string, boolean>>(() => {
     try { return JSON.parse(localStorage.getItem('pub_backlinks') || '{}') } catch { return {} }
   })

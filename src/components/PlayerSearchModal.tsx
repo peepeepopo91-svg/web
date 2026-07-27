@@ -29,7 +29,7 @@ function getBestRank(ranks: Record<string, string>): RankEntry | null {
   let bestIdx = Infinity
   for (const [mode, tier] of Object.entries(ranks)) {
     if (!tier || tier === 'NONE' || tier === 'None') continue
-    const idx = TIER_ORDER.indexOf(tier)
+    const idx = (TIER_ORDER as unknown as string[]).indexOf(tier)
     if (idx !== -1 && idx < bestIdx) {
       bestIdx = idx
       best = { mode: MODE_LABELS[mode] ?? mode, tier }
@@ -41,7 +41,7 @@ function getBestRank(ranks: Record<string, string>): RankEntry | null {
 function getTopRanks(ranks: Record<string, string>): RankEntry[] {
   return Object.entries(ranks)
     .filter(([, t]) => t && t !== 'NONE' && t !== 'None')
-    .sort((a, b) => TIER_ORDER.indexOf(a[1]) - TIER_ORDER.indexOf(b[1]))
+    .sort((a, b) => (TIER_ORDER as unknown as string[]).indexOf(a[1]) - (TIER_ORDER as unknown as string[]).indexOf(b[1]))
     .slice(0, 3)
     .map(([mode, tier]) => ({ mode: MODE_LABELS[mode] ?? mode, tier }))
 }

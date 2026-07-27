@@ -57,7 +57,6 @@ export function Footer() {
   if (!cfg.footer.enabled) return null
 
   const visibleColumns = cfg.footer.columns.filter(col => col.links.length > 0)
-  const showAdmin = cfg.footer.columns.some(col => col.links.some(l => l.url === '/admin'))
 
   return (
     <>

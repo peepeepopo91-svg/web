@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from 'react'
 import {
   ArrowDown, ArrowLeftRight, ArrowUp, BarChart3, Copy, Eye, GripVertical, History, Image, LayoutDashboard,
   List, Palette, Quote, Search, Server, Shapes, Sparkles, MessagesSquare, Monitor, Smartphone, Tablet,
-  Trash2, Plus, Undo2, X, AlertTriangle, CalendarDays, Check, LayoutTemplate, Wand2,
+  Trash2, Plus, Undo2, X, AlertTriangle, Check, LayoutTemplate, Wand2,
 } from 'lucide-react'
 import { AnnouncementBanner, EventBanner, isAnnouncementLive } from '../HomepageBanners'
 import { addLog } from '../../store/adminStore'

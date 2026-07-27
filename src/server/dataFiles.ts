@@ -125,6 +125,7 @@ function atomicWriteJson(file: string, data: unknown): string {
 
 // ─── Load all canonical data from disk ───────────────────────────────────────
 
+// @ts-expect-error TanStack Start handler type narrowing false positive
 export const loadAllData = createServerFn({ method: 'GET' }).handler(async () => {
   return {
     players:     readJson<Player[]>('players.json'),

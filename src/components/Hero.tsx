@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Copy, Check, ArrowRight, ChevronRight } from 'lucide-react'
 import { useHomepageConfig } from '../store/homepageStore'
-import { getPlayers } from '../store/playersStore'
 import { computeRankings, getHighestTier } from '../data/tiers'
 import type { PlayerRanks } from '../data/players'
 
@@ -142,6 +141,7 @@ function TopPlayersPanel({ accent, players }: { accent: string; players: RawPlay
         </span>
         <Link
           to="/rankings"
+          search={{ q: undefined }}
           className="flex items-center gap-0.5 text-[10px] font-semibold uppercase tracking-wide transition-colors hover:text-white"
           style={{ color: `${accent}99` }}
         >
@@ -152,7 +152,6 @@ function TopPlayersPanel({ accent, players }: { accent: string; players: RawPlay
       {/* Player rows */}
       <div className="rounded-xl border border-white/[0.08] bg-white/[0.025] backdrop-blur-sm overflow-hidden">
         {top.map((p, i) => {
-          const tierColor = p.bestTier ? (TIER_HEX[p.bestTier] ?? '#fff') : '#6B7280'
           return (
             <div
               key={p.name}

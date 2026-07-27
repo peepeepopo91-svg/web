@@ -374,13 +374,6 @@ export function TierTaggerManager({ admin }: Props) {
     showMsg('Reset to defaults.', 'info')
   }
 
-  /** Set release date to N days from now, returned as datetime-local string */
-  function daysFromNow(n: number): string {
-    const d = new Date(Date.now() + n * 86400_000)
-    // datetime-local needs "YYYY-MM-DDTHH:mm"
-    const pad = (x: number) => String(x).padStart(2, '0')
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-  }
 
   /** Convert datetime-local string to ISO */
   function localToISO(local: string): string {

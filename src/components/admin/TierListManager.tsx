@@ -513,7 +513,7 @@ export function TierListManager({ admin }: Props) {
       if (existingIdx !== -1) {
         const existing = players[existingIdx]
         // Merge: keep existing ranks, overwrite only the ones the user changed
-        const mergedRanks: Record<string, string> = { ...existing.ranks }
+        const mergedRanks = { ...existing.ranks } as Record<string, string>
         for (const gm of liveGamemodes) {
           if (savedRanks[gm.key] && savedRanks[gm.key] !== 'NONE') {
             mergedRanks[gm.key] = savedRanks[gm.key]

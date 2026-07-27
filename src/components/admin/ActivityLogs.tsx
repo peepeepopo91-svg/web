@@ -331,7 +331,7 @@ function Row({ label, value, mono = false }: { label: string; value: string; mon
 
 // Live Feed View ───────────────────────────────────────────────────────────────
 
-function LiveFeedView({ logs, admin }: { logs: AdminLog[]; admin: string }) {
+function LiveFeedView({ logs, admin: _admin }: { logs: AdminLog[]; admin: string }) {
   const [search, setSearch]     = useState('')
   const [catFilter, setCat]     = useState('all')
   const [sevFilter, setSev]     = useState('all')
@@ -656,7 +656,7 @@ function TimelineView({ logs }: { logs: AdminLog[] }) {
             <div className="absolute left-2 top-0 bottom-0 w-px bg-white/6" />
 
             <div className="space-y-2">
-              {dayLogs.map((log, i) => {
+              {dayLogs.map((log, _i) => {
                 const m = getMeta(log.action)
                 const isExpanded = expanded === log.id
                 return (
@@ -716,7 +716,7 @@ function TimelineView({ logs }: { logs: AdminLog[] }) {
 
 // ─── Export View ──────────────────────────────────────────────────────────────
 
-function ExportView({ logs, admin, onClear }: { logs: AdminLog[]; admin: string; onClear: () => void }) {
+function ExportView({ logs, admin: _admin, onClear }: { logs: AdminLog[]; admin: string; onClear: () => void }) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [exportRange, setExportRange] = useState('all')
 

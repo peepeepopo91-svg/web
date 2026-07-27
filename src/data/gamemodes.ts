@@ -1,4 +1,3 @@
-import type { PlayerRanks } from './players'
 
 export interface Gamemode {
   /** Stable data key used on player rank objects and in synced JSON. */

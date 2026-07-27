@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from 'react'
 
-export type DirtySection = 'players' | 'gamemodes' | 'content' | 'event' | 'economy' | 'homepage'
+export type DirtySection = 'players' | 'gamemodes' | 'content' | 'event' | 'economy' | 'homepage' | 'tier-tagger'
 
 export type SaveStatus = 'idle' | 'saving' | 'success' | 'error'
 
