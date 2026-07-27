@@ -236,7 +236,7 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785162215580,
+    "lastCheckedAt": 1785162275577,
     "balance": 67.23199999999997,
     "gems": 103811.4,
     "rigs": [
@@ -244,7 +244,7 @@
         "id": "elite_ms33jfbp_ba2q",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9980.261822089962,
+        "durability": 9979.269808201074,
         "status": "mining",
         "miningSince": 1785161021967,
         "purchasedAt": 1785148859221
@@ -253,7 +253,7 @@
         "id": "elite_ms3b4dcn_h6hf",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9989.686507936509,
+        "durability": 9988.69449404762,
         "status": "mining",
         "miningSince": 1785161593312,
         "purchasedAt": 1785161593751
