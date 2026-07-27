@@ -54,7 +54,7 @@
   "cyan_gaming07": {
     "username": "Cyan_Gaming07",
     "createdAt": 1785087682534,
-    "lastCheckedAt": 1785172795760,
+    "lastCheckedAt": 1785172846607,
     "balance": 50,
     "gems": 0,
     "rigs": [
@@ -62,7 +62,7 @@
         "id": "starter_ms237k3w_gc3p",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 8538.678324915832,
+        "durability": 8537.60831228957,
         "status": "mining",
         "miningSince": 1785146515542,
         "purchasedAt": 1785087839372

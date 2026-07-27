@@ -1,8 +1,21 @@
 {
   "title": "__E2E_EVENT_TEST__",
   "subtitle": "Registrations are now open!",
+  "description": "",
+  "eventType": "pvp",
   "registrationEnds": "2026-07-22T23:59:59Z",
+  "eventStartDate": "",
+  "eventEndDate": "",
   "buttonText": "Participate Now!",
   "buttonLink": "https://discord.gg/DmEPAb3NFU",
-  "closedButtonText": "Registrations Closed"
+  "closedButtonText": "Registrations Closed",
+  "prizePool": "",
+  "maxParticipants": 0,
+  "currentParticipants": 0,
+  "streamLink": "",
+  "rulesText": "",
+  "organizerName": "",
+  "visible": true,
+  "bannerStyle": "default",
+  "pinned": false
 }
