@@ -7,6 +7,7 @@ import {
   getGitHubBridgeStatus,
   pullAllFromGitHub,
   pushAllToGitHub,
+  pushEverythingToGitHub,
   type GitHubBridgeStatus,
   type BridgeSectionStatus,
 } from '../../server/dataFiles'
@@ -133,9 +134,12 @@ export function GitHubBridge({ admin: _admin }: Props) {
   const [loading, setLoading] = useState(true)
   const [pushing, setPushing] = useState(false)
   const [pulling, setPulling] = useState(false)
-  const [logs, setLogs]       = useState<LogLine[]>([])
-  const [pullDone, setPullDone] = useState(false)
-  const [pushDone, setPushDone] = useState(false)
+  const [logs, setLogs]             = useState<LogLine[]>([])
+  const [pullDone, setPullDone]     = useState(false)
+  const [pushDone, setPushDone]     = useState(false)
+  const [pushAllDone, setPushAllDone] = useState(false)
+  const [pushingAll, setPushingAll] = useState(false)
+  const [commitMsg, setCommitMsg]   = useState('')
   const logRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { loadStatus() }, [])
@@ -160,6 +164,37 @@ export function GitHubBridge({ admin: _admin }: Props) {
 
   function addLog(msg: string, kind: LogLine['kind'] = 'info') {
     setLogs(prev => [...prev, mkLog(msg, kind)])
+  }
+
+  // ─── PUSH EVERYTHING — code + data + icons via git ───────────────────────
+
+  async function handlePushAll() {
+    setPushingAll(true)
+    setPushAllDone(false)
+    setLogs([])
+    addLog('Collecting all changes (code + data + icons)…', 'step')
+    try {
+      const result = await pushEverythingToGitHub({ data: { message: commitMsg.trim() || undefined } })
+      result.logs.forEach(l => {
+        const kind: LogLine['kind'] =
+          l.startsWith('✓') ? 'ok'
+          : l.startsWith('✗') ? 'error'
+          : l.startsWith('⚠') ? 'warn'
+          : l.startsWith('→') ? 'step'
+          : l.startsWith('ℹ') ? 'info'
+          : 'dim'
+        addLog(l.replace(/^[✓✗⚠→ℹ]\s*/, ''), kind)
+      })
+      if (result.success) {
+        setPushAllDone(true)
+        setCommitMsg('')
+        await loadStatus()
+      }
+    } catch (e) {
+      addLog((e as Error).message.replace(/^[A-Z_]+:\s*/, ''), 'error')
+    } finally {
+      setPushingAll(false)
+    }
   }
 
   // ─── PUSH — send local data to GitHub ────────────────────────────────────
@@ -448,6 +483,68 @@ export function GitHubBridge({ admin: _admin }: Props) {
             <p className="text-center text-xs text-gray-600">Set up your GitHub token in GitHub Sync to enable this</p>
           )}
         </div>
+      </div>
+
+      {/* ── Push Everything card ─────────────────────────────────────── */}
+      <div className="glass rounded-2xl border border-violet-500/15 p-5 space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-xl">
+            📦
+          </div>
+          <div>
+            <p className="text-white font-bold text-base">Push Everything to GitHub</p>
+            <p className="text-gray-500 text-xs">Sends all files — code, data, icons, new features — everything</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-gray-500">
+          {[
+            ['Data files', 'players, gamemodes, economy, etc.'],
+            ['Code files', 'new pages, components, features you added'],
+            ['Config files', 'settings, routes, package files'],
+            ['Icon files', 'custom gamemode icons in public/icons/'],
+          ].map(([title, desc]) => (
+            <div key={title} className="flex items-start gap-2">
+              <span className="text-violet-400 mt-0.5 shrink-0">·</span>
+              <span><span className="text-gray-300 font-semibold">{title}</span> — {desc}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-gray-500 text-xs">
+            Describe what you changed <span className="text-gray-700">(optional — leave blank for auto message)</span>
+          </label>
+          <input
+            type="text"
+            value={commitMsg}
+            onChange={e => setCommitMsg(e.target.value)}
+            placeholder='e.g. "Added new tournament system and updated player data"'
+            disabled={pushingAll}
+            className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-700 focus:outline-none focus:border-violet-500/40 focus:bg-white/8 transition-all disabled:opacity-40"
+          />
+        </div>
+
+        {pushAllDone && (
+          <div className="px-3 py-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 text-xs">
+            ✓ Everything pushed to GitHub successfully
+          </div>
+        )}
+
+        <button
+          onClick={handlePushAll}
+          disabled={pushingAll || pulling || !status?.connected}
+          className="w-full py-3 rounded-xl text-sm font-bold text-white border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+        >
+          {pushingAll
+            ? <><span className="animate-spin">⟳</span> Pushing everything…</>
+            : <>📦 Push Everything to GitHub</>
+          }
+        </button>
+
+        {!status?.connected && !loading && (
+          <p className="text-center text-xs text-gray-600">Set up your GitHub token in GitHub Sync to enable this</p>
+        )}
       </div>
 
       {/* ── Operation log ─────────────────────────────────────────────── */}

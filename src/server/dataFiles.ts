@@ -1559,6 +1559,106 @@ export const pushAllToGitHub = createServerFn({ method: 'POST' })
     return { success: false, logs, error: logs.filter(l => l.startsWith('✗')).join('; ') }
   })
 
+// Push every file in the repo (code + data + icons) to GitHub.
+// In dev (git present): git add -A → commit → pull --rebase → push.
+// In production (no git): not supported — code changes cannot be made there anyway.
+export const pushEverythingToGitHub = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ message: z.string().optional() }))
+  .handler(async ({ data }): Promise<{ success: boolean; logs: string[]; sha?: string }> => {
+    const logs: string[] = []
+    const { spawnSync } = await import('node:child_process')
+    const cwd = process.cwd()
+
+    const ghToken = resolveTokenSource()?.token ?? ''
+    if (!ghToken) {
+      return { success: false, logs: ['✗ GitHub token not configured — set it in GitHub Sync first'] }
+    }
+
+    // Check git is available
+    const repoCheck = spawnSync('git', ['rev-parse', '--git-dir'], { cwd, encoding: 'utf8' })
+    if ((repoCheck.status ?? 1) !== 0) {
+      return {
+        success: false,
+        logs: ['✗ No local git repository found — full code push only works in the development environment, not on the live website'],
+      }
+    }
+
+    const { owner, repo, branch } = readRepoConfig()
+    const authUrl = `https://x-access-token:${ghToken}@github.com/${owner}/${repo}.git`
+
+    const env: Record<string, string> = {
+      ...Object.fromEntries(Object.entries(process.env).filter(([, v]) => v !== undefined) as [string, string][]),
+      GIT_EDITOR: 'true', GIT_MERGE_AUTOEDIT: 'no',
+      GIT_TERMINAL_PROMPT: '0', GIT_ASKPASS: 'echo',
+      EDITOR: 'true', VISUAL: 'true',
+    }
+
+    function git(...args: string[]): { out: string; err: string; ok: boolean } {
+      const r = spawnSync('git', args, { cwd, encoding: 'utf8', timeout: 60_000, env })
+      return { out: (r.stdout ?? '').trim(), err: (r.stderr ?? '').trim(), ok: (r.status ?? 1) === 0 }
+    }
+
+    // Stage all changes
+    const statusRes = git('status', '--short')
+    const changedLines = statusRes.out.split('\n').filter(Boolean)
+
+    if (changedLines.length > 0) {
+      logs.push(`→ Staging ${changedLines.length} changed file(s)…`)
+      const addRes = git('add', '-A')
+      if (!addRes.ok) {
+        logs.push(`✗ Could not stage files: ${addRes.err.slice(0, 200)}`)
+        return { success: false, logs }
+      }
+
+      const msg = data.message?.trim() || `Admin update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`
+      const commitRes = git('commit', '-m', msg)
+      if (!commitRes.ok && !commitRes.out.includes('nothing to commit')) {
+        logs.push(`✗ Commit failed: ${commitRes.err.slice(0, 200)}`)
+        return { success: false, logs }
+      }
+      logs.push(`✓ Committed: "${msg}"`)
+    } else {
+      logs.push('ℹ No local file changes to commit')
+    }
+
+    // Check how many commits ahead we are
+    const aheadRes = git('rev-list', '--count', `${branch}@{upstream}..HEAD`)
+    const ahead = parseInt(aheadRes.out) || 0
+    if (changedLines.length === 0 && ahead === 0) {
+      logs.push('✓ Everything is already up to date in GitHub')
+      const shaRes = git('rev-parse', '--short', 'HEAD')
+      return { success: true, logs, sha: shaRes.out }
+    }
+
+    // Pull --rebase to absorb any remote commits (auto-backups, etc.)
+    logs.push('→ Fetching latest changes from GitHub…')
+    const fetchRes = git('fetch', authUrl, branch)
+    if (fetchRes.ok) {
+      const rebaseRes = git('rebase', 'FETCH_HEAD')
+      if (!rebaseRes.ok) {
+        git('rebase', '--abort')
+        logs.push('⚠ Could not merge remote changes automatically — pushing anyway')
+      } else {
+        logs.push('✓ Merged any remote changes')
+      }
+    } else {
+      logs.push('⚠ Could not fetch from GitHub — pushing anyway')
+    }
+
+    // Push
+    logs.push(`→ Pushing to GitHub (${branch})…`)
+    const pushRes = git('push', authUrl, `HEAD:${branch}`)
+    if (!pushRes.ok) {
+      const safeErr = pushRes.err.replace(ghToken, '***').slice(0, 300)
+      logs.push(`✗ Push failed: ${safeErr}`)
+      return { success: false, logs }
+    }
+
+    const shaRes = git('rev-parse', '--short', 'HEAD')
+    logs.push(`✓ All files pushed — commit ${shaRes.out}`)
+    return { success: true, logs, sha: shaRes.out }
+  })
+
 // ─── Repair engine — helpers ──────────────────────────────────────────────────
 
 /**
