@@ -77,7 +77,7 @@
   "d3n1s1": {
     "username": "D3n1s1",
     "createdAt": 1785094613983,
-    "lastCheckedAt": 1785151429464,
+    "lastCheckedAt": 1785154224042,
     "balance": 138,
     "gems": 5583.06,
     "rigs": [
@@ -85,7 +85,7 @@
         "id": "elite_ms2y9f98_v7bg",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9811.052628968258,
+        "durability": 9764.84598214286,
         "status": "mining",
         "miningSince": 1785140008202,
         "purchasedAt": 1785139994492
@@ -94,7 +94,7 @@
         "id": "quantum_ms2y9mja_mgu2",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9834.671050347228,
+        "durability": 9794.240234375005,
         "status": "mining",
         "miningSince": 1785140007543,
         "purchasedAt": 1785140003926
@@ -103,7 +103,7 @@
         "id": "advanced_ms2yall1_8218",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9780.3330632716,
+        "durability": 9726.425308641974,
         "status": "mining",
         "miningSince": 1785140051257,
         "purchasedAt": 1785140049349
@@ -112,7 +112,7 @@
         "id": "pro_ms352cpi_6rur",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9999.830199430198,
+        "durability": 9950.069195156695,
         "status": "mining",
         "miningSince": 1785151423857,
         "purchasedAt": 1785151421910
@@ -236,7 +236,7 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785154115224,
+    "lastCheckedAt": 1785154236620,
     "balance": 177.23199999999997,
     "gems": 0,
     "rigs": [
@@ -244,7 +244,7 @@
         "id": "starter_ms30viep_useq",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9882.693518518528,
+        "durability": 9880.138888888896,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785144384241
@@ -253,7 +253,7 @@
         "id": "advanced_ms31jgdu_ccgy",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9892.469058642037,
+        "durability": 9890.127314814876,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785145501362
@@ -262,7 +262,7 @@
         "id": "starter_ms32ijmp_ohqt",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9882.693518518528,
+        "durability": 9880.138888888896,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785147138529
@@ -271,7 +271,7 @@
         "id": "elite_ms33jfbp_ba2q",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9912.9847056879,
+        "durability": 9910.977496693193,
         "status": "mining",
         "miningSince": 1785148858793,
         "purchasedAt": 1785148859221
@@ -280,7 +280,7 @@
         "id": "starter_ms34qfqk_rd63",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9931.643497474754,
+        "durability": 9929.088867845121,
         "status": "mining",
         "miningSince": 1785150865471,
         "purchasedAt": 1785150865964
@@ -289,7 +289,7 @@
         "id": "pro_ms365agq_h5xc",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9984.341435185197,
+        "durability": 9982.179825498586,
         "status": "mining",
         "miningSince": 1785153238233,
         "purchasedAt": 1785153238586
