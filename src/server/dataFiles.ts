@@ -2225,6 +2225,43 @@ export const adminCreateUser = createServerFn({ method: 'POST' })
     return { success: true, uuid }
   })
 
+// ─── Add login credentials to an existing user ───────────────────────────────
+// This is intentionally separate from adminCreateUser: an existing mining
+// profile must not be recreated or overwritten just to add its missing login.
+
+export const adminCreateUserCredential = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({
+    username: z.string().min(1).max(32),
+    password: z.string().min(1),
+    role:     z.string().default('user'),
+  }))
+  .handler(async ({ data }): Promise<{ success: boolean; uuid: string }> => {
+    const key     = data.username.toLowerCase()
+    const creds   = readCredsFile()
+    const players = readJson<any[]>('players.json') ?? []
+    const mining  = readJson<Record<string, any>>('mining-users.json') ?? {}
+
+    if (creds.users.some(u => u.username.toLowerCase() === key)) {
+      throw new Error(`DUPLICATE: Login account for "${data.username}" already exists`)
+    }
+    if (!players.some((p: any) => String(p.name ?? '').toLowerCase() === key) && !mining[key]) {
+      throw new Error(`User "${data.username}" was not found`)
+    }
+
+    const { randomUUID } = await import('node:crypto')
+    const uuid = randomUUID()
+    creds.users.push({
+      username: data.username,
+      password: data.password,
+      role: data.role,
+      uuid,
+      enabled: true,
+    })
+    writeCredsFile(creds)
+
+    return { success: true, uuid }
+  })
+
 export const adminUpdateUserPlayer = createServerFn({ method: 'POST' })
   .inputValidator(z.object({
     username: z.string(),

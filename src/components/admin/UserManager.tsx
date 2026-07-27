@@ -16,6 +16,7 @@ import {
   adminDeleteUser,
   adminBulkDeleteUsers,
   adminCreateMiningForPlayer,
+  adminCreateUserCredential,
   adminRenameMiningUser,
   loadAllData,
 } from '../../server/dataFiles'
@@ -433,16 +434,100 @@ function CreateMiningModal({ player, onClose, onCreated, admin }: CreateMiningMo
   )
 }
 
+// ─── Create Login Modal (for existing mining/profile users) ──────────────────
+
+interface CreateLoginModalProps {
+  user: UserRecord
+  onClose: () => void
+  onCreated: () => void
+  admin: string
+}
+
+function CreateLoginModal({ user, onClose, onCreated, admin }: CreateLoginModalProps) {
+  const [password, setPassword] = useState('')
+  const [role, setRole] = useState('user')
+  const [working, setWorking] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleCreate() {
+    const pw = password.trim()
+    if (!pw) { setError('Password is required'); return }
+
+    setWorking(true); setError(null)
+    try {
+      await adminCreateUserCredential({
+        data: { username: user.username, password: pw, role },
+      })
+      addLog(admin, 'user:create-credential', `Created login account for "${user.username}"`)
+      onCreated()
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(msg.replace(/^DUPLICATE:\s*/, '').replace(/^Error:\s*/, ''))
+    } finally {
+      setWorking(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="glass rounded-2xl border border-white/10 w-full max-w-md overflow-hidden">
+        <div className="px-6 py-5 border-b border-white/5 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-[#00BFFF]/10 border border-[#00BFFF]/20 flex items-center justify-center text-lg">🔑</div>
+          <div>
+            <h2 className="font-['Space_Grotesk'] font-bold text-white text-base">Create Login Account</h2>
+            <p className="text-gray-600 text-xs">Give an existing user access to BlueCoin Mining</p>
+          </div>
+          <button onClick={onClose} className="ml-auto text-gray-600 hover:text-white transition-colors text-xl leading-none">×</button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div className="glass rounded-xl border border-white/5 px-4 py-3">
+            <p className="text-gray-600 text-[10px] uppercase tracking-widest mb-0.5">Login Username</p>
+            <p className="text-white text-sm font-mono font-semibold">{user.username}</p>
+            <p className="text-gray-700 text-[10px] mt-1">Existing mining data will be preserved.</p>
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 uppercase tracking-widest block mb-2">Password *</label>
+            <input
+              type="text" value={password}
+              onChange={e => { setPassword(e.target.value); setError(null) }}
+              placeholder="Set a login password"
+              className="w-full bg-white/3 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:border-[#00BFFF]/40 placeholder-gray-700 transition-all"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 uppercase tracking-widest block mb-2">Role</label>
+            <select value={role} onChange={e => setRole(e.target.value)}
+              className="w-full bg-[#0B0F17] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:border-[#00BFFF]/40 transition-all">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          {error && <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
+        </div>
+
+        <div className="px-6 py-4 border-t border-white/5 flex gap-3">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm text-gray-400 border border-white/10 hover:bg-white/5 transition-all">Cancel</button>
+          <button onClick={handleCreate} disabled={working} className="flex-1 py-2.5 rounded-xl text-sm font-semibold btn-primary text-white flex items-center justify-center gap-2 disabled:opacity-50">
+            {working ? <><Spinner /> Creating…</> : '🔑 Create Account'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Edit User Modal ──────────────────────────────────────────────────────────
 
 interface EditModalProps {
   user: UserRecord
   onClose: () => void
   onSaved: () => void
+  onCreateLogin: (user: UserRecord) => void
   admin: string
 }
 
-function EditModal({ user, onClose, onSaved, admin }: EditModalProps) {
+function EditModal({ user, onClose, onSaved, onCreateLogin, admin }: EditModalProps) {
   const [tab, setTab] = useState<EditTab>('overview')
   const [working, setWorking] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -835,6 +920,15 @@ function EditModal({ user, onClose, onSaved, admin }: EditModalProps) {
                           </div>
                         </div>
                       )}
+                      {!user.hasCred && (
+                        <button
+                          onClick={() => onCreateLogin(user)}
+                          disabled={working}
+                          className="w-full py-2.5 rounded-xl text-sm font-semibold text-[#00BFFF] border border-[#00BFFF]/20 hover:bg-[#00BFFF]/10 transition-all disabled:opacity-50"
+                        >
+                          🔑 Create Login Account
+                        </button>
+                      )}
 
                       {/* Enable / Disable toggle (only when user has a login credential) */}
                       {user.hasCred && (
@@ -1075,6 +1169,7 @@ export function UserManager({ admin }: Props) {
 
   const [createOpen,          setCreateOpen]          = useState(false)
   const [createMiningTarget,  setCreateMiningTarget]  = useState<UserRecord | null>(null)
+  const [createLoginTarget,   setCreateLoginTarget]   = useState<UserRecord | null>(null)
   const [editTarget,          setEditTarget]          = useState<UserRecord | null>(null)
   const [deleteTarget,        setDeleteTarget]        = useState<UserRecord | null>(null)
   const [bulkDeleteOpen,      setBulkDeleteOpen]      = useState(false)
@@ -1162,6 +1257,12 @@ export function UserManager({ admin }: Props) {
     showToast('Mining account created successfully')
   }
 
+  async function handleLoginCreated() {
+    setCreateLoginTarget(null)
+    await load()
+    showToast('Login account created successfully')
+  }
+
   async function handleSaved() {
     await load()
     await syncPlayersStore()
@@ -1209,7 +1310,8 @@ export function UserManager({ admin }: Props) {
       {/* Modals */}
       {createOpen           && <CreateModal onClose={() => setCreateOpen(false)} onCreated={handleCreated} admin={admin} />}
       {createMiningTarget   && <CreateMiningModal player={createMiningTarget} onClose={() => setCreateMiningTarget(null)} onCreated={handleMiningCreated} admin={admin} />}
-      {editTarget           && <EditModal user={editTarget} onClose={() => setEditTarget(null)} onSaved={handleSaved} admin={admin} />}
+      {createLoginTarget    && <CreateLoginModal user={createLoginTarget} onClose={() => setCreateLoginTarget(null)} onCreated={handleLoginCreated} admin={admin} />}
+      {editTarget           && <EditModal user={editTarget} onClose={() => setEditTarget(null)} onSaved={handleSaved} onCreateLogin={user => { setEditTarget(null); setCreateLoginTarget(user) }} admin={admin} />}
       {deleteTarget         && <DeleteModal user={deleteTarget} onClose={() => setDeleteTarget(null)} onDeleted={handleDeleted} admin={admin} />}
       {bulkDeleteOpen       && <BulkDeleteModal usernames={selectedKeys} onClose={() => setBulkDeleteOpen(false)} onDeleted={handleBulkDeleted} admin={admin} />}
 
@@ -1376,6 +1478,16 @@ export function UserManager({ admin }: Props) {
                           title="Create Mining Account"
                         >
                           ⛏+
+                        </button>
+                      )}
+                      {/* Quick: Add login credentials without touching existing mining data */}
+                      {u.hasMining && !u.hasCred && (
+                        <button
+                          onClick={() => setCreateLoginTarget(u)}
+                          className="p-1.5 rounded-lg text-green-400 border border-green-500/20 hover:bg-green-500/10 transition-all text-[10px] leading-none"
+                          title="Create Login Account"
+                        >
+                          🔑+
                         </button>
                       )}
                       <button onClick={() => setEditTarget(u)}
