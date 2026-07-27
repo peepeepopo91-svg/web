@@ -77,7 +77,7 @@
   "d3n1s1": {
     "username": "D3n1s1",
     "createdAt": 1785094613983,
-    "lastCheckedAt": 1785142493085,
+    "lastCheckedAt": 1785142863082,
     "balance": 502,
     "gems": 5583.06,
     "rigs": [
@@ -85,7 +85,7 @@
         "id": "advanced_ms27cbfz_qd5l",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9114.917052469142,
+        "durability": 9107.7797646605,
         "status": "mining",
         "miningSince": 1785139982853,
         "purchasedAt": 1785094779887
@@ -94,7 +94,7 @@
         "id": "advanced_ms27dftu_ywo2",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9115.841435185192,
+        "durability": 9108.70414737655,
         "status": "mining",
         "miningSince": 1785139984506,
         "purchasedAt": 1785094832226
@@ -103,7 +103,7 @@
         "id": "elite_ms2y9f98_v7bg",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9958.81021825397,
+        "durability": 9952.692542989422,
         "status": "mining",
         "miningSince": 1785140008202,
         "purchasedAt": 1785139994492
@@ -112,7 +112,7 @@
         "id": "quantum_ms2y9mja_mgu2",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9963.958940972225,
+        "durability": 9958.605975115743,
         "status": "mining",
         "miningSince": 1785140007543,
         "purchasedAt": 1785140003926
@@ -121,7 +121,7 @@
         "id": "advanced_ms2yall1_8218",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9952.71691743827,
+        "durability": 9945.579629629628,
         "status": "mining",
         "miningSince": 1785140051257,
         "purchasedAt": 1785140049349
