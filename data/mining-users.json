@@ -236,15 +236,15 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785151474773,
-    "balance": 77.23199999999997,
+    "lastCheckedAt": 1785153935220,
+    "balance": 177.23199999999997,
     "gems": 0,
     "rigs": [
       {
         "id": "starter_ms30viep_useq",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9938.258564814807,
+        "durability": 9886.48148148149,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785144384241
@@ -253,7 +253,7 @@
         "id": "advanced_ms31jgdu_ccgy",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9943.4036844136,
+        "durability": 9895.941358024753,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785145501362
@@ -262,7 +262,7 @@
         "id": "starter_ms32ijmp_ohqt",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9938.258564814807,
+        "durability": 9886.48148148149,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785147138529
@@ -271,7 +271,7 @@
         "id": "elite_ms33jfbp_ba2q",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9956.642956349218,
+        "durability": 9915.960962301659,
         "status": "mining",
         "miningSince": 1785148858793,
         "purchasedAt": 1785148859221
@@ -280,13 +280,34 @@
         "id": "starter_ms34qfqk_rd63",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9987.208543771032,
+        "durability": 9935.431460437716,
         "status": "mining",
         "miningSince": 1785150865471,
         "purchasedAt": 1785150865964
+      },
+      {
+        "id": "pro_ms365agq_h5xc",
+        "tierId": "pro",
+        "name": "Pro Miner",
+        "durability": 9987.546634615397,
+        "status": "mining",
+        "miningSince": 1785153238233,
+        "purchasedAt": 1785153238586
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 220,
+        "solvedAt": 1785152362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 220,
+        "solvedAt": 1785152362607,
+        "amount": 500,
+        "type": "finder"
+      },
       {
         "blockNumber": 219,
         "solvedAt": 1785148762607,
