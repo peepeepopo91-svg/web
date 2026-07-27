@@ -1,0 +1,67 @@
+{
+  "lastSyncAt": "2026-07-27T16:01:42.935Z",
+  "lastCommitSha": "7453bb69232f5e6b329fac807c2aa9852c26f625",
+  "lastCommitMessage": "[admin] Sync data from production (2026-07-27)",
+  "filesUpdated": 11,
+  "filesFailed": 0,
+  "iconsUpdated": 15,
+  "triggeredBy": "server-fn",
+  "nextAutoSyncAt": null,
+  "fileResults": [
+    {
+      "file": "data/players.json",
+      "ok": true,
+      "bytes": 20337
+    },
+    {
+      "file": "data/gamemodes.json",
+      "ok": true,
+      "bytes": 868
+    },
+    {
+      "file": "data/content.json",
+      "ok": true,
+      "bytes": 1002
+    },
+    {
+      "file": "data/event.json",
+      "ok": true,
+      "bytes": 545
+    },
+    {
+      "file": "data/economy.json",
+      "ok": true,
+      "bytes": 39
+    },
+    {
+      "file": "data/homepage.json",
+      "ok": true,
+      "bytes": 10164
+    },
+    {
+      "file": "data/tier-tagger.json",
+      "ok": true,
+      "bytes": 3679
+    },
+    {
+      "file": "data/ads-config.json",
+      "ok": true,
+      "bytes": 4983
+    },
+    {
+      "file": "data/growth.json",
+      "ok": true,
+      "bytes": 2527
+    },
+    {
+      "file": "data/shop-items.json",
+      "ok": true,
+      "bytes": 5294
+    },
+    {
+      "file": "data/tournaments.json",
+      "ok": true,
+      "bytes": 16229
+    }
+  ]
+}
