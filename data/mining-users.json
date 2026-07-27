@@ -54,7 +54,7 @@
   "cyan_gaming07": {
     "username": "Cyan_Gaming07",
     "createdAt": 1785087682534,
-    "lastCheckedAt": 1785088043428,
+    "lastCheckedAt": 1785146711616,
     "balance": 50,
     "gems": 0,
     "rigs": [
@@ -62,17 +62,17 @@
         "id": "starter_ms237k3w_gc3p",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9995.789983164985,
+        "durability": 9087.587079124582,
         "status": "mining",
-        "miningSince": 1785087844405,
+        "miningSince": 1785146515542,
         "purchasedAt": 1785087839372
       }
     ],
     "rewardHistory": [],
     "exchangeUsedToday": 0,
     "exchangeResetAt": 1785174157088,
-    "miningExpiresAt": 1785131001533,
-    "miningRenewedAt": 1785087801533
+    "miningExpiresAt": 1785189704428,
+    "miningRenewedAt": 1785146504428
   },
   "d3n1s1": {
     "username": "D3n1s1",
@@ -245,18 +245,54 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785145414766,
-    "balance": 548,
+    "lastCheckedAt": 1785147262126,
+    "balance": 84.2320000000002,
     "gems": 0,
     "rigs": [
       {
         "id": "starter_ms30viep_useq",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9991.246675084176,
+        "durability": 9993.882744107743,
         "status": "mining",
-        "miningSince": 1785145000087,
+        "miningSince": 1785146979351,
         "purchasedAt": 1785144384241
+      },
+      {
+        "id": "advanced_ms31jgdu_ccgy",
+        "tierId": "advanced",
+        "name": "Advanced Rig",
+        "durability": 9994.3925154321,
+        "status": "mining",
+        "miningSince": 1785146979351,
+        "purchasedAt": 1785145501362
+      },
+      {
+        "id": "pro_ms326yze_p6kj",
+        "tierId": "pro",
+        "name": "Pro Miner",
+        "durability": 9994.823860398863,
+        "status": "mining",
+        "miningSince": 1785146979351,
+        "purchasedAt": 1785146598554
+      },
+      {
+        "id": "pro_ms32ez9u_le72",
+        "tierId": "pro",
+        "name": "Pro Miner",
+        "durability": 9994.823860398863,
+        "status": "mining",
+        "miningSince": 1785146972049,
+        "purchasedAt": 1785146972178
+      },
+      {
+        "id": "starter_ms32ijmp_ohqt",
+        "tierId": "starter",
+        "name": "Starter Pack",
+        "durability": 9997.407386363639,
+        "status": "mining",
+        "miningSince": 1785147139645,
+        "purchasedAt": 1785147138529
       }
     ],
     "rewardHistory": [
@@ -265,11 +301,17 @@
         "solvedAt": 1785145162607,
         "amount": 500,
         "type": "finder"
+      },
+      {
+        "blockNumber": 218,
+        "solvedAt": 1785145162607,
+        "amount": 500,
+        "type": "finder"
       }
     ],
-    "exchangeUsedToday": 0,
+    "exchangeUsedToday": 2,
     "exchangeResetAt": 1785230667822,
-    "miningExpiresAt": 1785187467822,
-    "miningRenewedAt": 1785144267822
+    "miningExpiresAt": 1785190283793,
+    "miningRenewedAt": 1785147083793
   }
 }
