@@ -73,5 +73,167 @@
     "exchangeResetAt": 1785174157088,
     "miningExpiresAt": 1785131001533,
     "miningRenewedAt": 1785087801533
+  },
+  "d3n1s1": {
+    "username": "D3n1s1",
+    "createdAt": 1785094613983,
+    "lastCheckedAt": 1785140121927,
+    "balance": 2,
+    "gems": 5583.06,
+    "rigs": [
+      {
+        "id": "advanced_ms27cbfz_qd5l",
+        "tierId": "advanced",
+        "name": "Advanced Rig",
+        "durability": 9160.656983024697,
+        "status": "mining",
+        "miningSince": 1785139982853,
+        "purchasedAt": 1785094779887
+      },
+      {
+        "id": "advanced_ms27dftu_ywo2",
+        "tierId": "advanced",
+        "name": "Advanced Rig",
+        "durability": 9161.581365740747,
+        "status": "mining",
+        "miningSince": 1785139984506,
+        "purchasedAt": 1785094832226
+      },
+      {
+        "id": "elite_ms2y9f98_v7bg",
+        "tierId": "elite",
+        "name": "Elite Station",
+        "durability": 9998.015873015875,
+        "status": "mining",
+        "miningSince": 1785140008202,
+        "purchasedAt": 1785139994492
+      },
+      {
+        "id": "quantum_ms2y9mja_mgu2",
+        "tierId": "quantum",
+        "name": "Quantum Array",
+        "durability": 9998.26388888889,
+        "status": "mining",
+        "miningSince": 1785140007543,
+        "purchasedAt": 1785140003926
+      },
+      {
+        "id": "advanced_ms2yall1_8218",
+        "tierId": "advanced",
+        "name": "Advanced Rig",
+        "durability": 9998.456847993826,
+        "status": "mining",
+        "miningSince": 1785140051257,
+        "purchasedAt": 1785140049349
+      }
+    ],
+    "rewardHistory": [
+      {
+        "blockNumber": 216,
+        "solvedAt": 1785137962607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 215,
+        "solvedAt": 1785134362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 214,
+        "solvedAt": 1785130762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 213,
+        "solvedAt": 1785127162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 212,
+        "solvedAt": 1785123562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 211,
+        "solvedAt": 1785119962607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 210,
+        "solvedAt": 1785116362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 209,
+        "solvedAt": 1785112762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 208,
+        "solvedAt": 1785109162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 207,
+        "solvedAt": 1785105562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 206,
+        "solvedAt": 1785101962607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 205,
+        "solvedAt": 1785098362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 204,
+        "solvedAt": 1785094762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 203,
+        "solvedAt": 1785091162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 205,
+        "solvedAt": 1785098362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 204,
+        "solvedAt": 1785094762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 204,
+        "solvedAt": 1785094762607,
+        "amount": 500,
+        "type": "finder"
+      }
+    ],
+    "exchangeUsedToday": 1,
+    "exchangeResetAt": 1785181037437,
+    "miningExpiresAt": 1785183176965,
+    "miningRenewedAt": 1785139976965
   }
 }
