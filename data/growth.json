@@ -111,35 +111,25 @@
       "peakConcurrent": 11
     },
     "2026-07-27": {
-      "pageViews": 103,
-      "uniqueSessions": 12,
+      "pageViews": 8,
+      "uniqueSessions": 5,
       "pages": {
-        "/exchange": 37,
-        "/mining": 46,
-        "/": 6,
-        "/tournament": 8,
-        "/tier-tagger": 1,
-        "/shop": 2,
-        "/rankings": 3
+        "/": 5,
+        "/mining": 3
       },
       "referrers": {
-        "Direct": 102,
-        "Referral": 1
+        "Referral": 6,
+        "Direct": 2
       },
       "devices": {
-        "Desktop": 97,
-        "Mobile": 6
+        "Desktop": 8
       },
       "browsers": {
-        "Opera": 78,
-        "Chrome": 5,
-        "Firefox": 18,
-        "Edge": 2
+        "Firefox": 6,
+        "Chrome": 2
       },
       "os": {
-        "Windows": 92,
-        "Android": 6,
-        "Linux": 5
+        "Linux": 8
       },
       "peakConcurrent": 3
     }

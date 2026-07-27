@@ -1,0 +1,4 @@
+{
+  "intervalMs": 300000,
+  "startupSync": true
+}

@@ -2518,6 +2518,44 @@ export const triggerBackupNow = createServerFn({ method: 'POST' })
     return { ok: true, message: 'No changes — data unchanged since last commit', status }
   })
 
+// ─── Auto-Sync Configuration ──────────────────────────────────────────────────
+
+export interface SyncConfig {
+  intervalMs:  number   // 0 = disabled
+  startupSync: boolean
+}
+
+const SYNC_CONFIG_PATH = resolve(process.cwd(), 'data', 'sync-config.json')
+
+export const getSyncConfig = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<SyncConfig> => {
+    try {
+      const raw = readFileSync(SYNC_CONFIG_PATH, 'utf8')
+      const d   = JSON.parse(raw) as Partial<SyncConfig>
+      return {
+        intervalMs:  typeof d.intervalMs  === 'number' ? d.intervalMs  : 300_000,
+        startupSync: d.startupSync !== false,
+      }
+    } catch {
+      return { intervalMs: 300_000, startupSync: true }
+    }
+  },
+)
+
+export const saveSyncConfig = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({
+    intervalMs:  z.number().int().min(0),
+    startupSync: z.boolean(),
+  }))
+  .handler(async ({ data }): Promise<SyncConfig> => {
+    const { writeFileSync: fsWrite, renameSync: fsRename } = await import('node:fs')
+    const content = JSON.stringify(data, null, 2)
+    const tmp = `${SYNC_CONFIG_PATH}.tmp`
+    fsWrite(tmp, content, 'utf8')
+    fsRename(tmp, SYNC_CONFIG_PATH)
+    return data
+  })
+
 // ─── Live Site Sync State ─────────────────────────────────────────────────────
 // The production server (server.mjs) writes data/sync-state.json after every
 // GitHub pull. These server functions expose it to the admin UI and let the

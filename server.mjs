@@ -1,19 +1,14 @@
 /**
  * Production server for Replit deployment.
  * Serves static assets from dist/client/ and SSR via TanStack Start.
- * Also handles /api/mining-events and /api/tournament-events as SSE endpoints.
  *
  * ── Live Site Auto-Sync ──────────────────────────────────────────────────────
- * On startup, and then every 5 minutes, this server fetches the latest STATIC
- * admin-controlled data files from GitHub and writes them to disk.
+ * Fetches STATIC admin data from GitHub on startup and on a configurable
+ * interval (default 5 min, reads from data/sync-config.json each tick).
  *
- * PROTECTED files — NEVER overwritten by GitHub sync (player-generated data):
- *   data/mining-users.json   ← player balances, mining rigs
- *   data/shop-purchases.json ← purchase history
- *   data/mining-community.json
- *   data/mining-access.json
- *   data/sync-history.json
- *   credentials.yml / admin.yml / .github-token.json
+ * PROTECTED — NEVER overwritten:
+ *   mining-users.json, shop-purchases.json, mining-community.json,
+ *   mining-access.json, sync-history.json, credentials.yml, admin.yml
  */
 
 import { serve }                            from 'srvx/node'
@@ -21,35 +16,22 @@ import { readFile, writeFile, stat, mkdir } from 'node:fs/promises'
 import { readFileSync, renameSync }         from 'node:fs'
 import { join, extname, resolve }           from 'node:path'
 
-// Dynamically import the built TanStack Start SSR bundle
 const { default: tsServer } = await import('./dist/server/server.js')
 
-// ─── MIME types ──────────────────────────────────────────────────────────────
-
 const MIME = {
-  '.js':    'application/javascript',
-  '.mjs':   'application/javascript',
-  '.css':   'text/css',
-  '.html':  'text/html',
-  '.svg':   'image/svg+xml',
-  '.png':   'image/png',
-  '.jpg':   'image/jpeg',
-  '.jpeg':  'image/jpeg',
-  '.ico':   'image/x-icon',
-  '.json':  'application/json',
-  '.woff':  'font/woff',
-  '.woff2': 'font/woff2',
-  '.ttf':   'font/ttf',
-  '.webp':  'image/webp',
+  '.js': 'application/javascript', '.mjs': 'application/javascript',
+  '.css': 'text/css', '.html': 'text/html', '.svg': 'image/svg+xml',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+  '.ico': 'image/x-icon', '.json': 'application/json',
+  '.woff': 'font/woff', '.woff2': 'font/woff2', '.ttf': 'font/ttf',
+  '.webp': 'image/webp',
 }
 
 const CLIENT_DIR = new URL('./dist/client', import.meta.url).pathname
 const PORT       = Number(process.env.PORT) || 5000
 const CWD        = process.cwd()
 
-// ─── GitHub Auto-Sync ─────────────────────────────────────────────────────────
-// These are the STATIC admin-controlled files pulled from GitHub.
-// Player / economy / transaction data is NEVER touched.
+// ─── Static data files synced FROM GitHub (NEVER includes user data) ──────────
 
 const STATIC_DATA_REPO_PATHS = [
   'data/players.json',
@@ -65,48 +47,55 @@ const STATIC_DATA_REPO_PATHS = [
   'data/tournaments.json',
 ]
 
-const SYNC_STATE_PATH = resolve(CWD, 'data', 'sync-state.json')
-const AUTO_SYNC_INTERVAL_MS = 5 * 60 * 1000  // 5 minutes
+const SYNC_STATE_PATH  = resolve(CWD, 'data', 'sync-state.json')
+const SYNC_CONFIG_PATH = resolve(CWD, 'data', 'sync-config.json')
+const MAX_HISTORY      = 30
 
-/** Read the GitHub token from env var → panel file. */
+// ─── Config helpers ───────────────────────────────────────────────────────────
+
 function readGHToken() {
   if (process.env.GITHUB_TOKEN) return process.env.GITHUB_TOKEN
   try {
-    const raw = readFileSync(resolve(CWD, '.github-token.json'), 'utf-8')
-    const d   = JSON.parse(raw)
-    if (typeof d.token === 'string' && d.token.trim()) return d.token.trim()
-  } catch { /* not configured yet */ }
-  return null
+    const d = JSON.parse(readFileSync(resolve(CWD, '.github-token.json'), 'utf-8'))
+    return typeof d.token === 'string' && d.token.trim() ? d.token.trim() : null
+  } catch { return null }
 }
 
-/** Read owner/repo/branch from data/github-config.json. */
 function readGHConfig() {
-  try {
-    const raw = readFileSync(resolve(CWD, 'data', 'github-config.json'), 'utf-8')
-    return JSON.parse(raw)
-  } catch {
-    return null
-  }
+  try { return JSON.parse(readFileSync(resolve(CWD, 'data', 'github-config.json'), 'utf-8')) }
+  catch { return null }
 }
 
-/** Atomically write a file: write .tmp first, then rename. */
+function readSyncConfig() {
+  try {
+    const d = JSON.parse(readFileSync(SYNC_CONFIG_PATH, 'utf-8'))
+    return {
+      intervalMs:  typeof d.intervalMs  === 'number' ? d.intervalMs  : 300_000,
+      startupSync: d.startupSync !== false,
+    }
+  } catch { return { intervalMs: 300_000, startupSync: true } }
+}
+
+function readCurrentSyncState() {
+  try { return JSON.parse(readFileSync(SYNC_STATE_PATH, 'utf-8')) }
+  catch { return null }
+}
+
 async function atomicWrite(path, content) {
   const tmp = path + '.tmp'
   await writeFile(tmp, content, 'utf-8')
   renameSync(tmp, path)
 }
 
-/**
- * Pull all static data files from GitHub and write them to disk.
- * Also syncs public/icons/*.
- * Returns a summary written to data/sync-state.json.
- */
+// ─── Core sync function ───────────────────────────────────────────────────────
+
 async function doGitHubSync(triggeredBy = 'auto') {
   const token  = readGHToken()
   const config = readGHConfig()
 
   if (!token || !config) {
-    return { success: false, reason: 'GitHub not configured — set token via admin panel', triggeredBy }
+    console.log('[sync] GitHub not configured — skipping')
+    return { success: false }
   }
 
   const { owner, repo, branch } = config
@@ -117,148 +106,126 @@ async function doGitHubSync(triggeredBy = 'auto') {
     'X-GitHub-Api-Version': '2022-11-28',
   }
 
-  let filesUpdated = 0
-  let filesFailed  = 0
+  let filesUpdated = 0, filesFailed = 0
   const fileResults = []
 
-  // ── Fetch each static data file ──────────────────────────────────────────
   await mkdir(resolve(CWD, 'data'), { recursive: true })
 
   for (const repoPath of STATIC_DATA_REPO_PATHS) {
     try {
-      const res = await fetch(
-        `${BASE}/repos/${owner}/${repo}/contents/${repoPath}?ref=${branch}`,
-        { headers },
-      )
-      if (!res.ok) {
-        fileResults.push({ file: repoPath, ok: false, error: `HTTP ${res.status}` })
-        filesFailed++
-        continue
-      }
+      const res  = await fetch(`${BASE}/repos/${owner}/${repo}/contents/${repoPath}?ref=${branch}`, { headers })
+      if (!res.ok) { filesFailed++; fileResults.push({ file: repoPath, ok: false, error: `HTTP ${res.status}` }); continue }
       const data    = await res.json()
       const content = Buffer.from(data.content.replace(/\n/g, ''), 'base64').toString('utf-8')
-
-      // Validate JSON before writing — never corrupt a data file
-      JSON.parse(content)
-
-      const localPath = resolve(CWD, repoPath)
-      await atomicWrite(localPath, content)
-      fileResults.push({ file: repoPath, ok: true, bytes: content.length })
+      JSON.parse(content)  // validate
+      await atomicWrite(resolve(CWD, repoPath), content)
       filesUpdated++
+      fileResults.push({ file: repoPath, ok: true, bytes: content.length })
     } catch (e) {
-      fileResults.push({ file: repoPath, ok: false, error: e.message })
       filesFailed++
+      fileResults.push({ file: repoPath, ok: false, error: e.message })
     }
   }
 
-  // ── Sync icon files from public/icons/ ───────────────────────────────────
+  // Icons
   let iconsUpdated = 0
   try {
-    const iconsRes = await fetch(
-      `${BASE}/repos/${owner}/${repo}/contents/public/icons?ref=${branch}`,
-      { headers },
-    )
+    const iconsRes = await fetch(`${BASE}/repos/${owner}/${repo}/contents/public/icons?ref=${branch}`, { headers })
     if (iconsRes.ok) {
-      const items = await iconsRes.json()
+      const items    = await iconsRes.json()
       const iconsDir = resolve(CWD, 'public', 'icons')
       await mkdir(iconsDir, { recursive: true })
       for (const item of items) {
         if (item.type !== 'file' || !/\.(png|jpg|jpeg|gif|webp)$/i.test(item.name)) continue
         try {
           const dl = await fetch(item.download_url)
-          if (dl.ok) {
-            await writeFile(resolve(iconsDir, item.name), Buffer.from(await dl.arrayBuffer()))
-            iconsUpdated++
-          }
-        } catch { /* icon failed — skip */ }
+          if (dl.ok) { await writeFile(resolve(iconsDir, item.name), Buffer.from(await dl.arrayBuffer())); iconsUpdated++ }
+        } catch {}
       }
     }
-  } catch { /* icons are optional */ }
+  } catch {}
 
-  // ── Get latest commit info ────────────────────────────────────────────────
-  let latestCommitSha     = null
-  let latestCommitMessage = null
+  // Latest commit
+  let lastCommitSha = null, lastCommitMessage = null
   try {
-    const commitRes = await fetch(
-      `${BASE}/repos/${owner}/${repo}/commits/${branch}`,
-      { headers },
-    )
-    if (commitRes.ok) {
-      const c = await commitRes.json()
-      latestCommitSha     = c.sha
-      latestCommitMessage = c.commit?.message?.split('\n')[0] ?? null
-    }
-  } catch { /* commit info is optional */ }
+    const cr = await fetch(`${BASE}/repos/${owner}/${repo}/commits/${branch}`, { headers })
+    if (cr.ok) { const c = await cr.json(); lastCommitSha = c.sha; lastCommitMessage = c.commit?.message?.split('\n')[0] ?? null }
+  } catch {}
 
-  // ── Write sync state ──────────────────────────────────────────────────────
-  const now      = new Date()
-  const nextSync = new Date(now.getTime() + AUTO_SYNC_INTERVAL_MS)
-  const state = {
-    lastSyncAt:          now.toISOString(),
-    lastCommitSha:       latestCommitSha,
-    lastCommitMessage:   latestCommitMessage,
+  // Build state with history
+  const existing = readCurrentSyncState()
+  const prevHistory = Array.isArray(existing?.history) ? existing.history : []
+  const now = new Date()
+
+  const historyEntry = {
+    at:            now.toISOString(),
+    commitSha:     lastCommitSha,
+    commitMessage: lastCommitMessage,
     filesUpdated,
     filesFailed,
     iconsUpdated,
     triggeredBy,
-    nextAutoSyncAt:      nextSync.toISOString(),
-    fileResults,
   }
-  try {
-    await atomicWrite(SYNC_STATE_PATH, JSON.stringify(state, null, 2))
-  } catch { /* non-critical */ }
 
-  const shaStr = latestCommitSha?.slice(0, 7) ?? 'unknown'
-  console.log(`[github-sync] ${triggeredBy}: ${filesUpdated} files + ${iconsUpdated} icons updated, ${filesFailed} failed — HEAD ${shaStr}`)
+  const cfg = readSyncConfig()
+  const state = {
+    lastSyncAt:        now.toISOString(),
+    lastCommitSha,
+    lastCommitMessage,
+    filesUpdated,
+    filesFailed,
+    iconsUpdated,
+    triggeredBy,
+    nextAutoSyncAt:    cfg.intervalMs > 0 ? new Date(now.getTime() + cfg.intervalMs).toISOString() : null,
+    fileResults,
+    history:           [...prevHistory.slice(-(MAX_HISTORY - 1)), historyEntry],
+  }
 
+  try { await atomicWrite(SYNC_STATE_PATH, JSON.stringify(state, null, 2)) } catch {}
+
+  console.log(`[sync] ${triggeredBy}: ${filesUpdated}+${iconsUpdated}ico updated, ${filesFailed} failed — ${lastCommitSha?.slice(0, 7) ?? '?'}`)
   return { success: true, ...state }
 }
 
-// ── Run sync on startup, then every 5 minutes ────────────────────────────────
-doGitHubSync('startup').catch(e => console.error('[github-sync] startup sync error:', e.message))
-setInterval(() => {
-  doGitHubSync('auto').catch(e => console.error('[github-sync] periodic sync error:', e.message))
-}, AUTO_SYNC_INTERVAL_MS)
+// ─── Self-scheduling sync (reads config each tick) ────────────────────────────
 
-// ─── SSE helper ───────────────────────────────────────────────────────────────
+function scheduleNextSync(overrideDelayMs) {
+  const cfg   = readSyncConfig()
+  const delay = overrideDelayMs ?? (cfg.intervalMs > 0 ? cfg.intervalMs : null)
+  if (!delay) return  // auto-sync disabled
+  setTimeout(async () => {
+    await doGitHubSync('auto').catch(e => console.error('[sync] error:', e.message))
+    scheduleNextSync()  // re-read config for next interval
+  }, delay)
+}
+
+const startupCfg = readSyncConfig()
+if (startupCfg.startupSync) {
+  doGitHubSync('startup').catch(e => console.error('[sync] startup error:', e.message))
+}
+scheduleNextSync(startupCfg.intervalMs > 0 ? startupCfg.intervalMs : null)
+
+// ─── SSE handler ─────────────────────────────────────────────────────────────
 
 function handleSSE(req) {
   let closed = false
-
   const stream = new ReadableStream({
     start(controller) {
-      const enc  = new TextEncoder()
-      const write = (data) => {
-        if (closed) return
-        try { controller.enqueue(enc.encode(data)) } catch { cleanup() }
-      }
-
+      const enc   = new TextEncoder()
+      const write = d => { if (!closed) try { controller.enqueue(enc.encode(d)) } catch { cleanup() } }
       if (!globalThis.__miningSSEClients) globalThis.__miningSSEClients = new Set()
       globalThis.__miningSSEClients.add(write)
-
       write(': connected\n\n')
-
-      const heartbeat = setInterval(() => write(': ping\n\n'), 25_000)
-
+      const hb = setInterval(() => write(': ping\n\n'), 25_000)
       function cleanup() {
-        if (closed) return
-        closed = true
-        clearInterval(heartbeat)
-        globalThis.__miningSSEClients?.delete(write)
-        try { controller.close() } catch {}
+        if (closed) return; closed = true; clearInterval(hb)
+        globalThis.__miningSSEClients?.delete(write); try { controller.close() } catch {}
       }
-
       if (req.signal) req.signal.addEventListener('abort', cleanup, { once: true })
     },
   })
-
   return new Response(stream, {
-    headers: {
-      'Content-Type':      'text/event-stream; charset=utf-8',
-      'Cache-Control':     'no-cache, no-transform',
-      'Connection':        'keep-alive',
-      'X-Accel-Buffering': 'no',
-    },
+    headers: { 'Content-Type': 'text/event-stream; charset=utf-8', 'Cache-Control': 'no-cache, no-transform', 'Connection': 'keep-alive', 'X-Accel-Buffering': 'no' },
   })
 }
 
@@ -270,71 +237,54 @@ serve({
   fetch: async (req) => {
     const url = new URL(req.url)
 
-    // ── SSE endpoints ──────────────────────────────────────────────────────
-    if ((url.pathname === '/api/mining-events' || url.pathname === '/api/tournament-events') && req.method === 'GET') {
+    if ((url.pathname === '/api/mining-events' || url.pathname === '/api/tournament-events') && req.method === 'GET')
       return handleSSE(req)
-    }
 
-    // ── Sync status (public, read-only) ────────────────────────────────────
-    // Used by the admin GitHubBridge panel to show live site sync state.
+    // Public sync-status endpoint (read-only, used by admin UI)
     if (url.pathname === '/api/sync-status' && req.method === 'GET') {
       try {
-        const raw  = await readFile(SYNC_STATE_PATH, 'utf-8')
-        const data = JSON.parse(raw)
-        return new Response(JSON.stringify(data), {
-          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
-        })
+        return new Response(await readFile(SYNC_STATE_PATH, 'utf-8'), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' } })
       } catch {
-        return new Response(JSON.stringify({ lastSyncAt: null, reason: 'No sync yet' }), {
-          headers: { 'Content-Type': 'application/json' },
-        })
+        return new Response(JSON.stringify({ lastSyncAt: null }), { headers: { 'Content-Type': 'application/json' } })
       }
     }
 
-    // ── Force sync trigger (admin-initiated via server function) ───────────
-    // This endpoint is called from the TanStack Start server function
-    // pullStaticDataFromGitHub, which runs server-side. The sync itself
-    // is handled by doGitHubSync(); this endpoint is a direct HTTP trigger
-    // for cases where the server function context isn't available.
+    // Sync config endpoint (read-only)
+    if (url.pathname === '/api/sync-config' && req.method === 'GET') {
+      try {
+        return new Response(await readFile(SYNC_CONFIG_PATH, 'utf-8'), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' } })
+      } catch {
+        return new Response(JSON.stringify({ intervalMs: 300000, startupSync: true }), { headers: { 'Content-Type': 'application/json' } })
+      }
+    }
+
+    // Admin force-sync trigger (validated by shared secret)
     if (url.pathname === '/api/admin/trigger-sync' && req.method === 'POST') {
-      // Simple shared-secret check: must pass X-Sync-Key matching the last
-      // 12 chars of the SESSION_SECRET (kept short, not a security boundary
-      // since the sync only writes public static data).
       const key      = req.headers.get('x-sync-key') ?? ''
       const secret   = process.env.SESSION_SECRET ?? ''
       const expected = secret.slice(-16)
-      if (!expected || key !== expected) {
-        return new Response('Forbidden', { status: 403 })
-      }
+      if (!expected || key !== expected) return new Response('Forbidden', { status: 403 })
       const result = await doGitHubSync('admin')
-      return new Response(JSON.stringify(result), {
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } })
     }
 
-    // ── Player API ─────────────────────────────────────────────────────────
+    // Player API
     const playerMatch = url.pathname.match(/^\/api\/([^/]+)$/)
     if (playerMatch && req.method === 'GET') {
       const name    = decodeURIComponent(playerMatch[1])
-      const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      const hd      = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
       try {
-        const raw     = await readFile(resolve(CWD, 'data/players.json'), 'utf-8')
-        const players = JSON.parse(raw)
+        const players = JSON.parse(await readFile(resolve(CWD, 'data/players.json'), 'utf-8'))
         const player  = players.find(p => p.name.toLowerCase() === name.toLowerCase())
-        if (!player) {
-          return new Response(JSON.stringify({ error: 'Player not found', player: name }), { status: 404, headers })
-        }
+        if (!player) return new Response(JSON.stringify({ error: 'Player not found' }), { status: 404, headers: hd })
         const tiers = {}
-        for (const [mode, tier] of Object.entries(player.ranks)) {
+        for (const [mode, tier] of Object.entries(player.ranks))
           tiers[mode] = (tier === 'NONE' || tier === 'None' || tier === 'none') ? null : tier
-        }
-        return new Response(JSON.stringify({ player: player.name, region: player.region, tiers }), { status: 200, headers })
-      } catch {
-        return new Response(JSON.stringify({ error: 'Failed to read player data' }), { status: 500, headers })
-      }
+        return new Response(JSON.stringify({ player: player.name, region: player.region, tiers }), { headers: hd })
+      } catch { return new Response(JSON.stringify({ error: 'Failed to read player data' }), { status: 500, headers: hd }) }
     }
 
-    // ── Static files ───────────────────────────────────────────────────────
+    // Static files
     const filePath = join(CLIENT_DIR, url.pathname)
     try {
       const s = await stat(filePath)
@@ -342,19 +292,11 @@ serve({
         const data = await readFile(filePath)
         const ext  = extname(filePath)
         return new Response(data, {
-          headers: {
-            'Content-Type':  MIME[ext] || 'application/octet-stream',
-            'Cache-Control': url.pathname.startsWith('/assets/')
-              ? 'max-age=31536000, immutable'
-              : 'no-cache',
-          },
+          headers: { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Cache-Control': url.pathname.startsWith('/assets/') ? 'max-age=31536000, immutable' : 'no-cache' },
         })
       }
-    } catch {
-      // File not found — fall through to SSR
-    }
+    } catch {}
 
-    // ── SSR via TanStack Start ─────────────────────────────────────────────
     return tsServer.fetch(req)
   },
 })
