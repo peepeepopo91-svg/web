@@ -77,33 +77,15 @@
   "d3n1s1": {
     "username": "D3n1s1",
     "createdAt": 1785094613983,
-    "lastCheckedAt": 1785142863082,
-    "balance": 502,
+    "lastCheckedAt": 1785151429464,
+    "balance": 138,
     "gems": 5583.06,
     "rigs": [
-      {
-        "id": "advanced_ms27cbfz_qd5l",
-        "tierId": "advanced",
-        "name": "Advanced Rig",
-        "durability": 9107.7797646605,
-        "status": "mining",
-        "miningSince": 1785139982853,
-        "purchasedAt": 1785094779887
-      },
-      {
-        "id": "advanced_ms27dftu_ywo2",
-        "tierId": "advanced",
-        "name": "Advanced Rig",
-        "durability": 9108.70414737655,
-        "status": "mining",
-        "miningSince": 1785139984506,
-        "purchasedAt": 1785094832226
-      },
       {
         "id": "elite_ms2y9f98_v7bg",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9952.692542989422,
+        "durability": 9811.052628968258,
         "status": "mining",
         "miningSince": 1785140008202,
         "purchasedAt": 1785139994492
@@ -112,7 +94,7 @@
         "id": "quantum_ms2y9mja_mgu2",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9958.605975115743,
+        "durability": 9834.671050347228,
         "status": "mining",
         "miningSince": 1785140007543,
         "purchasedAt": 1785140003926
@@ -121,10 +103,19 @@
         "id": "advanced_ms2yall1_8218",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9945.579629629628,
+        "durability": 9780.3330632716,
         "status": "mining",
         "miningSince": 1785140051257,
         "purchasedAt": 1785140049349
+      },
+      {
+        "id": "pro_ms352cpi_6rur",
+        "tierId": "pro",
+        "name": "Pro Miner",
+        "durability": 9999.830199430198,
+        "status": "mining",
+        "miningSince": 1785151423857,
+        "purchasedAt": 1785151421910
       }
     ],
     "rewardHistory": [
@@ -239,13 +230,13 @@
     ],
     "exchangeUsedToday": 1,
     "exchangeResetAt": 1785181037437,
-    "miningExpiresAt": 1785183176965,
-    "miningRenewedAt": 1785139976965
+    "miningExpiresAt": 1785194585927,
+    "miningRenewedAt": 1785151385927
   },
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785151100335,
+    "lastCheckedAt": 1785151474773,
     "balance": 77.23199999999997,
     "gems": 0,
     "rigs": [
@@ -253,7 +244,7 @@
         "id": "starter_ms30viep_useq",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9946.138152356907,
+        "durability": 9938.258564814807,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785144384241
@@ -262,7 +253,7 @@
         "id": "advanced_ms31jgdu_ccgy",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9950.626639660504,
+        "durability": 9943.4036844136,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785145501362
@@ -271,7 +262,7 @@
         "id": "starter_ms32ijmp_ohqt",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9946.138152356907,
+        "durability": 9938.258564814807,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785147138529
@@ -280,7 +271,7 @@
         "id": "elite_ms33jfbp_ba2q",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9962.834060846571,
+        "durability": 9956.642956349218,
         "status": "mining",
         "miningSince": 1785148858793,
         "purchasedAt": 1785148859221
@@ -289,7 +280,7 @@
         "id": "starter_ms34qfqk_rd63",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9995.088131313132,
+        "durability": 9987.208543771032,
         "status": "mining",
         "miningSince": 1785150865471,
         "purchasedAt": 1785150865964
@@ -323,7 +314,7 @@
     ],
     "exchangeUsedToday": 2,
     "exchangeResetAt": 1785230667822,
-    "miningExpiresAt": 1785192650969,
-    "miningRenewedAt": 1785149450969
+    "miningExpiresAt": 1785194531848,
+    "miningRenewedAt": 1785151331848
   }
 }
