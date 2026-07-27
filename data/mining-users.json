@@ -236,30 +236,81 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785162815576,
-    "balance": 67.23199999999997,
+    "lastCheckedAt": 1785167542445,
+    "balance": 355.23199999999997,
     "gems": 103811.4,
     "rigs": [
       {
         "id": "elite_ms33jfbp_ba2q",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9970.341253306895,
+        "durability": 9965.119973545014,
         "status": "mining",
-        "miningSince": 1785161021967,
+        "miningSince": 1785165436554,
         "purchasedAt": 1785148859221
       },
       {
         "id": "elite_ms3b4dcn_h6hf",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9979.765939153442,
+        "durability": 9965.119973545014,
         "status": "mining",
-        "miningSince": 1785161593312,
+        "miningSince": 1785165436554,
         "purchasedAt": 1785161593751
+      },
+      {
+        "id": "pro_ms3dbmdi_65jn",
+        "tierId": "pro",
+        "name": "Pro Miner",
+        "durability": 9962.436894586941,
+        "status": "mining",
+        "miningSince": 1785165436554,
+        "purchasedAt": 1785165291270
+      },
+      {
+        "id": "advanced_ms3emvuc_ioe4",
+        "tierId": "advanced",
+        "name": "Advanced Rig",
+        "durability": 9999.817091049383,
+        "status": "mining",
+        "miningSince": 1785167535300,
+        "purchasedAt": 1785167496372
+      },
+      {
+        "id": "advanced_ms3ensip_r7z9",
+        "tierId": "advanced",
+        "name": "Advanced Rig",
+        "durability": 9999.817091049383,
+        "status": "mining",
+        "miningSince": 1785167540510,
+        "purchasedAt": 1785167538721
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 224,
+        "solvedAt": 1785166762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 224,
+        "solvedAt": 1785166762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 223,
+        "solvedAt": 1785163162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 223,
+        "solvedAt": 1785163162607,
+        "amount": 500,
+        "type": "finder"
+      },
       {
         "blockNumber": 222,
         "solvedAt": 1785159562607,
@@ -323,7 +374,7 @@
     ],
     "exchangeUsedToday": 3,
     "exchangeResetAt": 1785230667822,
-    "miningExpiresAt": 1785204207243,
-    "miningRenewedAt": 1785161007243
+    "miningExpiresAt": 1785206151873,
+    "miningRenewedAt": 1785162951873
   }
 }
