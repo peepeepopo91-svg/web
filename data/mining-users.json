@@ -236,7 +236,7 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785154055214,
+    "lastCheckedAt": 1785154115224,
     "balance": 177.23199999999997,
     "gems": 0,
     "rigs": [
@@ -244,7 +244,7 @@
         "id": "starter_ms30viep_useq",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9883.956355218865,
+        "durability": 9882.693518518528,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785144384241
@@ -253,7 +253,7 @@
         "id": "advanced_ms31jgdu_ccgy",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9893.626658950678,
+        "durability": 9892.469058642037,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785145501362
@@ -262,7 +262,7 @@
         "id": "starter_ms32ijmp_ohqt",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9883.956355218865,
+        "durability": 9882.693518518528,
         "status": "mining",
         "miningSince": 1785148546248,
         "purchasedAt": 1785147138529
@@ -271,7 +271,7 @@
         "id": "elite_ms33jfbp_ba2q",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9913.97693452388,
+        "durability": 9912.9847056879,
         "status": "mining",
         "miningSince": 1785148858793,
         "purchasedAt": 1785148859221
@@ -280,7 +280,7 @@
         "id": "starter_ms34qfqk_rd63",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9932.90633417509,
+        "durability": 9931.643497474754,
         "status": "mining",
         "miningSince": 1785150865471,
         "purchasedAt": 1785150865964
@@ -289,7 +289,7 @@
         "id": "pro_ms365agq_h5xc",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9985.409989316251,
+        "durability": 9984.341435185197,
         "status": "mining",
         "miningSince": 1785153238233,
         "purchasedAt": 1785153238586
