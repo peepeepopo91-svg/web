@@ -2517,3 +2517,191 @@ export const triggerBackupNow = createServerFn({ method: 'POST' })
     }
     return { ok: true, message: 'No changes — data unchanged since last commit', status }
   })
+
+// ─── Live Site Sync State ─────────────────────────────────────────────────────
+// The production server (server.mjs) writes data/sync-state.json after every
+// GitHub pull. These server functions expose it to the admin UI and let the
+// admin force an immediate re-sync.
+
+export interface SyncState {
+  lastSyncAt:          string | null
+  lastCommitSha:       string | null
+  lastCommitMessage:   string | null
+  filesUpdated:        number
+  filesFailed:         number
+  iconsUpdated:        number
+  triggeredBy:         'startup' | 'auto' | 'admin' | 'server-fn'
+  nextAutoSyncAt:      string | null
+  fileResults:         Array<{ file: string; ok: boolean; bytes?: number; error?: string }>
+}
+
+export interface StaticSyncResult {
+  success:           boolean
+  filesUpdated:      number
+  filesFailed:       number
+  iconsUpdated:      number
+  lastCommitSha:     string | null
+  lastCommitMessage: string | null
+  logs:              string[]
+  error?:            string
+}
+
+// Static data repo paths — these are the admin-controlled files we pull.
+// NEVER includes user data: mining-users.json, shop-purchases.json, etc.
+const STATIC_REPO_PATHS = [
+  { repoPath: 'data/players.json',      file: 'players.json' },
+  { repoPath: 'data/gamemodes.json',    file: 'gamemodes.json' },
+  { repoPath: 'data/content.json',      file: 'content.json' },
+  { repoPath: 'data/event.json',        file: 'event.json' },
+  { repoPath: 'data/economy.json',      file: 'economy.json' },
+  { repoPath: 'data/homepage.json',     file: 'homepage.json' },
+  { repoPath: 'data/tier-tagger.json',  file: 'tier-tagger.json' },
+  { repoPath: 'data/ads-config.json',   file: 'ads-config.json' },
+  { repoPath: 'data/growth.json',       file: 'growth.json' },
+  { repoPath: 'data/shop-items.json',   file: 'shop-items.json' },
+  { repoPath: 'data/tournaments.json',  file: 'tournaments.json' },
+]
+
+const SYNC_STATE_FILE_PATH = resolve(process.cwd(), 'data', 'sync-state.json')
+
+/** Read the current sync-state.json produced by the production server. */
+export const getSyncState = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<SyncState | null> => {
+    try {
+      const raw = readFileSync(SYNC_STATE_FILE_PATH, 'utf8')
+      return JSON.parse(raw) as SyncState
+    } catch {
+      return null
+    }
+  },
+)
+
+/**
+ * Pull all STATIC data files from GitHub and write them to disk.
+ * Safe to run in both dev and production — never touches player/purchase data.
+ * Called by the admin "Force Refresh" button in GitHubBridge.
+ */
+export const pullStaticDataFromGitHub = createServerFn({ method: 'POST' }).handler(
+  async (): Promise<StaticSyncResult> => {
+    const { mkdirSync, renameSync: fsRename, writeFileSync: fsWrite } = await import('node:fs')
+    const logs: string[] = []
+
+    const token = resolveTokenSource()?.token
+    if (!token) {
+      return { success: false, filesUpdated: 0, filesFailed: 0, iconsUpdated: 0, lastCommitSha: null, lastCommitMessage: null, logs, error: 'GitHub token not configured' }
+    }
+
+    const { owner, repo, branch } = readRepoConfig()
+    const ghHeaders = buildGHHeaders(token)
+
+    let filesUpdated = 0
+    let filesFailed  = 0
+    const fileResults: SyncState['fileResults'] = []
+
+    mkdirSync(DATA_DIR, { recursive: true })
+
+    logs.push(`→ Pulling ${STATIC_REPO_PATHS.length} static data files from GitHub…`)
+
+    // Fetch each static file
+    for (const { repoPath, file } of STATIC_REPO_PATHS) {
+      try {
+        const remote = await fetchRemoteFile(token, repoPath)
+        if (!remote) {
+          logs.push(`⚠ ${file} — not found in GitHub`)
+          fileResults.push({ file: repoPath, ok: false, error: 'Not found in GitHub' })
+          filesFailed++
+          continue
+        }
+        // Validate JSON
+        JSON.parse(remote)
+        // Atomic write
+        const target = resolve(DATA_DIR, file)
+        const tmp    = `${target}.tmp`
+        fsWrite(tmp, remote, 'utf8')
+        fsRename(tmp, target)
+        logs.push(`✓ ${file} (${(remote.length / 1024).toFixed(1)} KB)`)
+        fileResults.push({ file: repoPath, ok: true, bytes: remote.length })
+        filesUpdated++
+      } catch (e: any) {
+        logs.push(`✗ ${file} — ${(e as Error).message.slice(0, 80)}`)
+        fileResults.push({ file: repoPath, ok: false, error: (e as Error).message.slice(0, 80) })
+        filesFailed++
+      }
+    }
+
+    // Sync icon files
+    let iconsUpdated = 0
+    try {
+      const listRes = await fetch(
+        `${BASE}/repos/${owner}/${repo}/contents/public/icons?ref=${branch}`,
+        { headers: ghHeaders },
+      )
+      if (listRes.ok) {
+        const items = await listRes.json() as Array<{ name: string; download_url: string; type: string }>
+        const iconsDir = resolve(process.cwd(), 'public', 'icons')
+        mkdirSync(iconsDir, { recursive: true })
+        for (const item of items) {
+          if (item.type !== 'file' || !/\.(png|jpg|jpeg|gif|webp)$/i.test(item.name)) continue
+          try {
+            const dl = await fetch(item.download_url)
+            if (dl.ok) {
+              fsWrite(resolve(iconsDir, item.name), Buffer.from(await dl.arrayBuffer()))
+              iconsUpdated++
+            }
+          } catch { /* skip */ }
+        }
+        if (iconsUpdated > 0) logs.push(`✓ ${iconsUpdated} icon file${iconsUpdated !== 1 ? 's' : ''} updated`)
+      }
+    } catch { /* icons are optional */ }
+
+    // Get latest commit info
+    let lastCommitSha:     string | null = null
+    let lastCommitMessage: string | null = null
+    try {
+      const commitRes = await fetch(
+        `${BASE}/repos/${owner}/${repo}/commits/${branch}`,
+        { headers: ghHeaders },
+      )
+      if (commitRes.ok) {
+        const c = await commitRes.json() as { sha: string; commit: { message: string } }
+        lastCommitSha     = c.sha
+        lastCommitMessage = c.commit?.message?.split('\n')[0] ?? null
+      }
+    } catch { /* optional */ }
+
+    if (lastCommitSha) logs.push(`✓ Synced to commit ${lastCommitSha.slice(0, 7)}: ${lastCommitMessage ?? ''}`)
+
+    // Write sync state
+    const now = new Date()
+    const state: SyncState = {
+      lastSyncAt:        now.toISOString(),
+      lastCommitSha,
+      lastCommitMessage,
+      filesUpdated,
+      filesFailed,
+      iconsUpdated,
+      triggeredBy:       'server-fn',
+      nextAutoSyncAt:    null,   // next auto-sync is managed by server.mjs
+      fileResults,
+    }
+    try {
+      const content = JSON.stringify(state, null, 2)
+      const tmp = `${SYNC_STATE_FILE_PATH}.tmp`
+      fsWrite(tmp, content, 'utf8')
+      fsRename(tmp, SYNC_STATE_FILE_PATH)
+    } catch { /* non-critical */ }
+
+    const summary = `${filesUpdated} file${filesUpdated !== 1 ? 's' : ''} updated, ${filesFailed} failed`
+    logs.push(filesUpdated > 0 ? `✓ Done — ${summary}` : `⚠ Done — ${summary}`)
+
+    return {
+      success: filesFailed === 0 || filesUpdated > 0,
+      filesUpdated,
+      filesFailed,
+      iconsUpdated,
+      lastCommitSha,
+      lastCommitMessage,
+      logs,
+    }
+  },
+)

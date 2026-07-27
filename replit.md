@@ -30,4 +30,28 @@ The dev server starts on port 5000.
 - Dev workflow configured: `npm run dev` (starts Vite on port 5000)
 - `vite.config.ts` already has `server.host: true` and `allowedHosts: true` for the Replit proxy
 
+## Live Site Auto-Sync System
+
+The published website automatically pulls static data from GitHub on startup and every 5 minutes.
+
+**How the update pipeline works:**
+1. Edit data in this admin panel (players, economy, homepage, shop items, tournaments, etc.)
+2. Click **Send to GitHub** (data only) or **Push Everything** (code + data) in the GitHub Bridge section
+3. The live published site pulls the new data from GitHub automatically within 5 minutes
+4. For code/feature changes: after Push Everything, go to Replit → Deploy → Redeploy to rebuild
+
+**Protected files — NEVER overwritten by sync:**
+- `data/mining-users.json` — player balances, mining rigs
+- `data/shop-purchases.json` — purchase history
+- `data/mining-community.json`, `data/mining-access.json`
+
+**Static files synced from GitHub to production:**
+- players.json, gamemodes.json, content.json, event.json, economy.json, homepage.json,
+  tier-tagger.json, ads-config.json, growth.json, shop-items.json, tournaments.json, icons/
+
+**Implementation:**
+- `server.mjs` — `doGitHubSync()` runs on startup + every 5 min, writes `data/sync-state.json`
+- `src/server/dataFiles.ts` — `getSyncState()` and `pullStaticDataFromGitHub()` server functions
+- `src/components/admin/GitHubBridge.tsx` — "Live Site Auto-Sync" panel with force-refresh button
+
 ## User preferences

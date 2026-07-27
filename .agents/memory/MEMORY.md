@@ -11,3 +11,4 @@
 - [Homepage CMS normalization](homepage-cms-normalization.md) — normalize legacy banner items consistently across local storage, JSON imports, and SSR loading
 - [Vite optimized dependency cache](vite-optimized-cache.md) — stale optimized modules can cause dynamic-import and invalid-hook crashes after dependency/runtime changes; clear cache and restart
 - [Admin rankings data refresh](admin-rankings-data-refresh.md) — await admin JSON persistence and refresh public route data after client-side navigation
+- [Live Site Auto-Sync](live-site-sync.md) — server.mjs pulls static data from GitHub on startup+5min; never touches user data; new admin files must be added to both STATIC_DATA_REPO_PATHS lists
