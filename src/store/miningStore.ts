@@ -461,12 +461,12 @@ export function buyRig(user: User, tierId: string): { user: User; error?: string
   return { user: { ...user, balance: user.balance - tier.cost, rigs: [...user.rigs, rig] } }
 }
 
-export function startMining(user: User, rigId: string): User {
+export function startMining(user: User, rigId: string, now = Date.now()): User {
   return {
     ...user,
     rigs: user.rigs.map(r =>
       r.id === rigId && r.status === 'idle'
-        ? { ...r, status: 'mining' as RigStatus, miningSince: Date.now() }
+        ? { ...r, status: 'mining' as RigStatus, miningSince: now }
         : r,
     ),
   }

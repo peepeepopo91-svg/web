@@ -316,12 +316,13 @@ export function MiningProvider({ children }: { children: React.ReactNode }) {
 
   const startRig = useCallback((rigId: string) => {
     if (!user) return
-    const updated = startMining(user, rigId)
+    const now     = serverNow()
+    const updated = startMining(user, rigId, now)
     saveUser(updated)
     setUser(updated)
     lastLocalSave.current = Date.now()
     saveMiningUser({ data: { user: updated } }).catch(() => {})
-  }, [user])
+  }, [user, serverNow])
 
   const stopRig = useCallback((rigId: string) => {
     if (!user) return
@@ -334,15 +335,16 @@ export function MiningProvider({ children }: { children: React.ReactNode }) {
 
   const startAllRigs = useCallback(() => {
     if (!user) return
+    const now = serverNow()
     // Fold startMining over every idle rig in one pass — one setUser call
     const updated = user.rigs
       .filter(r => r.status === 'idle')
-      .reduce((acc, r) => startMining(acc, r.id), user)
+      .reduce((acc, r) => startMining(acc, r.id, now), user)
     saveUser(updated)
     setUser(updated)
     lastLocalSave.current = Date.now()
     saveMiningUser({ data: { user: updated } }).catch(() => {})
-  }, [user])
+  }, [user, serverNow])
 
   const stopAllRigs = useCallback(() => {
     if (!user) return

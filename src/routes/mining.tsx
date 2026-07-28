@@ -13,6 +13,7 @@ import { MiningProvider, useMining } from '../context/MiningContext'
 import { MiningRenewalBanner } from '../components/mining/MiningRenewalBanner'
 import { HardwareCatalogue } from '../components/mining/HardwareCatalogue'
 import { MiningSimulator } from '../components/mining/MiningSimulator'
+import { ActiveMiners } from '../components/mining/ActiveMiners'
 
 export const Route = createFileRoute('/mining')({
   component: () => (
@@ -105,6 +106,9 @@ function MiningPage() {
           <RigShop />
         </>
       )}
+
+      {/* Active Miners — visible to all visitors */}
+      <ActiveMiners currentUsername={user?.username ?? null} />
 
       {/* Global leaderboard — visible to all visitors */}
       <MiningLeaderboard currentUsername={user?.username ?? null} />

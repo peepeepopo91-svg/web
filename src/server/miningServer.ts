@@ -225,6 +225,66 @@ export const adminUpdateMiningUser = createServerFn({ method: 'POST' })
     return { ok: true }
   })
 
+// ─── Active Miners ────────────────────────────────────────────────────────────
+
+export interface ActiveMinerEntry {
+  username:         string
+  activeRigs:       number
+  totalRigs:        number
+  hashrate:         number   // GH/s (active rigs only)
+  networkSharePct:  number   // 0–100
+  sessionExpiresAt: number | null
+}
+
+export interface ActiveMinersPayload {
+  miners:          ActiveMinerEntry[]
+  totalHashrate:   number   // GH/s across all active miners
+  totalMiners:     number
+  serverNow:       number
+}
+
+/**
+ * Public: return all miners whose session is active and have at least one
+ * 'mining' rig. Sorted by hashrate descending.
+ */
+export const getActiveMiners = createServerFn({ method: 'GET' })
+  .handler(async (): Promise<ActiveMinersPayload> => {
+    const serverNow = Date.now()
+    const users     = loadMiningUsers()
+
+    const entries: ActiveMinerEntry[] = []
+    for (const u of Object.values(users)) {
+      // Must have a live session
+      if (u.miningExpiresAt === null || u.miningExpiresAt === undefined) continue
+      if (u.miningExpiresAt <= serverNow) continue
+
+      const activeRigs = u.rigs.filter(r => r.status === 'mining')
+      if (activeRigs.length === 0) continue
+
+      const hashrate = activeRigs.reduce(
+        (s, r) => s + (RIG_TIERS.find(t => t.id === r.tierId)?.hashrate ?? 0), 0
+      )
+
+      entries.push({
+        username:         u.username,
+        activeRigs:       activeRigs.length,
+        totalRigs:        u.rigs.length,
+        hashrate,
+        networkSharePct:  0,   // filled after totalling
+        sessionExpiresAt: u.miningExpiresAt,
+      })
+    }
+
+    const totalHashrate = entries.reduce((s, e) => s + e.hashrate, 0)
+    for (const e of entries) {
+      e.networkSharePct = totalHashrate > 0 ? (e.hashrate / totalHashrate) * 100 : 0
+    }
+
+    entries.sort((a, b) => b.hashrate - a.hashrate)
+
+    return { miners: entries, totalHashrate, totalMiners: entries.length, serverNow }
+  })
+
 /**
  * Public: compute the global leaderboard from disk data.
  * Sorted by current BlueCoin balance descending.
