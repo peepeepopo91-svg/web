@@ -77,7 +77,7 @@
   "d3n1s1": {
     "username": "D3n1s1",
     "createdAt": 1785094613983,
-    "lastCheckedAt": 1785256547212,
+    "lastCheckedAt": 1785256567212,
     "balance": 1406,
     "gems": 5583.06,
     "rigs": [
@@ -85,7 +85,7 @@
         "id": "elite_ms2y9f98_v7bg",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 8585.865062830704,
+        "durability": 8585.534375000017,
         "status": "mining",
         "miningSince": 1785225608447,
         "purchasedAt": 1785139994492
@@ -94,7 +94,7 @@
         "id": "quantum_ms2y9mja_mgu2",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8762.631929976858,
+        "durability": 8762.342578125008,
         "status": "mining",
         "miningSince": 1785225609635,
         "purchasedAt": 1785140003926
@@ -103,7 +103,7 @@
         "id": "advanced_ms2yall1_8218",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 8350.947569444454,
+        "durability": 8350.561766975317,
         "status": "mining",
         "miningSince": 1785225609635,
         "purchasedAt": 1785140049349
@@ -112,7 +112,7 @@
         "id": "pro_ms352cpi_6rur",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 8680.397435897454,
+        "durability": 8680.04131054133,
         "status": "mining",
         "miningSince": 1785225609635,
         "purchasedAt": 1785151421910
