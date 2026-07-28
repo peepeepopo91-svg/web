@@ -8,8 +8,7 @@ import { MiningManager }   from './MiningManager'
 import { EconomyManager }  from './EconomyManager'
 import { UserManager }     from './UserManager'
 import { ActivityLogs }    from './ActivityLogs'
-import { GitHubSyncCenter } from './GitHubSyncCenter'
-import { GitHubBridge }     from './GitHubBridge'
+import { GitHubDeployCenter } from './GitHubDeployCenter'
 import { RepoHistoryManager } from './RepoHistoryManager'
 import { ShopManager }         from './ShopManager'
 import { CredentialsManager }  from './CredentialsManager'
@@ -43,10 +42,9 @@ const NAV_ITEMS: { id: AdminSection; label: string; icon: string; desc: string }
   { id: 'home',             label: 'Homepage',    icon: '🎨', desc: 'Homepage CMS' },
   { id: 'tier-tagger-mgmt', label: 'Tier Tagger', icon: '🏷️', desc: 'Edit Tier Tagger page' },
   { id: 'logs',            label: 'Activity Logs', icon: '📊', desc: 'Audit trail'        },
-  { id: 'repo-history', label: 'Repo History',  icon: '🕓', desc: 'Reset history' },
-  { id: 'credentials',  label: 'Credentials',   icon: '🔐', desc: 'Manage admin auth' },
-  { id: 'github-bridge', label: 'GitHub Bridge', icon: '⇅',  desc: 'Two-way sync'  },
-  { id: 'github-sync',  label: 'GitHub Sync',   icon: '☁️',  desc: 'Advanced sync' },
+  { id: 'repo-history',   label: 'Repo History',   icon: '🕓', desc: 'Reset history' },
+  { id: 'credentials',   label: 'Credentials',    icon: '🔐', desc: 'Manage admin auth' },
+  { id: 'deploy-center', label: 'Deploy Center',  icon: '🚀', desc: 'Full sync & deploy' },
 ]
 
 const SECTION_TITLES: Record<AdminSection, { title: string; subtitle: string }> = {
@@ -59,8 +57,7 @@ const SECTION_TITLES: Record<AdminSection, { title: string; subtitle: string }> 
   'shop-mgmt':       { title: 'Shop Management',       subtitle: 'Manage purchases, prices, refunds, and delivery' },
   'tournament-mgmt': { title: 'Tournament Management', subtitle: 'Create tournaments, manage teams, brackets, matches, prizes and announcements' },
   'logs':            { title: 'Activity Logs',         subtitle: 'Full audit trail of all admin actions' },
-  'github-bridge': { title: 'GitHub Bridge',               subtitle: 'Send your data to GitHub or get the latest data from GitHub — plain and simple' },
-  'github-sync':  { title: 'GitHub Sync Center',         subtitle: 'Professional synchronization dashboard — push, validate, rollback' },
+  'deploy-center': { title: 'Deploy Center', subtitle: 'Full repo sync, data publish, live site health, commit history, and auto-sync settings' },
   'repo-history': { title: 'Repository History Management', subtitle: 'Reset commit history while preserving all project files' },
   'site-growth':  { title: 'Site Growth',              subtitle: 'Real-time analytics — visitors, users, mining, shop, and growth trends' },
   'earnings':     { title: 'Earnings & Monetisation', subtitle: 'Configure ads, renew-button behaviour, and track revenue' },
@@ -81,8 +78,7 @@ function SectionContent({ section, admin, setSection }: { section: AdminSection;
     case 'shop-mgmt':       return <ShopManager admin={admin} />
     case 'tournament-mgmt': return <TournamentManager admin={admin} />
     case 'logs':            return <ActivityLogs admin={admin} />
-    case 'github-bridge': return <GitHubBridge admin={admin} />
-    case 'github-sync':  return <GitHubSyncCenter admin={admin} />
+    case 'deploy-center': return <GitHubDeployCenter admin={admin} />
     case 'repo-history': return <RepoHistoryManager admin={admin} />
     case 'credentials':  return <CredentialsManager admin={admin} />
     case 'site-growth':  return <SiteGrowth admin={admin} />
@@ -136,7 +132,7 @@ export function AdminLayout({ session, section, setSection, onLogout }: Props) {
                 <p className="text-[9px] text-gray-700 leading-tight mt-0.5">{item.desc}</p>
               </div>
               {/* Dirty badge on GitHub Sync nav item */}
-              {item.id === 'github-sync' && sync.isDirty && section !== 'github-sync' && (
+              {item.id === 'deploy-center' && sync.isDirty && section !== 'deploy-center' && (
                 <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0 animate-pulse" />
               )}
               {section === item.id && (

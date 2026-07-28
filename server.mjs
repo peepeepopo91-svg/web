@@ -31,7 +31,7 @@ const CLIENT_DIR = new URL('./dist/client', import.meta.url).pathname
 const PORT       = Number(process.env.PORT) || 5000
 const CWD        = process.cwd()
 
-// ─── Static data files synced FROM GitHub (NEVER includes user data) ──────────
+// ─── Static data files synced FROM GitHub (quick data-only sync) ──────────────
 
 const STATIC_DATA_REPO_PATHS = [
   'data/players.json',
@@ -46,6 +46,23 @@ const STATIC_DATA_REPO_PATHS = [
   'data/shop-items.json',
   'data/tournaments.json',
 ]
+
+// ─── Full sync — never overwrite these files ───────────────────────────────────
+
+const FULL_SYNC_PROTECTED = new Set([
+  'data/mining-users.json',
+  'data/shop-purchases.json',
+  'data/mining-community.json',
+  'data/mining-access.json',
+  'data/sync-history.json',
+  'data/sync-state.json',
+  'data/sync-config.json',
+  'credentials.yml',
+  'admin.yml',
+  '.github-token.json',
+])
+
+const FULL_SYNC_EXCLUDE_PREFIXES = ['node_modules/', '.local/', 'data/backups/']
 
 const SYNC_STATE_PATH  = resolve(CWD, 'data', 'sync-state.json')
 const SYNC_CONFIG_PATH = resolve(CWD, 'data', 'sync-config.json')
@@ -87,7 +104,93 @@ async function atomicWrite(path, content) {
   renameSync(tmp, path)
 }
 
-// ─── Core sync function ───────────────────────────────────────────────────────
+// ─── Full repo sync — downloads EVERY committed file from GitHub ───────────────
+
+async function doFullGitHubSync(triggeredBy = 'admin') {
+  const token  = readGHToken()
+  const config = readGHConfig()
+
+  if (!token || !config) {
+    console.log('[full-sync] GitHub not configured — skipping')
+    return { success: false, error: 'GitHub not configured' }
+  }
+
+  const { owner, repo, branch } = config
+  const BASE    = 'https://api.github.com'
+  const headers = {
+    Authorization:          `Bearer ${token}`,
+    Accept:                 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'User-Agent':           'BlueTiers-Server',
+  }
+
+  // ── 1. Fetch the complete file tree ────────────────────────────────────────
+  const treeRes = await fetch(`${BASE}/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`, { headers })
+  if (!treeRes.ok) return { success: false, error: `Tree API: HTTP ${treeRes.status}` }
+  const { tree, truncated } = await treeRes.json()
+
+  // ── 2. Filter blobs; exclude protected + ignored paths ────────────────────
+  const toSync = []
+  let filesSkipped = 0
+  for (const item of tree) {
+    if (item.type !== 'blob') continue
+    if (FULL_SYNC_PROTECTED.has(item.path)) { filesSkipped++; continue }
+    if (FULL_SYNC_EXCLUDE_PREFIXES.some(p => item.path.startsWith(p))) continue
+    toSync.push(item)
+  }
+
+  console.log(`[full-sync] ${toSync.length} files to sync (${filesSkipped} protected)${truncated ? ' — tree truncated!' : ''}`)
+
+  // ── 3. Download and write in parallel batches ──────────────────────────────
+  let filesUpdated = 0, filesFailed = 0
+  const BATCH = 8
+
+  for (let i = 0; i < toSync.length; i += BATCH) {
+    const batch = toSync.slice(i, i + BATCH)
+    await Promise.all(batch.map(async item => {
+      try {
+        const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${item.path}`
+        const res = await fetch(rawUrl, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'BlueTiers-Server' } })
+        if (!res.ok) { filesFailed++; return }
+        const buf    = Buffer.from(await res.arrayBuffer())
+        const target = resolve(CWD, item.path)
+        const dir    = resolve(target, '..')
+        await mkdir(dir, { recursive: true })
+        const tmp = `${target}.tmp`
+        await writeFile(tmp, buf)
+        renameSync(tmp, target)
+        filesUpdated++
+      } catch { filesFailed++ }
+    }))
+  }
+
+  // ── 4. Latest commit info ─────────────────────────────────────────────────
+  let lastCommitSha = null, lastCommitMessage = null
+  try {
+    const cr = await fetch(`${BASE}/repos/${owner}/${repo}/commits/${branch}`, { headers })
+    if (cr.ok) { const c = await cr.json(); lastCommitSha = c.sha; lastCommitMessage = c.commit?.message?.split('\n')[0] ?? null }
+  } catch {}
+
+  // ── 5. Write sync state ───────────────────────────────────────────────────
+  const existing = readCurrentSyncState()
+  const prevHistory = Array.isArray(existing?.history) ? existing.history : []
+  const now = new Date()
+  const historyEntry = { at: now.toISOString(), commitSha: lastCommitSha, commitMessage: lastCommitMessage, filesUpdated, filesFailed, iconsUpdated: 0, triggeredBy }
+  const cfg = readSyncConfig()
+  const state = {
+    lastSyncAt: now.toISOString(), lastCommitSha, lastCommitMessage,
+    filesUpdated, filesFailed, iconsUpdated: 0, triggeredBy,
+    nextAutoSyncAt: cfg.intervalMs > 0 ? new Date(now.getTime() + cfg.intervalMs).toISOString() : null,
+    fileResults: [], truncated,
+    history: [...prevHistory.slice(-(MAX_HISTORY - 1)), historyEntry],
+  }
+  try { await atomicWrite(SYNC_STATE_PATH, JSON.stringify(state, null, 2)) } catch {}
+
+  console.log(`[full-sync] ${triggeredBy}: ${filesUpdated} updated, ${filesFailed} failed — ${lastCommitSha?.slice(0, 7) ?? '?'}`)
+  return { success: filesUpdated > 0, filesUpdated, filesFailed, filesSkipped, totalFiles: toSync.length, truncated, lastCommitSha, lastCommitMessage, ...state }
+}
+
+// ─── Core sync function (data-only, fast) ─────────────────────────────────────
 
 async function doGitHubSync(triggeredBy = 'auto') {
   const token  = readGHToken()
@@ -258,13 +361,23 @@ serve({
       }
     }
 
-    // Admin force-sync trigger (validated by shared secret)
+    // Admin force-sync trigger — quick data-only sync
     if (url.pathname === '/api/admin/trigger-sync' && req.method === 'POST') {
       const key      = req.headers.get('x-sync-key') ?? ''
       const secret   = process.env.SESSION_SECRET ?? ''
       const expected = secret.slice(-16)
       if (!expected || key !== expected) return new Response('Forbidden', { status: 403 })
       const result = await doGitHubSync('admin')
+      return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } })
+    }
+
+    // Admin FULL repo sync — pulls every committed file from GitHub
+    if (url.pathname === '/api/admin/full-sync' && req.method === 'POST') {
+      const key      = req.headers.get('x-sync-key') ?? ''
+      const secret   = process.env.SESSION_SECRET ?? ''
+      const expected = secret.slice(-16)
+      if (!expected || key !== expected) return new Response('Forbidden', { status: 403 })
+      const result = await doFullGitHubSync('admin')
       return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } })
     }
 

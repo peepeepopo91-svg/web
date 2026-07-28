@@ -357,7 +357,7 @@ export function Dashboard({ admin, setSection }: Props) {
             { id: 'users',       icon: '👥', label: 'Users'      },
             { id: 'content',     icon: '📝', label: 'Content'    },
             { id: 'logs',        icon: '📊', label: 'Logs'       },
-            { id: 'github-sync', icon: '☁️', label: 'GitHub'     },
+            { id: 'deploy-center', icon: '🚀', label: 'Deploy'     },
           ].map(item => (
             <button key={item.id} onClick={() => setSection?.(item.id)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] text-gray-500 border border-white/8 hover:border-[#00BFFF]/25 hover:text-[#00BFFF] hover:bg-[#00BFFF]/5 transition-all">

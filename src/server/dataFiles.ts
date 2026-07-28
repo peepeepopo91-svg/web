@@ -2652,6 +2652,240 @@ export const getSyncState = createServerFn({ method: 'GET' }).handler(
   },
 )
 
+// ─── Protected files — NEVER overwritten by any sync ──────────────────────────
+export const FULL_SYNC_PROTECTED = new Set([
+  'data/mining-users.json',
+  'data/shop-purchases.json',
+  'data/mining-community.json',
+  'data/mining-access.json',
+  'data/sync-history.json',
+  'data/sync-state.json',
+  'data/sync-config.json',
+  'credentials.yml',
+  'admin.yml',
+  '.github-token.json',
+])
+
+export const FULL_SYNC_EXCLUDE_PREFIXES = [
+  'node_modules/',
+  '.local/',
+  'data/backups/',
+]
+
+export interface FullSyncResult {
+  success:          boolean
+  totalFiles:       number
+  filesUpdated:     number
+  filesFailed:      number
+  filesSkipped:     number
+  truncated:        boolean
+  byCategory: {
+    dist:   { updated: number; failed: number }
+    public: { updated: number; failed: number }
+    data:   { updated: number; failed: number }
+    src:    { updated: number; failed: number }
+    other:  { updated: number; failed: number }
+  }
+  lastCommitSha:     string | null
+  lastCommitMessage: string | null
+  logs:              string[]
+  error?:            string
+}
+
+/**
+ * Full repo sync — pulls EVERY file from GitHub (using the Tree API) and
+ * writes it to disk. This means dist/, public/, data/, src/ and everything
+ * else committed to the repo lands on the live site, not just the data JSON.
+ * Protected user-data files are never touched.
+ */
+export const fullSyncFromGitHub = createServerFn({ method: 'POST' }).handler(
+  async (): Promise<FullSyncResult> => {
+    const { mkdirSync, writeFileSync, renameSync: fsRename } = await import('node:fs')
+    const { resolve: res, dirname }                           = await import('node:path')
+
+    const logs: string[] = []
+
+    const token = resolveTokenSource()?.token
+    if (!token) {
+      return {
+        success: false, totalFiles: 0, filesUpdated: 0, filesFailed: 0,
+        filesSkipped: 0, truncated: false,
+        byCategory: { dist: { updated:0, failed:0 }, public: { updated:0, failed:0 }, data: { updated:0, failed:0 }, src: { updated:0, failed:0 }, other: { updated:0, failed:0 } },
+        lastCommitSha: null, lastCommitMessage: null, logs,
+        error: 'GitHub token not configured',
+      }
+    }
+
+    const { owner, repo, branch } = readRepoConfig()
+    const ghHeaders = buildGHHeaders(token)
+    const cwd = process.cwd()
+
+    logs.push(`→ Fetching full file tree from ${owner}/${repo}@${branch}…`)
+
+    // ── Step 1: Get the complete tree ────────────────────────────────────────
+    let tree: Array<{ path: string; type: string; sha: string; size?: number }> = []
+    let truncated = false
+    try {
+      const treeRes = await fetch(
+        `${BASE}/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,
+        { headers: ghHeaders },
+      )
+      if (!treeRes.ok) {
+        const msg = `Tree API returned HTTP ${treeRes.status}`
+        logs.push(`✗ ${msg}`)
+        return {
+          success: false, totalFiles: 0, filesUpdated: 0, filesFailed: 0,
+          filesSkipped: 0, truncated: false,
+          byCategory: { dist: { updated:0, failed:0 }, public: { updated:0, failed:0 }, data: { updated:0, failed:0 }, src: { updated:0, failed:0 }, other: { updated:0, failed:0 } },
+          lastCommitSha: null, lastCommitMessage: null, logs, error: msg,
+        }
+      }
+      const treeJson = await treeRes.json() as { tree: typeof tree; truncated: boolean }
+      tree = treeJson.tree
+      truncated = !!treeJson.truncated
+    } catch (e) {
+      const msg = (e as Error).message.slice(0, 120)
+      logs.push(`✗ Failed to fetch tree: ${msg}`)
+      return {
+        success: false, totalFiles: 0, filesUpdated: 0, filesFailed: 0,
+        filesSkipped: 0, truncated: false,
+        byCategory: { dist: { updated:0, failed:0 }, public: { updated:0, failed:0 }, data: { updated:0, failed:0 }, src: { updated:0, failed:0 }, other: { updated:0, failed:0 } },
+        lastCommitSha: null, lastCommitMessage: null, logs, error: msg,
+      }
+    }
+
+    // ── Step 2: Filter blobs, separate protected / excluded ─────────────────
+    const allBlobs = tree.filter(i => i.type === 'blob')
+    const toSync: typeof allBlobs = []
+    let filesSkipped = 0
+
+    for (const item of allBlobs) {
+      if (FULL_SYNC_PROTECTED.has(item.path)) { filesSkipped++; continue }
+      if (FULL_SYNC_EXCLUDE_PREFIXES.some(p => item.path.startsWith(p))) continue
+      toSync.push(item)
+    }
+
+    logs.push(`→ ${toSync.length} files to sync (${filesSkipped} protected, ${allBlobs.length - toSync.length - filesSkipped} excluded)${truncated ? ' ⚠ tree truncated' : ''}`)
+
+    // ── Step 3: Download and write in parallel batches ───────────────────────
+    const byCategory = {
+      dist:   { updated: 0, failed: 0 },
+      public: { updated: 0, failed: 0 },
+      data:   { updated: 0, failed: 0 },
+      src:    { updated: 0, failed: 0 },
+      other:  { updated: 0, failed: 0 },
+    }
+
+    function categoryOf(p: string): keyof typeof byCategory {
+      if (p.startsWith('dist/'))   return 'dist'
+      if (p.startsWith('public/')) return 'public'
+      if (p.startsWith('data/'))   return 'data'
+      if (p.startsWith('src/'))    return 'src'
+      return 'other'
+    }
+
+    let filesUpdated = 0
+    let filesFailed  = 0
+    const BATCH = 8
+
+    for (let i = 0; i < toSync.length; i += BATCH) {
+      const batch = toSync.slice(i, i + BATCH)
+      await Promise.all(batch.map(async item => {
+        const cat = categoryOf(item.path)
+        try {
+          // Use raw GitHub content URL — works for both text and binary
+          const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${item.path}`
+          const dlRes = await fetch(rawUrl, {
+            headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'BlueTiers-Admin' },
+          })
+          if (!dlRes.ok) {
+            byCategory[cat].failed++
+            filesFailed++
+            return
+          }
+          const buf    = Buffer.from(await dlRes.arrayBuffer())
+          const target = res(cwd, item.path)
+          mkdirSync(dirname(target), { recursive: true })
+          const tmp = `${target}.tmp`
+          writeFileSync(tmp, buf)
+          fsRename(tmp, target)
+          byCategory[cat].updated++
+          filesUpdated++
+        } catch {
+          byCategory[cat].failed++
+          filesFailed++
+        }
+      }))
+    }
+
+    // ── Step 4: Categorised summary ──────────────────────────────────────────
+    for (const [cat, stats] of Object.entries(byCategory)) {
+      if (stats.updated + stats.failed > 0)
+        logs.push(`${stats.failed === 0 ? '✓' : '⚠'} ${cat}/  — ${stats.updated} updated${stats.failed > 0 ? `, ${stats.failed} failed` : ''}`)
+    }
+
+    // ── Step 5: Latest commit ────────────────────────────────────────────────
+    let lastCommitSha: string | null     = null
+    let lastCommitMessage: string | null = null
+    try {
+      const cr = await fetch(`${BASE}/repos/${owner}/${repo}/commits/${branch}`, { headers: ghHeaders })
+      if (cr.ok) {
+        const c = await cr.json() as { sha: string; commit: { message: string } }
+        lastCommitSha     = c.sha
+        lastCommitMessage = c.commit?.message?.split('\n')[0] ?? null
+      }
+    } catch { /* optional */ }
+
+    if (lastCommitSha) logs.push(`✓ Synced to commit ${lastCommitSha.slice(0, 7)}: ${lastCommitMessage ?? ''}`)
+
+    // ── Step 6: Write sync state ─────────────────────────────────────────────
+    const now = new Date()
+    try {
+      const { readFileSync: fsRead } = await import('node:fs')
+      const existing: any = (() => {
+        try { return JSON.parse(fsRead(SYNC_STATE_FILE_PATH, 'utf8')) } catch { return null }
+      })()
+      const prevHistory = Array.isArray(existing?.history) ? existing.history : []
+      const state = {
+        lastSyncAt:        now.toISOString(),
+        lastCommitSha,
+        lastCommitMessage,
+        filesUpdated,
+        filesFailed,
+        iconsUpdated:      0,
+        triggeredBy:       'full-sync',
+        nextAutoSyncAt:    null,
+        fileResults:       [],
+        history: [
+          ...prevHistory.slice(-29),
+          { at: now.toISOString(), commitSha: lastCommitSha, commitMessage: lastCommitMessage, filesUpdated, filesFailed, iconsUpdated: 0, triggeredBy: 'full-sync' },
+        ],
+      }
+      const tmp = `${SYNC_STATE_FILE_PATH}.tmp`
+      writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8')
+      fsRename(tmp, SYNC_STATE_FILE_PATH)
+    } catch { /* non-critical */ }
+
+    const ok = filesFailed === 0
+    logs.push(ok
+      ? `✓ Full sync complete — ${filesUpdated} files written`
+      : `⚠ Full sync done — ${filesUpdated} written, ${filesFailed} failed`)
+
+    return {
+      success: filesUpdated > 0,
+      totalFiles: toSync.length,
+      filesUpdated,
+      filesFailed,
+      filesSkipped,
+      truncated,
+      byCategory,
+      lastCommitSha,
+      lastCommitMessage,
+      logs,
+    }
+  },
+)
+
 /**
  * Pull all STATIC data files from GitHub and write them to disk.
  * Safe to run in both dev and production — never touches player/purchase data.
