@@ -147,25 +147,26 @@
       "peakConcurrent": 10
     },
     "2026-07-28": {
-      "pageViews": 15,
-      "uniqueSessions": 8,
+      "pageViews": 24,
+      "uniqueSessions": 9,
       "pages": {
         "/": 11,
-        "/mining": 4
+        "/mining": 12,
+        "/exchange": 1
       },
       "referrers": {
-        "Referral": 11,
-        "Direct": 4
+        "Referral": 19,
+        "Direct": 5
       },
       "devices": {
-        "Desktop": 15
+        "Desktop": 24
       },
       "browsers": {
-        "Firefox": 13,
-        "Chrome": 2
+        "Firefox": 21,
+        "Chrome": 3
       },
       "os": {
-        "Linux": 15
+        "Linux": 24
       },
       "peakConcurrent": 2
     }

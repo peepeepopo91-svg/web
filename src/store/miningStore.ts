@@ -241,8 +241,12 @@ export function computeUserBlockReward(
   totalHashrate: number,
   activeMinerCount: number,
   isWinner: boolean,
+  /** Pass server-side overrides explicitly so this function never reads localStorage
+   *  (which returns {} on the server, silently ignoring admin economy config). */
+  overrides?: EconomyOverrides,
 ): number {
-  const ov = getEconomyOverrides()
+  // Prefer explicitly-passed overrides; fall back to localStorage only on the client.
+  const ov = overrides ?? getEconomyOverrides()
   const BLOCK_REWARD      = ov.BLOCK_REWARD      ?? MINING_CONSTANTS.BLOCK_REWARD
   const FINDER_BONUS_PCT  = ov.FINDER_BONUS_PCT  ?? MINING_CONSTANTS.FINDER_BONUS_PCT
   const EQUAL_SPLIT_PCT   = ov.EQUAL_SPLIT_PCT   ?? MINING_CONSTANTS.EQUAL_SPLIT_PCT
@@ -314,9 +318,23 @@ export function catchUpUser(
 
   // 2. Distribute missed block rewards (only during active session)
   const ov = opts?.overrides ?? getEconomyOverrides()
-  const blockIntervalMs    = ov.BLOCK_INTERVAL_MS ?? MINING_CONSTANTS.BLOCK_INTERVAL_MS
-  const timeSinceLastBlock = earnUntil - community.lastSolvedAt
-  const blocksPassed       = elapsed > 0 ? Math.floor(timeSinceLastBlock / blockIntervalMs) : 0
+  const blockIntervalMs = ov.BLOCK_INTERVAL_MS ?? MINING_CONSTANTS.BLOCK_INTERVAL_MS
+
+  // ── Block counting fix ────────────────────────────────────────────────────
+  // We must count how many global block boundaries were crossed during the
+  // user's observation window [lastCheckedAt, earnUntil], NOT simply how much
+  // time has elapsed since community.lastSolvedAt.
+  //
+  // Problem with the naive approach (timeSinceLastBlock = earnUntil - lastSolvedAt):
+  // When another user's serverCatchUp already advanced community.lastSolvedAt,
+  // the next user sees a very recent lastSolvedAt, making timeSinceLastBlock
+  // tiny even after hours of mining — so they get ZERO block rewards.
+  //
+  // Fix: express both lastCheckedAt and earnUntil as "blocks since lastSolvedAt"
+  // and award the difference.  This is immune to community advancement.
+  const blockAtLastCheck = Math.floor((user.lastCheckedAt - community.lastSolvedAt) / blockIntervalMs)
+  const blockAtEarnUntil = Math.floor((earnUntil        - community.lastSolvedAt) / blockIntervalMs)
+  const blocksPassed     = elapsed > 0 ? Math.max(0, blockAtEarnUntil - blockAtLastCheck) : 0
 
   let balance = user.balance
   const newRewards: MiningReward[] = []
@@ -341,7 +359,10 @@ export function catchUpUser(
         : 1
 
       for (let i = 0; i < blocksPassed; i++) {
-        const blockNum = community.blockNumber + i
+        // Absolute block number aligned with the global timeline.
+        // blockAtLastCheck may be negative when lastCheckedAt predates the
+        // current community epoch (e.g. community was recently advanced).
+        const blockNum = community.blockNumber + blockAtLastCheck + i
 
         // Determine if this user won the finder bonus for this block.
         const isWinner = globalMiners && globalMiners.length > 0
@@ -350,12 +371,13 @@ export function catchUpUser(
 
         const amount = computeUserBlockReward(
           userHashrate, totalHashrate, activeMinerCount, isWinner,
+          ov,  // pass overrides explicitly — avoids a dead localStorage read on the server
         )
 
         balance += amount
         newRewards.push({
           blockNumber: blockNum,
-          solvedAt: community.lastSolvedAt + (i + 1) * blockIntervalMs,
+          solvedAt: community.lastSolvedAt + (blockAtLastCheck + i + 1) * blockIntervalMs,
           amount,
           type: isWinner ? 'finder' : 'hashrate_share',
         })

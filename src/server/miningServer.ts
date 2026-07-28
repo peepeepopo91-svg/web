@@ -7,7 +7,6 @@ import { createServerFn }      from '@tanstack/react-start'
 import { z }                   from 'zod'
 import { readFileSync, writeFileSync, mkdirSync, renameSync } from 'fs'
 import { resolve }             from 'path'
-import { load as yamlLoad }    from 'js-yaml'
 import { catchUpUser, buyRig, normalizeUser } from '../store/miningStore'
 import type { User, CommunityBlock } from '../data/mining'
 import { MINING_CONSTANTS, RIG_TIERS } from '../data/mining'
@@ -116,8 +115,12 @@ export const serverCatchUp = createServerFn({ method: 'POST' })
     const stored = normalizeUser({ ...rawUser } as Record<string, unknown>, serverNow)
 
     // Build global miner list so rewards are shared across the network.
+    // Exclude users whose sessions have already expired — their rigs remain
+    // 'mining' on disk until their own catch-up runs, which would incorrectly
+    // dilute rewards for genuinely active miners.
     const globalMiners: Array<{ name: string; hashrate: number }> = []
     for (const u of Object.values(users)) {
+      if (u.miningExpiresAt !== null && u.miningExpiresAt !== undefined && u.miningExpiresAt <= serverNow) continue
       const h = u.rigs
         .filter(r => r.status === 'mining')
         .reduce((s, r) => s + (RIG_TIERS.find(t => t.id === r.tierId)?.hashrate ?? 0), 0)
@@ -300,9 +303,20 @@ export const renewMiningSession = createServerFn({ method: 'POST' })
     // Normalise before catching up so catchUpUser receives clean, valid data.
     const stored = normalizeUser({ ...rawUser } as Record<string, unknown>, serverNow)
 
+    // Build global miner list so rewards are shared correctly across the network.
+    // Only include users whose sessions are still active at serverNow.
+    const globalMiners: Array<{ name: string; hashrate: number }> = []
+    for (const u of Object.values(users)) {
+      if (u.miningExpiresAt !== null && u.miningExpiresAt !== undefined && u.miningExpiresAt <= serverNow) continue
+      const h = u.rigs
+        .filter(r => r.status === 'mining')
+        .reduce((s, r) => s + (RIG_TIERS.find(t => t.id === r.tierId)?.hashrate ?? 0), 0)
+      if (h > 0) globalMiners.push({ name: u.username, hashrate: h })
+    }
+
     // Catch up earnings first (capped at old expiry if session is expired), then renew.
     const { user: caughtUp, community: updatedCommunity } = catchUpUser(
-      stored, serverNow, { community, overrides: economy }
+      stored, serverNow, { community, overrides: economy, globalMiners }
     )
 
     const renewed: typeof caughtUp = {
