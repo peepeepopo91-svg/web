@@ -4,12 +4,12 @@
 // mining-community.json. It batches changes and pushes once per `debounceMs`.
 // Never blocks gameplay — all errors are handled gracefully with backoff retries.
 
-import { readFileSync }               from 'node:fs'
-import { statSync }                   from 'node:fs'
-import { resolve }                    from 'node:path'
-import { createHash }                 from 'node:crypto'
-import { spawnSync, SpawnSyncOptions } from 'node:child_process'
-import { commitFiles }                from './github'
+import { readFileSync }  from 'node:fs'
+import { statSync }      from 'node:fs'
+import { resolve }       from 'node:path'
+import { createHash }    from 'node:crypto'
+import { spawn }         from 'node:child_process'
+import { commitFiles }   from './github'
 
 const DATA_DIR    = resolve('data')
 const MAX_RETRIES = 5
@@ -56,12 +56,26 @@ function fileBytes(name: string): number {
  * Keeps `git status` honest: diagnostics show files as clean right after a
  * backup, and only "modified" once mining writes new data.
  * --mixed so the working tree is never touched.
+ *
+ * Uses non-blocking spawn — never freezes the Node.js event loop.
+ * A blocked event loop (the old spawnSync path) killed Vite's HMR heartbeat,
+ * causing the browser to disconnect and reconnect on every backup cycle.
  */
 function syncLocalHead(): void {
-  const cwd  = process.cwd()
-  const opts: SpawnSyncOptions = { cwd, encoding: 'utf8', timeout: 15_000 }
-  spawnSync('git', ['fetch', 'origin', '--quiet'], opts)
-  spawnSync('git', ['reset', '--mixed', 'origin/main'], opts)
+  const cwd = process.cwd()
+  // Fire-and-forget: pipe stdio to /dev/null so git never prompts for creds
+  const fetch = spawn('git', ['fetch', 'origin', '--quiet'], {
+    cwd,
+    stdio: 'ignore',
+    timeout: 15_000,
+  })
+  fetch.once('close', () => {
+    spawn('git', ['reset', '--mixed', 'origin/main'], {
+      cwd,
+      stdio: 'ignore',
+      timeout: 10_000,
+    })
+  })
 }
 
 function contentHash(): string {
@@ -248,8 +262,15 @@ export function getBackupStatus(): BackupStatus {
 }
 
 // ─── Graceful shutdown — one final push before the process exits ──────────────
+// Guard against duplicate registrations: Vite HMR reloads this SSR module on
+// every file change, which would accumulate a new handler pair each time and
+// eventually trigger MaxListenersExceededWarning — and in the worst case cause
+// multiple process.exit() calls when Vite sends SIGTERM to restart the runner.
 
-if (typeof process !== 'undefined') {
+declare global { var __miningBackupShutdownRegistered: boolean | undefined }
+
+if (typeof process !== 'undefined' && !globalThis.__miningBackupShutdownRegistered) {
+  globalThis.__miningBackupShutdownRegistered = true
   const shutdown = async (signal: string) => {
     try { await flushBackupNow() } catch { /* best-effort */ }
     process.exit(signal === 'SIGINT' ? 130 : 0)
