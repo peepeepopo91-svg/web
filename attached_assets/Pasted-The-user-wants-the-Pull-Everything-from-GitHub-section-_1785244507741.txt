@@ -1,0 +1,23 @@
+The user wants the "Pull Everything from GitHub" section in the Deploy tab to be grand and tell them exactly what it's doing step by step. Let me look at the current DeployTab and enhance it with:
+
+    A live progress display showing exactly what's happening (phase by phase)
+    Detailed step-by-step logging as the sync progresses
+    A grand visual design with animated progress
+    Show categories of files being synced in real time
+    Live counts updating as files are downloaded
+
+The issue is that fullSyncFromGitHub is a server function that runs all at once and returns when done - we can't stream progress from it.
+
+I could break this into separate server functions for each category - one to fetch the repo tree and get file counts, then individual functions to sync specific categories like dist, public, data, and src. This way the UI can call them sequentially and show real progress updates for each phase as it completes. the UI calls them sequentially: first checking the connection, then scanning the repo to get file counts, then syncing each category one by one with live progress updates, and finally showing a complete summary. This approach gives true real-time feedback since each phase is independent and can report its own progress.
+
+Now I'm setting up the server functions and redesigning the UI to display this as a grand, animated sync experience with a glowing card that transforms through each phase, showing live file counts, terminal-style logs, progress bars, and category checkmarks.
+
+Writing server functions... Defining the sync result type...
+
+Actually, I'm realizing that making separate API calls for each category would be inefficient since each one hits GitHub's Tree API. Instead, I should fetch the tree once with getRepoTreeInfo to categorize and count files, then keep fullSyncFromGitHub as the main sync operation but enhance it with streaming-like behavior to report progress by category. each handling a specific directory with the Contents API instead of the Tree API for simpler per-category progress tracking. But actually, the cleanest path forward is to keep getRepoTreeInfo for fetching full stats and leave fullSyncFromGitHub as-is, then restructure the UI to handle the sync in phases.
+
+I'll split this into three stages: first scan the repo to show file counts and commit info, then run the actual sync while animating per-category progress, and finally mark it complete. This way the user sees real data upfront about what's being synced, and during the heavy phase they get visual feedback as each category processes. Simplifying to three core phases: scanning the repo, downloading and writing files, then completion. I'm building a state machine UI with a hero card that animates through each phase, category cards showing pending/syncing/done states, a live log stream, and a progress tracker.
+
+Defining the sync phase types... Defining the server function and types... Building the categorization logic... Wrapping up the repository data fetching with error handling, then moving on to redesign the DeployTab UI with a comprehensive multi-phase display showing category cards with progress bars, file counts, and status indicators for each directory.
+
+The sync flow moves through distinct phases—idle to scanning to syncing to completion—and since the GitHub sync runs all categories in parallel, I'll show the pre-scan file counts during the syncing phase with animated indicators, then display the final breakdown once everything completes. This gives users visibility into what's being processed even without true per-category live progress.

@@ -2886,6 +2886,88 @@ export const fullSyncFromGitHub = createServerFn({ method: 'POST' }).handler(
   },
 )
 
+export interface RepoTreeInfo {
+  ok:            boolean
+  totalFiles:    number
+  byCategory: {
+    dist:   number
+    public: number
+    data:   number
+    src:    number
+    other:  number
+  }
+  lastCommitSha:     string | null
+  lastCommitMessage: string | null
+  lastCommitDate:    string | null
+  lastCommitAuthor:  string | null
+  truncated:         boolean
+  error?:            string
+}
+
+/**
+ * Scan the GitHub repo tree and return file counts by category + latest commit info.
+ * Lightweight pre-flight for the full sync UI — does NOT download or write any files.
+ */
+export const getRepoTreeInfo = createServerFn({ method: 'POST' }).handler(
+  async (): Promise<RepoTreeInfo> => {
+    const token = resolveTokenSource()?.token
+    if (!token) return {
+      ok: false, totalFiles: 0,
+      byCategory: { dist: 0, public: 0, data: 0, src: 0, other: 0 },
+      lastCommitSha: null, lastCommitMessage: null, lastCommitDate: null, lastCommitAuthor: null,
+      truncated: false, error: 'GitHub token not configured',
+    }
+
+    const { owner, repo, branch } = readRepoConfig()
+    const ghHeaders = buildGHHeaders(token)
+
+    // Fetch tree and latest commit in parallel
+    const [treeRes, commitRes] = await Promise.all([
+      fetch(`${BASE}/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`, { headers: ghHeaders }),
+      fetch(`${BASE}/repos/${owner}/${repo}/commits/${branch}`, { headers: ghHeaders }),
+    ])
+
+    if (!treeRes.ok) return {
+      ok: false, totalFiles: 0,
+      byCategory: { dist: 0, public: 0, data: 0, src: 0, other: 0 },
+      lastCommitSha: null, lastCommitMessage: null, lastCommitDate: null, lastCommitAuthor: null,
+      truncated: false, error: `Tree API ${treeRes.status}`,
+    }
+
+    const treeJson = await treeRes.json() as { tree: Array<{ path: string; type: string }>; truncated: boolean }
+    const truncated = !!treeJson.truncated
+
+    let lastCommitSha: string | null = null
+    let lastCommitMessage: string | null = null
+    let lastCommitDate: string | null = null
+    let lastCommitAuthor: string | null = null
+    if (commitRes.ok) {
+      const c = await commitRes.json() as { sha: string; commit: { message: string; author: { date: string; name: string } } }
+      lastCommitSha     = c.sha
+      lastCommitMessage = c.commit?.message?.split('\n')[0] ?? null
+      lastCommitDate    = c.commit?.author?.date ?? null
+      lastCommitAuthor  = c.commit?.author?.name ?? null
+    }
+
+    const byCategory = { dist: 0, public: 0, data: 0, src: 0, other: 0 }
+    let totalFiles = 0
+
+    for (const item of treeJson.tree) {
+      if (item.type !== 'blob') continue
+      if (FULL_SYNC_PROTECTED.has(item.path)) continue
+      if (FULL_SYNC_EXCLUDE_PREFIXES.some(p => item.path.startsWith(p))) continue
+      if (item.path.startsWith('dist/'))        byCategory.dist++
+      else if (item.path.startsWith('public/')) byCategory.public++
+      else if (item.path.startsWith('data/'))   byCategory.data++
+      else if (item.path.startsWith('src/'))    byCategory.src++
+      else                                       byCategory.other++
+      totalFiles++
+    }
+
+    return { ok: true, totalFiles, byCategory, lastCommitSha, lastCommitMessage, lastCommitDate, lastCommitAuthor, truncated }
+  },
+)
+
 /**
  * Pull all STATIC data files from GitHub and write them to disk.
  * Safe to run in both dev and production — never touches player/purchase data.

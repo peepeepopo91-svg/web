@@ -17,12 +17,14 @@ import {
   saveSyncConfig,
   pullStaticDataFromGitHub,
   fullSyncFromGitHub,
+  getRepoTreeInfo,
   type GitHubBridgeStatus,
   type CommitEntry,
   type SyncHistoryEntry,
   type SyncState,
   type SyncConfig,
   type FullSyncResult,
+  type RepoTreeInfo,
 } from '../../server/dataFiles'
 import {
   getPlayers, getGamemodes, savePlayers, saveGamemodes,
@@ -270,6 +272,97 @@ function StatusCards({
 
 // ─── Deploy Tab ───────────────────────────────────────────────────────────────
 
+type FullSyncPhase = 'idle' | 'scanning' | 'syncing' | 'done' | 'error'
+
+const SYNC_CATEGORIES = [
+  { key: 'dist'   as const, icon: '⚡', label: 'dist/',   desc: 'Compiled frontend & SSR bundles', color: 'text-[#00BFFF]',   activeBorder: 'border-[#00BFFF]/40',   activeBg: 'bg-[#00BFFF]/10',   idleBorder: 'border-[#00BFFF]/20',   idleBg: 'bg-[#00BFFF]/5',   glow: 'shadow-[0_0_20px_rgba(0,191,255,0.2)]'  },
+  { key: 'public' as const, icon: '🖼', label: 'public/', desc: 'Assets, icons & images',          color: 'text-violet-400',  activeBorder: 'border-violet-500/40',  activeBg: 'bg-violet-500/10',  idleBorder: 'border-violet-500/20',  idleBg: 'bg-violet-500/5',  glow: 'shadow-[0_0_20px_rgba(139,92,246,0.2)]' },
+  { key: 'data'   as const, icon: '📄', label: 'data/',   desc: 'Config & content JSON files',     color: 'text-emerald-400', activeBorder: 'border-emerald-500/40', activeBg: 'bg-emerald-500/10', idleBorder: 'border-emerald-500/20', idleBg: 'bg-emerald-500/5', glow: 'shadow-[0_0_20px_rgba(52,211,153,0.2)]' },
+  { key: 'src'    as const, icon: '📦', label: 'src/',    desc: 'TypeScript source files',         color: 'text-amber-400',   activeBorder: 'border-amber-500/40',   activeBg: 'bg-amber-500/10',   idleBorder: 'border-amber-500/20',   idleBg: 'bg-amber-500/5',   glow: 'shadow-[0_0_20px_rgba(251,191,36,0.2)]' },
+]
+
+function SyncCategoryCard({
+  cat, scannedCount, syncResult, phase,
+}: {
+  cat: typeof SYNC_CATEGORIES[number]
+  scannedCount: number
+  syncResult: FullSyncResult | null
+  phase: FullSyncPhase
+}) {
+  const isSyncing  = phase === 'syncing'
+  const isDone     = phase === 'done'
+  const result     = isDone && syncResult ? syncResult.byCategory[cat.key] : null
+  const hasFailure = result && result.failed > 0
+
+  const borderClass = isSyncing
+    ? cat.activeBorder
+    : isDone && !hasFailure
+    ? 'border-green-500/30'
+    : isDone && hasFailure
+    ? 'border-amber-500/30'
+    : cat.idleBorder
+
+  const bgClass = isSyncing
+    ? cat.activeBg
+    : isDone && !hasFailure
+    ? 'bg-green-500/5'
+    : isDone && hasFailure
+    ? 'bg-amber-500/5'
+    : cat.idleBg
+
+  return (
+    <div className={`relative flex flex-col gap-1.5 px-3 py-3 rounded-xl border transition-all duration-400 ${borderClass} ${bgClass} ${isSyncing ? cat.glow : ''}`}>
+      <div className="flex items-center justify-between gap-1">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="text-base shrink-0">{cat.icon}</span>
+          <p className={`text-xs font-bold font-mono truncate ${cat.color}`}>{cat.label}</p>
+        </div>
+        {isSyncing && (
+          <span className={`text-[10px] font-semibold ${cat.color} flex items-center gap-1 shrink-0`}>
+            <span className="inline-block animate-spin leading-none">⟳</span>
+          </span>
+        )}
+        {isDone && !hasFailure && <span className="text-[10px] font-bold text-green-400 shrink-0">✓</span>}
+        {isDone &&  hasFailure && <span className="text-[10px] font-bold text-amber-400 shrink-0">⚠</span>}
+      </div>
+
+      {/* File count */}
+      {(scannedCount > 0 || result) && (
+        <p className={`text-[11px] font-semibold ${
+          isDone && !hasFailure ? 'text-green-300'
+          : isDone &&  hasFailure ? 'text-amber-300'
+          : cat.color
+        }`}>
+          {result
+            ? `${result.updated} written${result.failed > 0 ? ` · ${result.failed} ✗` : ''}`
+            : `${scannedCount} files`}
+        </p>
+      )}
+      {phase === 'idle' || phase === 'scanning' ? (
+        <p className="text-[10px] text-gray-600 truncate">{cat.desc}</p>
+      ) : null}
+    </div>
+  )
+}
+
+function TerminalLog({ lines }: { lines: string[] }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (ref.current) ref.current.scrollTop = ref.current.scrollHeight }, [lines])
+  if (lines.length === 0) return null
+  return (
+    <div ref={ref} className="font-mono text-[11px] space-y-px max-h-48 overflow-y-auto bg-black/40 rounded-xl p-3 border border-white/6 leading-5">
+      {lines.map((l, i) => {
+        const isOk   = l.startsWith('✓')
+        const isErr  = l.startsWith('✗')
+        const isWarn = l.startsWith('⚠')
+        const isStep = l.startsWith('→')
+        const color  = isOk ? 'text-green-400' : isErr ? 'text-red-400' : isWarn ? 'text-amber-400' : isStep ? 'text-[#00BFFF]' : 'text-gray-600'
+        return <div key={i} className={color}>{l}</div>
+      })}
+    </div>
+  )
+}
+
 function DeployTab({
   status, syncState, onLog, onRefreshSyncState,
 }: {
@@ -278,30 +371,75 @@ function DeployTab({
   onLog:              (msg: string, kind: LogLine['kind']) => void
   onRefreshSyncState: () => void
 }) {
-  const [fullSyncing,   setFullSyncing]   = useState(false)
-  const [fullResult,    setFullResult]    = useState<FullSyncResult | null>(null)
+  const [phase,         setPhase]         = useState<FullSyncPhase>('idle')
+  const [treeInfo,      setTreeInfo]      = useState<RepoTreeInfo | null>(null)
+  const [syncResult,    setSyncResult]    = useState<FullSyncResult | null>(null)
+  const [termLines,     setTermLines]     = useState<string[]>([])
+  const [elapsed,       setElapsed]       = useState(0)
   const [quickSyncing,  setQuickSyncing]  = useState(false)
   const [quickResult,   setQuickResult]   = useState<{ ok: boolean; files: number } | null>(null)
   const [showProtected, setShowProtected] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const connected = !!status?.connected
+  const busy      = phase === 'scanning' || phase === 'syncing' || quickSyncing
+
+  function pushLine(line: string) {
+    setTermLines(prev => [...prev, line])
+  }
+  function startTimer() {
+    setElapsed(0)
+    timerRef.current = setInterval(() => setElapsed(e => e + 1), 1000)
+  }
+  function stopTimer() {
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null }
+  }
 
   async function handleFullSync() {
-    setFullSyncing(true)
-    setFullResult(null)
-    onLog('Starting full repo sync — fetching complete file tree from GitHub…', 'step')
+    setPhase('scanning')
+    setTreeInfo(null)
+    setSyncResult(null)
+    setTermLines([])
+    startTimer()
+    pushLine(`→ Connecting to GitHub…`)
+
+    let tree: RepoTreeInfo
+    try {
+      tree = await getRepoTreeInfo()
+      setTreeInfo(tree)
+      if (!tree.ok) {
+        pushLine(`✗ Scan failed: ${tree.error ?? 'unknown error'}`)
+        stopTimer(); setPhase('error'); return
+      }
+    } catch (e) {
+      pushLine(`✗ ${(e as Error).message}`)
+      stopTimer(); setPhase('error'); return
+    }
+
+    pushLine(`✓ Repository scanned — ${tree.totalFiles} files queued for download`)
+    if (tree.lastCommitSha) pushLine(`→ HEAD ${tree.lastCommitSha.slice(0, 7)} — ${tree.lastCommitMessage ?? ''}`)
+    const cats = SYNC_CATEGORIES.filter(c => (tree.byCategory[c.key] ?? 0) > 0)
+    if (cats.length) pushLine(`→ ` + cats.map(c => `${c.label}${tree.byCategory[c.key]}`).join('  '))
+
+    await new Promise(r => setTimeout(r, 500))
+
+    setPhase('syncing')
+    pushLine(`→ Downloading all ${tree.totalFiles} files in parallel batches…`)
+
     try {
       const result = await fullSyncFromGitHub()
+      result.logs.forEach(l => pushLine(l))
+      setSyncResult(result)
+      stopTimer()
+      setPhase(result.success ? 'done' : 'error')
+      if (result.success) onRefreshSyncState()
       result.logs.forEach(l => {
         const k: LogLine['kind'] = l.startsWith('✓') ? 'ok' : l.startsWith('✗') ? 'error' : l.startsWith('⚠') ? 'warn' : l.startsWith('→') ? 'step' : 'dim'
         onLog(l.replace(/^[✓✗⚠→·]\s*/, ''), k)
       })
-      setFullResult(result)
-      if (result.success) onRefreshSyncState()
     } catch (e) {
-      onLog((e as Error).message.replace(/^[A-Z_]+:\s*/, ''), 'error')
-    } finally {
-      setFullSyncing(false)
+      const msg = (e as Error).message.replace(/^[A-Z_]+:\s*/, '')
+      pushLine(`✗ ${msg}`); stopTimer(); setPhase('error'); onLog(msg, 'error')
     }
   }
 
@@ -313,7 +451,7 @@ function DeployTab({
       const result = await pullStaticDataFromGitHub()
       result.logs.forEach(l => {
         const k: LogLine['kind'] = l.startsWith('✓') ? 'ok' : l.startsWith('✗') ? 'error' : l.startsWith('⚠') ? 'warn' : l.startsWith('→') ? 'step' : 'dim'
-        onLog(l.replace(/^[✓✗⚠→·]\s*/, ''), k)
+        onLog(l.replace(/^[✓✗⚠→]\s*/, ''), k)
       })
       setQuickResult({ ok: result.success, files: result.filesUpdated })
       if (result.success) onRefreshSyncState()
@@ -324,91 +462,160 @@ function DeployTab({
     }
   }
 
-  const busy = fullSyncing || quickSyncing
+  function handleReset() {
+    stopTimer(); setPhase('idle'); setTreeInfo(null); setSyncResult(null); setTermLines([]); setElapsed(0)
+  }
+
+  // ── Derived hero card styles ────────────────────────────────────────────────
+  const heroBorder = {
+    idle:     'border-[#00BFFF]/20',
+    scanning: 'border-[#00BFFF]/40 shadow-[0_0_40px_rgba(0,191,255,0.08)]',
+    syncing:  'border-[#00BFFF]/55 shadow-[0_0_60px_rgba(0,191,255,0.13)]',
+    done:     'border-green-500/40 shadow-[0_0_40px_rgba(74,222,128,0.10)]',
+    error:    'border-red-500/35',
+  }[phase]
+
+  const iconContent = phase === 'scanning' ? <span className="animate-spin text-xl leading-none">⟳</span>
+    : phase === 'syncing' ? <span className="animate-pulse">🚀</span>
+    : phase === 'done'    ? <span>✅</span>
+    : phase === 'error'   ? <span>❌</span>
+    : <span>🚀</span>
+
+  const iconBg = phase === 'scanning' || phase === 'syncing'
+    ? 'bg-[#00BFFF]/18 border-[#00BFFF]/45 shadow-[0_0_24px_rgba(0,191,255,0.28)]'
+    : phase === 'done'  ? 'bg-green-500/15 border-green-500/40'
+    : phase === 'error' ? 'bg-red-500/15 border-red-500/40'
+    : 'bg-[#00BFFF]/12 border-[#00BFFF]/25'
 
   return (
     <div className="space-y-4">
 
-      {/* ── FULL REPO SYNC — Hero card ─────────────────────────────────────── */}
-      <div className="glass rounded-2xl border border-[#00BFFF]/20 p-6 space-y-5 relative overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#00BFFF]/4 to-transparent pointer-events-none" />
+      {/* ── FULL REPO SYNC — Grand animated hero card ─────────────────────── */}
+      <div className={`glass rounded-2xl border ${heroBorder} p-6 space-y-5 relative overflow-hidden transition-all duration-500`}>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#00BFFF]/4 via-transparent to-violet-500/3 pointer-events-none transition-opacity duration-500" style={{ opacity: phase === 'idle' ? 0.5 : 1 }} />
 
+        {/* ── Header row ─────────────────────────────────────────────────── */}
         <div className="relative flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#00BFFF]/12 border border-[#00BFFF]/25 flex items-center justify-center text-2xl shrink-0">
-            🚀
+          <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center text-2xl shrink-0 transition-all duration-300 ${iconBg}`}>
+            {iconContent}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <p className="text-white font-bold text-lg">Full Repo Sync</p>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#00BFFF]/15 text-[#00BFFF] border border-[#00BFFF]/25 font-semibold uppercase tracking-wide">Recommended</span>
+              <p className="text-white font-bold text-lg">
+                {phase === 'idle'     && 'Full Repo Sync'}
+                {phase === 'scanning' && 'Scanning Repository…'}
+                {phase === 'syncing'  && 'Downloading Files…'}
+                {phase === 'done'     && 'Sync Complete '}
+                {phase === 'error'    && 'Sync Failed'}
+              </p>
+              {phase === 'idle' && (
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#00BFFF]/15 text-[#00BFFF] border border-[#00BFFF]/25 font-semibold uppercase tracking-wide">Recommended</span>
+              )}
+              {(phase === 'scanning' || phase === 'syncing') && (
+                <span className="text-[11px] text-gray-500 font-mono tabular-nums">{elapsed}s</span>
+              )}
+              {phase === 'done' && syncResult && (
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/25 font-semibold">
+                  {syncResult.filesUpdated} files · {elapsed}s
+                </span>
+              )}
             </div>
+
             <p className="text-gray-400 text-sm mt-1">
-              Downloads <strong className="text-white">every single file</strong> from GitHub — compiled frontend code, assets, data files, icons, and all new features. Nothing is left behind.
+              {phase === 'idle' && <>Downloads <strong className="text-white">every single file</strong> from GitHub — compiled frontend, assets, data, source code, and all new features. Nothing left behind.</>}
+              {phase === 'scanning' && !treeInfo && 'Fetching complete file tree from GitHub…'}
+              {phase === 'scanning' &&  treeInfo && <span className="text-[#00BFFF]">Found <strong>{treeInfo.totalFiles}</strong> files — starting download…</span>}
+              {phase === 'syncing' && treeInfo  && <>Downloading <strong className="text-white">{treeInfo.totalFiles}</strong> files across {SYNC_CATEGORIES.filter(c => treeInfo.byCategory[c.key] > 0).length} directories…</>}
+              {phase === 'done' && syncResult && (
+                <span className="text-green-400">
+                  ✓ {syncResult.filesUpdated} files written successfully
+                  {syncResult.filesFailed  > 0 && <span className="text-amber-400 ml-2">· {syncResult.filesFailed} failed</span>}
+                  {syncResult.filesSkipped > 0 && <span className="text-gray-500 ml-2">· {syncResult.filesSkipped} protected</span>}
+                </span>
+              )}
+              {phase === 'error' && <span className="text-red-400">Check the terminal log below for details.</span>}
             </p>
+
+            {/* Commit info pill */}
+            {treeInfo?.lastCommitSha && phase !== 'idle' && (
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/5 border border-white/8 text-gray-300">{treeInfo.lastCommitSha.slice(0, 7)}</span>
+                <span className="text-[11px] text-gray-500 truncate max-w-[240px]">{treeInfo.lastCommitMessage}</span>
+                {treeInfo.lastCommitAuthor && <span className="text-[10px] text-gray-700">by {treeInfo.lastCommitAuthor}</span>}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* What gets synced */}
+        {/* ── Category cards grid ─────────────────────────────────────────── */}
         <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {[
-            { icon: '⚡', label: 'dist/', desc: 'Compiled frontend & SSR', color: 'text-[#00BFFF]', bg: 'bg-[#00BFFF]/8 border-[#00BFFF]/15' },
-            { icon: '🖼', label: 'public/', desc: 'Assets, icons, images', color: 'text-violet-400', bg: 'bg-violet-500/8 border-violet-500/15' },
-            { icon: '📄', label: 'data/', desc: 'Config & content JSON', color: 'text-emerald-400', bg: 'bg-emerald-500/8 border-emerald-500/15' },
-            { icon: '📦', label: 'src/', desc: 'Source code files', color: 'text-amber-400', bg: 'bg-amber-500/8 border-amber-500/15' },
-          ].map(c => (
-            <div key={c.label} className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border ${c.bg}`}>
-              <span className="text-lg shrink-0">{c.icon}</span>
-              <div className="min-w-0">
-                <p className={`text-xs font-bold font-mono ${c.color}`}>{c.label}</p>
-                <p className="text-gray-600 text-[10px] truncate">{c.desc}</p>
-              </div>
-            </div>
+          {SYNC_CATEGORIES.map(cat => (
+            <SyncCategoryCard
+              key={cat.key}
+              cat={cat}
+              scannedCount={treeInfo?.byCategory[cat.key] ?? 0}
+              syncResult={syncResult}
+              phase={phase}
+            />
           ))}
         </div>
 
-        {/* Result */}
-        {fullResult && (
-          <div className={`relative px-4 py-3 rounded-xl border text-xs space-y-2 ${fullResult.success ? 'bg-green-500/8 border-green-500/20' : 'bg-red-500/8 border-red-500/20'}`}>
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <p className={`font-bold ${fullResult.success ? 'text-green-400' : 'text-red-400'}`}>
-                {fullResult.success ? '✓ Full sync complete' : '✗ Sync failed'}
-                {fullResult.lastCommitSha && ` — commit ${fullResult.lastCommitSha.slice(0, 7)}`}
-              </p>
-              <div className="flex items-center gap-3">
-                <span className="text-gray-400">{fullResult.filesUpdated} files written</span>
-                {fullResult.filesFailed > 0 && <span className="text-red-400">{fullResult.filesFailed} failed</span>}
-                {fullResult.filesSkipped > 0 && <span className="text-amber-400/70">{fullResult.filesSkipped} protected</span>}
-              </div>
+        {/* ── Animated progress bar (syncing) ────────────────────────────── */}
+        {phase === 'syncing' && (
+          <div className="relative space-y-1.5">
+            <div className="h-1 bg-white/6 rounded-full overflow-hidden">
+              <div className="h-full rounded-full bg-gradient-to-r from-[#00BFFF] via-violet-400 to-emerald-400 animate-pulse" style={{ width: '100%' }} />
             </div>
-            {/* Category breakdown */}
-            <div className="flex flex-wrap gap-3">
-              {Object.entries(fullResult.byCategory).filter(([, s]) => s.updated + s.failed > 0).map(([cat, s]) => (
-                <span key={cat} className="text-[10px] text-gray-500">
-                  <span className="text-gray-300 font-mono">{cat}/</span> {s.updated} ✓{s.failed > 0 ? ` ${s.failed} ✗` : ''}
-                </span>
-              ))}
-            </div>
-            {fullResult.truncated && (
-              <p className="text-amber-400 text-[10px]">⚠ GitHub tree was truncated — very large repo; some files may have been missed</p>
-            )}
+            <p className="text-[10px] text-gray-600 text-center tracking-wide">Downloading in parallel batches of 8 · please wait…</p>
           </div>
         )}
 
-        {/* Button */}
-        <button
-          onClick={handleFullSync}
-          disabled={busy || !connected}
-          className="relative w-full py-3.5 rounded-xl text-sm font-bold text-white btn-primary disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-        >
-          {fullSyncing
-            ? <><span className="animate-spin">⟳</span> Syncing entire repo…</>
-            : <>🚀 Pull Everything from GitHub</>}
-        </button>
-
-        {!connected && (
-          <p className="relative text-center text-xs text-gray-600">Configure your GitHub token in Settings to enable syncing</p>
+        {/* ── Done summary bar ────────────────────────────────────────────── */}
+        {phase === 'done' && syncResult && (
+          <div className="relative flex flex-wrap gap-x-4 gap-y-1 px-4 py-3 rounded-xl bg-green-500/6 border border-green-500/18">
+            {SYNC_CATEGORIES.filter(c => (syncResult.byCategory[c.key]?.updated ?? 0) > 0 || (syncResult.byCategory[c.key]?.failed ?? 0) > 0).map(c => (
+              <span key={c.key} className="text-[11px] flex items-center gap-1.5">
+                <span className={`font-mono font-bold ${c.color}`}>{c.label}</span>
+                <span className="text-gray-400">{syncResult.byCategory[c.key].updated} files</span>
+                {syncResult.byCategory[c.key].failed > 0 && <span className="text-amber-400">({syncResult.byCategory[c.key].failed} ✗)</span>}
+              </span>
+            ))}
+            {syncResult.lastCommitSha && (
+              <span className="text-[11px] text-gray-600 ml-auto font-mono">commit {syncResult.lastCommitSha.slice(0, 7)}</span>
+            )}
+            {syncResult.truncated && <span className="text-[10px] text-amber-400 w-full">⚠ GitHub tree was truncated — very large repo; some files may have been missed</span>}
+          </div>
         )}
+
+        {/* ── Terminal log ────────────────────────────────────────────────── */}
+        {termLines.length > 0 && (
+          <div className="relative">
+            <TerminalLog lines={termLines} />
+          </div>
+        )}
+
+        {/* ── Action button ───────────────────────────────────────────────── */}
+        <div className="relative">
+          {(phase === 'scanning' || phase === 'syncing') ? (
+            <div className="w-full py-3.5 rounded-xl text-sm font-semibold text-gray-500 border border-white/8 bg-white/3 flex items-center justify-center gap-2 cursor-not-allowed select-none">
+              <span className="animate-spin leading-none">⟳</span>
+              {phase === 'scanning' ? 'Scanning repository…' : 'Downloading — do not close this page…'}
+            </div>
+          ) : (
+            <button
+              onClick={phase === 'idle' ? handleFullSync : handleReset}
+              disabled={!connected}
+              className="w-full py-3.5 rounded-xl text-sm font-bold text-white btn-primary disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+            >
+              {phase === 'done'  ? <>🚀 Sync Again from GitHub</>
+              : phase === 'error' ? <>↩ Try Again</>
+              : <>🚀 Pull Everything from GitHub</>}
+            </button>
+          )}
+          {!connected && phase === 'idle' && (
+            <p className="mt-2 text-center text-xs text-gray-600">Configure your GitHub token in Settings to enable syncing</p>
+          )}
+        </div>
       </div>
 
       {/* ── QUICK DATA SYNC ────────────────────────────────────────────────── */}
