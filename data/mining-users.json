@@ -77,15 +77,15 @@
   "d3n1s1": {
     "username": "D3n1s1",
     "createdAt": 1785094613983,
-    "lastCheckedAt": 1785240296803,
-    "balance": 638,
+    "lastCheckedAt": 1785256274393,
+    "balance": 1406,
     "gems": 5583.06,
     "rigs": [
       {
         "id": "elite_ms2y9f98_v7bg",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 8854.555687830703,
+        "durability": 8590.375958994726,
         "status": "mining",
         "miningSince": 1785225608447,
         "purchasedAt": 1785139994492
@@ -94,7 +94,7 @@
         "id": "quantum_ms2y9mja_mgu2",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8997.736226851857,
+        "durability": 8766.57896412038,
         "status": "mining",
         "miningSince": 1785225609635,
         "purchasedAt": 1785140003926
@@ -103,7 +103,7 @@
         "id": "advanced_ms2yall1_8218",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 8664.419965277782,
+        "durability": 8356.21028163581,
         "status": "mining",
         "miningSince": 1785225609635,
         "purchasedAt": 1785140049349
@@ -112,13 +112,31 @@
         "id": "pro_ms352cpi_6rur",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 8969.756570512838,
+        "durability": 8685.25532407409,
         "status": "mining",
         "miningSince": 1785225609635,
         "purchasedAt": 1785151421910
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 248,
+        "solvedAt": 1785253162607,
+        "amount": 256,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 247,
+        "solvedAt": 1785249562607,
+        "amount": 256,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 246,
+        "solvedAt": 1785245962607,
+        "amount": 256,
+        "type": "finder"
+      },
       {
         "blockNumber": 243,
         "solvedAt": 1785235162607,
