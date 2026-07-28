@@ -77,7 +77,7 @@
   "d3n1s1": {
     "username": "D3n1s1",
     "createdAt": 1785094613983,
-    "lastCheckedAt": 1785154224042,
+    "lastCheckedAt": 1785225614479,
     "balance": 138,
     "gems": 5583.06,
     "rigs": [
@@ -85,36 +85,36 @@
         "id": "elite_ms2y9f98_v7bg",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9764.84598214286,
+        "durability": 9097.318981481485,
         "status": "mining",
-        "miningSince": 1785140008202,
+        "miningSince": 1785225608447,
         "purchasedAt": 1785139994492
       },
       {
         "id": "quantum_ms2y9mja_mgu2",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9794.240234375005,
+        "durability": 9210.154108796301,
         "status": "mining",
-        "miningSince": 1785140007543,
+        "miningSince": 1785225609635,
         "purchasedAt": 1785140003926
       },
       {
         "id": "advanced_ms2yall1_8218",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9726.425308641974,
+        "durability": 8947.643807870369,
         "status": "mining",
-        "miningSince": 1785140051257,
+        "miningSince": 1785225609635,
         "purchasedAt": 1785140049349
       },
       {
         "id": "pro_ms352cpi_6rur",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9950.069195156695,
+        "durability": 9231.193963675214,
         "status": "mining",
-        "miningSince": 1785151423857,
+        "miningSince": 1785225609635,
         "purchasedAt": 1785151421910
       }
     ],
@@ -228,10 +228,10 @@
         "type": "finder"
       }
     ],
-    "exchangeUsedToday": 1,
-    "exchangeResetAt": 1785181037437,
-    "miningExpiresAt": 1785194585927,
-    "miningRenewedAt": 1785151385927
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1785311996227,
+    "miningExpiresAt": 1785268804331,
+    "miningRenewedAt": 1785225604331
   },
   "somerandomdude54": {
     "username": "SomeRandomDude54",
