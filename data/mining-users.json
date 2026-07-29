@@ -54,25 +54,65 @@
   "cyan_gaming07": {
     "username": "Cyan_Gaming07",
     "createdAt": 1785087682534,
-    "lastCheckedAt": 1785172897308,
-    "balance": 50,
+    "lastCheckedAt": 1785341018891,
+    "balance": 350,
     "gems": 0,
     "rigs": [
       {
         "id": "starter_ms237k3w_gc3p",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 8536.54137205388,
+        "durability": 8182.224116161623,
         "status": "mining",
-        "miningSince": 1785146515542,
+        "miningSince": 1785340994590,
         "purchasedAt": 1785087839372
+      },
+      {
+        "id": "elite_ms69xp6f_tp8d",
+        "tierId": "elite",
+        "name": "Elite Station",
+        "durability": 9999.668832671958,
+        "status": "mining",
+        "miningSince": 1785341004812,
+        "purchasedAt": 1785341001399
       }
     ],
-    "rewardHistory": [],
+    "rewardHistory": [
+      {
+        "blockNumber": 230,
+        "solvedAt": 1785188362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 229,
+        "solvedAt": 1785184762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 228,
+        "solvedAt": 1785181162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 227,
+        "solvedAt": 1785177562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 226,
+        "solvedAt": 1785173962607,
+        "amount": 500,
+        "type": "finder"
+      }
+    ],
     "exchangeUsedToday": 0,
-    "exchangeResetAt": 1785174157088,
-    "miningExpiresAt": 1785189704428,
-    "miningRenewedAt": 1785146504428
+    "exchangeResetAt": 1785427370003,
+    "miningExpiresAt": 1785384176919,
+    "miningRenewedAt": 1785340976919
   },
   "d3n1s1": {
     "username": "D3n1s1",
@@ -260,8 +300,8 @@
     ],
     "exchangeUsedToday": 0,
     "exchangeResetAt": 1785311996227,
-    "miningExpiresAt": 1785283493498,
-    "miningRenewedAt": 1785240293498
+    "miningExpiresAt": 1785384294246,
+    "miningRenewedAt": 1785341094246
   },
   "somerandomdude54": {
     "username": "SomeRandomDude54",
@@ -575,7 +615,7 @@
     ],
     "exchangeUsedToday": 1,
     "exchangeResetAt": 1785318318898,
-    "miningExpiresAt": 1785263526305,
-    "miningRenewedAt": 1785220326305
+    "miningExpiresAt": 1785384276872,
+    "miningRenewedAt": 1785341076872
   }
 }
