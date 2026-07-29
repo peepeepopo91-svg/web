@@ -1,6 +1,6 @@
 {
   "startedAt": 1753266000000,
-  "peakConcurrentEver": 11,
+  "peakConcurrentEver": 12,
   "dailyStats": {
     "2026-07-23": {
       "pageViews": 142,
@@ -147,28 +147,60 @@
       "peakConcurrent": 10
     },
     "2026-07-28": {
-      "pageViews": 41,
-      "uniqueSessions": 14,
+      "pageViews": 44,
+      "uniqueSessions": 16,
       "pages": {
-        "/": 11,
+        "/": 14,
         "/mining": 28,
         "/exchange": 2
       },
       "referrers": {
-        "Referral": 32,
-        "Direct": 9
+        "Referral": 34,
+        "Direct": 10
       },
       "devices": {
-        "Desktop": 41
+        "Desktop": 44
       },
       "browsers": {
-        "Firefox": 34,
-        "Chrome": 7
+        "Firefox": 36,
+        "Chrome": 8
       },
       "os": {
-        "Linux": 41
+        "Linux": 44
       },
       "peakConcurrent": 3
+    },
+    "2026-07-29": {
+      "pageViews": 22,
+      "uniqueSessions": 16,
+      "pages": {
+        "/": 5,
+        "/rankings": 8,
+        "/tournament": 3,
+        "/mining": 2,
+        "/exchange": 1,
+        "/shop": 1,
+        "/tier-tagger": 2
+      },
+      "referrers": {
+        "Referral": 2,
+        "Direct": 20
+      },
+      "devices": {
+        "Desktop": 6,
+        "Mobile": 16
+      },
+      "browsers": {
+        "Firefox": 5,
+        "Opera": 1,
+        "Chrome": 16
+      },
+      "os": {
+        "Linux": 3,
+        "Windows": 3,
+        "Android": 16
+      },
+      "peakConcurrent": 12
     }
   }
 }

@@ -126,6 +126,20 @@
     }
   },
   {
+    "name": "BloomIsDum",
+    "head": "https://mc-heads.net/avatar/BloomIsDum",
+    "region": "Europe",
+    "ranks": {
+      "mace": "LT5",
+      "sword": "LT5",
+      "axe": "NONE",
+      "crystal": "LT5",
+      "uhc": "NONE",
+      "nethpot": "NONE",
+      "diapot": "HT5"
+    }
+  },
+  {
     "name": "Blue_Gaming08",
     "head": "https://mc-heads.net/avatar/Blue_Gaming08",
     "region": "Asia",
