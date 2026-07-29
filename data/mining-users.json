@@ -54,15 +54,15 @@
   "cyan_gaming07": {
     "username": "Cyan_Gaming07",
     "createdAt": 1785087682534,
-    "lastCheckedAt": 1785341018891,
-    "balance": 350,
+    "lastCheckedAt": 1785346253432,
+    "balance": 413,
     "gems": 0,
     "rigs": [
       {
         "id": "starter_ms237k3w_gc3p",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 8182.224116161623,
+        "durability": 8072.0696338383905,
         "status": "mining",
         "miningSince": 1785340994590,
         "purchasedAt": 1785087839372
@@ -71,13 +71,19 @@
         "id": "elite_ms69xp6f_tp8d",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9999.668832671958,
+        "durability": 9913.118882275132,
         "status": "mining",
         "miningSince": 1785341004812,
         "purchasedAt": 1785341001399
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 273,
+        "solvedAt": 1785343162607,
+        "amount": 63,
+        "type": "hashrate_share"
+      },
       {
         "blockNumber": 230,
         "solvedAt": 1785188362607,
