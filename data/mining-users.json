@@ -684,11 +684,52 @@
   "alibicimss": {
     "username": "AliBicimss",
     "createdAt": 1785498595605,
-    "lastCheckedAt": 1785508219897,
-    "balance": 200,
+    "lastCheckedAt": 1785514033178,
+    "balance": 212,
     "gems": 0,
-    "rigs": [],
-    "rewardHistory": [],
+    "rigs": [
+      {
+        "id": "starter_ms91n1ke_i03j",
+        "tierId": "starter",
+        "name": "Starter Pack",
+        "durability": 9882.91805555578,
+        "status": "mining",
+        "miningSince": 1785508469787,
+        "purchasedAt": 1785508465838
+      },
+      {
+        "id": "advanced_ms91ttay_e9b5",
+        "tierId": "advanced",
+        "name": "Advanced Rig",
+        "durability": 9898.654764660534,
+        "status": "mining",
+        "miningSince": 1785508783832,
+        "purchasedAt": 1785508781722
+      },
+      {
+        "id": "advanced_ms94eaf4_7v12",
+        "tierId": "advanced",
+        "name": "Advanced Rig",
+        "durability": 9981.934201388896,
+        "status": "mining",
+        "miningSince": 1785513097775,
+        "purchasedAt": 1785513096256
+      }
+    ],
+    "rewardHistory": [
+      {
+        "blockNumber": 320,
+        "solvedAt": 1785512362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 319,
+        "solvedAt": 1785508762607,
+        "amount": 500,
+        "type": "finder"
+      }
+    ],
     "exchangeUsedToday": 0,
     "exchangeResetAt": 1785594611252,
     "miningExpiresAt": 1785551411252,
