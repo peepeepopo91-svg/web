@@ -54,71 +54,25 @@
   "cyan_gaming07": {
     "username": "Cyan_Gaming07",
     "createdAt": 1785087682534,
-    "lastCheckedAt": 1785346253432,
-    "balance": 413,
+    "lastCheckedAt": 1785172897308,
+    "balance": 50,
     "gems": 0,
     "rigs": [
       {
         "id": "starter_ms237k3w_gc3p",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 8072.0696338383905,
+        "durability": 8536.54137205388,
         "status": "mining",
-        "miningSince": 1785340994590,
+        "miningSince": 1785146515542,
         "purchasedAt": 1785087839372
-      },
-      {
-        "id": "elite_ms69xp6f_tp8d",
-        "tierId": "elite",
-        "name": "Elite Station",
-        "durability": 9913.118882275132,
-        "status": "mining",
-        "miningSince": 1785341004812,
-        "purchasedAt": 1785341001399
       }
     ],
-    "rewardHistory": [
-      {
-        "blockNumber": 273,
-        "solvedAt": 1785343162607,
-        "amount": 63,
-        "type": "hashrate_share"
-      },
-      {
-        "blockNumber": 230,
-        "solvedAt": 1785188362607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 229,
-        "solvedAt": 1785184762607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 228,
-        "solvedAt": 1785181162607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 227,
-        "solvedAt": 1785177562607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 226,
-        "solvedAt": 1785173962607,
-        "amount": 500,
-        "type": "finder"
-      }
-    ],
+    "rewardHistory": [],
     "exchangeUsedToday": 0,
-    "exchangeResetAt": 1785427370003,
-    "miningExpiresAt": 1785384176919,
-    "miningRenewedAt": 1785340976919
+    "exchangeResetAt": 1785174157088,
+    "miningExpiresAt": 1785189704428,
+    "miningRenewedAt": 1785146504428
   },
   "d3n1s1": {
     "username": "D3n1s1",
@@ -306,90 +260,162 @@
     ],
     "exchangeUsedToday": 0,
     "exchangeResetAt": 1785311996227,
-    "miningExpiresAt": 1785384294246,
-    "miningRenewedAt": 1785341094246
+    "miningExpiresAt": 1785283493498,
+    "miningRenewedAt": 1785240293498
   },
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785243910569,
-    "balance": 7239.483304347827,
-    "gems": 0.39999999999417923,
+    "lastCheckedAt": 1785506979589,
+    "balance": 500.018956521737,
+    "gems": 2643476.4,
     "rigs": [
       {
         "id": "elite_ms33jfbp_ba2q",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 8702.419510582171,
+        "durability": 7972.286177248828,
         "status": "mining",
-        "miningSince": 1785165436554,
+        "miningSince": 1785482437853,
         "purchasedAt": 1785148859221
       },
       {
         "id": "elite_ms3b4dcn_h6hf",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 8935.425396825523,
+        "durability": 8205.292063492194,
         "status": "mining",
-        "miningSince": 1785179528146,
+        "miningSince": 1785482437853,
         "purchasedAt": 1785161593751
       },
       {
         "id": "pro_ms3dbmdi_65jn",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 8853.535042735075,
+        "durability": 8067.237606837641,
         "status": "mining",
-        "miningSince": 1785179526396,
+        "miningSince": 1785482437853,
         "purchasedAt": 1785165291270
       },
       {
         "id": "advanced_ms3emvuc_ioe4",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 8757.609972993861,
+        "durability": 7905.78775077164,
         "status": "mining",
-        "miningSince": 1785179524359,
+        "miningSince": 1785482437853,
         "purchasedAt": 1785167496372
       },
       {
         "id": "advanced_ms3ensip_r7z9",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 8757.609972993861,
+        "durability": 7905.78775077164,
         "status": "mining",
-        "miningSince": 1785179523169,
+        "miningSince": 1785482437853,
         "purchasedAt": 1785167538721
       },
       {
         "id": "elite_ms3lsig1_ay22",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 8935.094262566265,
+        "durability": 8204.960929232935,
         "status": "mining",
-        "miningSince": 1785179519151,
+        "miningSince": 1785482437853,
         "purchasedAt": 1785179516257
       },
       {
         "id": "quantum_ms49utef_7vwj",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9653.181192129641,
+        "durability": 9014.314525462987,
         "status": "mining",
-        "miningSince": 1785219938850,
+        "miningSince": 1785482437853,
         "purchasedAt": 1785219934551
       },
       {
         "id": "elite_ms4h0lfw_dejl",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 9802.378786375777,
+        "durability": 9072.245453042447,
         "status": "mining",
-        "miningSince": 1785231962565,
+        "miningSince": 1785482437853,
         "purchasedAt": 1785231961484
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 318,
+        "solvedAt": 1785505162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 317,
+        "solvedAt": 1785501562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 316,
+        "solvedAt": 1785497962607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 315,
+        "solvedAt": 1785494362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 314,
+        "solvedAt": 1785490762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 313,
+        "solvedAt": 1785487162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 312,
+        "solvedAt": 1785483562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 250,
+        "solvedAt": 1785260362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 249,
+        "solvedAt": 1785256762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 248,
+        "solvedAt": 1785253162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 247,
+        "solvedAt": 1785249562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 246,
+        "solvedAt": 1785245962607,
+        "amount": 500,
+        "type": "finder"
+      },
       {
         "blockNumber": 245,
         "solvedAt": 1785242362607,
@@ -619,9 +645,20 @@
         "type": "finder"
       }
     ],
-    "exchangeUsedToday": 1,
-    "exchangeResetAt": 1785318318898,
-    "miningExpiresAt": 1785384276872,
-    "miningRenewedAt": 1785341076872
+    "exchangeUsedToday": 3,
+    "exchangeResetAt": 1785568832127,
+    "miningExpiresAt": 1785536799753,
+    "miningRenewedAt": 1785493599753
+  },
+  "alibicimss": {
+    "username": "AliBicimss",
+    "createdAt": 1785498595605,
+    "lastCheckedAt": 1785498595605,
+    "balance": 200,
+    "gems": 0,
+    "rigs": [],
+    "rewardHistory": [],
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1785498595605
   }
 }
