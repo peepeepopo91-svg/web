@@ -684,15 +684,15 @@
   "alibicimss": {
     "username": "AliBicimss",
     "createdAt": 1785498595605,
-    "lastCheckedAt": 1785514093180,
-    "balance": 212,
-    "gems": 0,
+    "lastCheckedAt": 1785514767238,
+    "balance": 162,
+    "gems": 3822,
     "rigs": [
       {
         "id": "starter_ms91n1ke_i03j",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9881.655387205612,
+        "durability": 9867.470664983395,
         "status": "mining",
         "miningSince": 1785508469787,
         "purchasedAt": 1785508465838
@@ -701,7 +701,7 @@
         "id": "advanced_ms91ttay_e9b5",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9897.49731867288,
+        "durability": 9884.494656635847,
         "status": "mining",
         "miningSince": 1785508783832,
         "purchasedAt": 1785508781722
@@ -710,7 +710,7 @@
         "id": "advanced_ms94eaf4_7v12",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9980.776755401243,
+        "durability": 9967.774093364209,
         "status": "mining",
         "miningSince": 1785513097775,
         "purchasedAt": 1785513096256
@@ -730,7 +730,7 @@
         "type": "finder"
       }
     ],
-    "exchangeUsedToday": 0,
+    "exchangeUsedToday": 1,
     "exchangeResetAt": 1785594611252,
     "miningExpiresAt": 1785551411252,
     "miningRenewedAt": 1785508211252
