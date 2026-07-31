@@ -726,15 +726,15 @@
   "alibicimss": {
     "username": "AliBicimss",
     "createdAt": 1785498595605,
-    "lastCheckedAt": 1785519313413,
-    "balance": 662,
+    "lastCheckedAt": 1785519800419,
+    "balance": 262,
     "gems": 3822,
     "rigs": [
       {
         "id": "starter_ms91n1ke_i03j",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9771.80199915843,
+        "durability": 9761.553556397494,
         "status": "mining",
         "miningSince": 1785508469787,
         "purchasedAt": 1785508465838
@@ -743,7 +743,7 @@
         "id": "advanced_ms91ttay_e9b5",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9796.798379629727,
+        "durability": 9787.403973765535,
         "status": "mining",
         "miningSince": 1785508783832,
         "purchasedAt": 1785508781722
@@ -752,13 +752,28 @@
         "id": "advanced_ms94eaf4_7v12",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9880.077816358089,
+        "durability": 9870.683410493897,
         "status": "mining",
         "miningSince": 1785513097775,
         "purchasedAt": 1785513096256
+      },
+      {
+        "id": "pro_ms989iqc_tltx",
+        "tierId": "pro",
+        "name": "Pro Miner",
+        "durability": 10000,
+        "status": "idle",
+        "miningSince": null,
+        "purchasedAt": 1785519592212
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 322,
+        "solvedAt": 1785519562607,
+        "amount": 500,
+        "type": "finder"
+      },
       {
         "blockNumber": 321,
         "solvedAt": 1785515962607,
