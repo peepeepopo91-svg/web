@@ -729,15 +729,15 @@
   "alibicimss": {
     "username": "AliBicimss",
     "createdAt": 1785498595605,
-    "lastCheckedAt": 1785533953958,
-    "balance": 500.72444444444443,
+    "lastCheckedAt": 1785534013958,
+    "balance": 1000.7244444444444,
     "gems": 2646,
     "rigs": [
       {
         "id": "starter_ms91n1ke_i03j",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9463.709722222264,
+        "durability": 9462.447095959638,
         "status": "mining",
         "miningSince": 1785508469787,
         "purchasedAt": 1785508465838
@@ -746,7 +746,7 @@
         "id": "advanced_ms91ttay_e9b5",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9514.380459105098,
+        "durability": 9513.22305169769,
         "status": "mining",
         "miningSince": 1785508783832,
         "purchasedAt": 1785508781722
@@ -755,7 +755,7 @@
         "id": "advanced_ms94eaf4_7v12",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9597.65989583346,
+        "durability": 9596.502488426053,
         "status": "mining",
         "miningSince": 1785513097775,
         "purchasedAt": 1785513096256
@@ -764,7 +764,7 @@
         "id": "pro_ms989iqc_tltx",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9749.222435897354,
+        "durability": 9748.154059828978,
         "status": "mining",
         "miningSince": 1785519870723,
         "purchasedAt": 1785519592212
@@ -773,7 +773,7 @@
         "id": "advanced_ms9aex7h_c8vk",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9792.537673611158,
+        "durability": 9791.38026620375,
         "status": "mining",
         "miningSince": 1785523206609,
         "purchasedAt": 1785523203485
@@ -782,13 +782,19 @@
         "id": "pro_ms9ckuxb_zxzi",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9873.328472222176,
+        "durability": 9872.2600961538,
         "status": "mining",
         "miningSince": 1785526841623,
         "purchasedAt": 1785526839695
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 326,
+        "solvedAt": 1785533962607,
+        "amount": 500,
+        "type": "finder"
+      },
       {
         "blockNumber": 325,
         "solvedAt": 1785530362607,
