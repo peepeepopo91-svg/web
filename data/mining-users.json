@@ -54,25 +54,56 @@
   "cyan_gaming07": {
     "username": "Cyan_Gaming07",
     "createdAt": 1785087682534,
-    "lastCheckedAt": 1785172897308,
-    "balance": 50,
+    "lastCheckedAt": 1785508121352,
+    "balance": 685,
     "gems": 0,
     "rigs": [
       {
         "id": "starter_ms237k3w_gc3p",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 8536.54137205388,
+        "durability": 8182.856186868695,
         "status": "mining",
-        "miningSince": 1785146515542,
+        "miningSince": 1785508125285,
         "purchasedAt": 1785087839372
       }
     ],
-    "rewardHistory": [],
+    "rewardHistory": [
+      {
+        "blockNumber": 230,
+        "solvedAt": 1785188362607,
+        "amount": 127,
+        "type": "hashrate_share"
+      },
+      {
+        "blockNumber": 229,
+        "solvedAt": 1785184762607,
+        "amount": 127,
+        "type": "hashrate_share"
+      },
+      {
+        "blockNumber": 228,
+        "solvedAt": 1785181162607,
+        "amount": 127,
+        "type": "hashrate_share"
+      },
+      {
+        "blockNumber": 227,
+        "solvedAt": 1785177562607,
+        "amount": 127,
+        "type": "hashrate_share"
+      },
+      {
+        "blockNumber": 226,
+        "solvedAt": 1785173962607,
+        "amount": 127,
+        "type": "hashrate_share"
+      }
+    ],
     "exchangeUsedToday": 0,
-    "exchangeResetAt": 1785174157088,
-    "miningExpiresAt": 1785189704428,
-    "miningRenewedAt": 1785146504428
+    "exchangeResetAt": 1785594511321,
+    "miningExpiresAt": 1785551315499,
+    "miningRenewedAt": 1785508115499
   },
   "d3n1s1": {
     "username": "D3n1s1",
