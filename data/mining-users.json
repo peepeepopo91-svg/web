@@ -729,7 +729,7 @@
   "alibicimss": {
     "username": "AliBicimss",
     "createdAt": 1785498595605,
-    "lastCheckedAt": 1785534073962,
+    "lastCheckedAt": 1785534133963,
     "balance": 1000.7244444444444,
     "gems": 2646,
     "rigs": [
@@ -737,7 +737,7 @@
         "id": "starter_ms91n1ke_i03j",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9461.184385521929,
+        "durability": 9459.921738215531,
         "status": "mining",
         "miningSince": 1785508469787,
         "purchasedAt": 1785508465838
@@ -746,7 +746,7 @@
         "id": "advanced_ms91ttay_e9b5",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9512.06556712979,
+        "durability": 9510.908140432259,
         "status": "mining",
         "miningSince": 1785508783832,
         "purchasedAt": 1785508781722
@@ -755,7 +755,7 @@
         "id": "advanced_ms94eaf4_7v12",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9595.345003858152,
+        "durability": 9594.187577160621,
         "status": "mining",
         "miningSince": 1785513097775,
         "purchasedAt": 1785513096256
@@ -764,7 +764,7 @@
         "id": "pro_ms989iqc_tltx",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9747.08561253553,
+        "durability": 9746.017218660885,
         "status": "mining",
         "miningSince": 1785519870723,
         "purchasedAt": 1785519592212
@@ -773,7 +773,7 @@
         "id": "advanced_ms9aex7h_c8vk",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9790.22278163585,
+        "durability": 9789.065354938319,
         "status": "mining",
         "miningSince": 1785523206609,
         "purchasedAt": 1785523203485
@@ -782,7 +782,7 @@
         "id": "pro_ms9ckuxb_zxzi",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9871.191648860351,
+        "durability": 9870.123254985707,
         "status": "mining",
         "miningSince": 1785526841623,
         "purchasedAt": 1785526839695
