@@ -729,7 +729,7 @@
   "alibicimss": {
     "username": "AliBicimss",
     "createdAt": 1785498595605,
-    "lastCheckedAt": 1785530113838,
+    "lastCheckedAt": 1785530173839,
     "balance": 0.7244444444444298,
     "gems": 2646,
     "rigs": [
@@ -737,7 +737,7 @@
         "id": "starter_ms91n1ke_i03j",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9544.520328282873,
+        "durability": 9543.257680976476,
         "status": "mining",
         "miningSince": 1785508469787,
         "purchasedAt": 1785508465838
@@ -746,7 +746,7 @@
         "id": "advanced_ms91ttay_e9b5",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9588.456847993953,
+        "durability": 9587.299421296422,
         "status": "mining",
         "miningSince": 1785508783832,
         "purchasedAt": 1785508781722
@@ -755,7 +755,7 @@
         "id": "advanced_ms94eaf4_7v12",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9671.736284722316,
+        "durability": 9670.578858024784,
         "status": "mining",
         "miningSince": 1785513097775,
         "purchasedAt": 1785513096256
@@ -764,7 +764,7 @@
         "id": "pro_ms989iqc_tltx",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9817.60064102557,
+        "durability": 9816.532247150926,
         "status": "mining",
         "miningSince": 1785519870723,
         "purchasedAt": 1785519592212
@@ -773,7 +773,7 @@
         "id": "advanced_ms9aex7h_c8vk",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9866.614062500013,
+        "durability": 9865.456635802482,
         "status": "mining",
         "miningSince": 1785523206609,
         "purchasedAt": 1785523203485
@@ -782,7 +782,7 @@
         "id": "pro_ms9ckuxb_zxzi",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9941.706677350392,
+        "durability": 9940.638283475748,
         "status": "mining",
         "miningSince": 1785526841623,
         "purchasedAt": 1785526839695
