@@ -201,6 +201,32 @@
         "Android": 16
       },
       "peakConcurrent": 12
+    },
+    "2026-08-02": {
+      "pageViews": 10,
+      "uniqueSessions": 10,
+      "pages": {
+        "/tournament": 1,
+        "/rankings": 4,
+        "/": 1,
+        "/mining": 1,
+        "/exchange": 1,
+        "/shop": 1,
+        "/tier-tagger": 1
+      },
+      "referrers": {
+        "Direct": 10
+      },
+      "devices": {
+        "Mobile": 10
+      },
+      "browsers": {
+        "Chrome": 10
+      },
+      "os": {
+        "Android": 10
+      },
+      "peakConcurrent": 10
     }
   }
 }
