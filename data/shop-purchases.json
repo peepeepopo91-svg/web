@@ -1,6 +1,24 @@
 {
   "purchases": [
     {
+      "id": "BT-42GE2695",
+      "username": "D3n1s1",
+      "itemId": "rank-trainee",
+      "itemName": "Trainee",
+      "category": "ranks",
+      "quantity": 1,
+      "price": 800000,
+      "totalCost": 800000,
+      "status": "completed",
+      "createdAt": 1785679181121,
+      "updatedAt": 1785680024759,
+      "completedAt": 1785680024759,
+      "staffNotes": null,
+      "playerNotes": null,
+      "refunded": false,
+      "refundedAt": null
+    },
+    {
       "id": "BT-HJFEC8NE",
       "username": "zolup",
       "itemId": "tool-axe",
