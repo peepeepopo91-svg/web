@@ -513,84 +513,156 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785699685011,
-    "balance": 2676.257217391336,
-    "gems": 29658575.36,
+    "lastCheckedAt": 1785758783970,
+    "balance": 1085172.6831433172,
+    "gems": 0.35999999940395355,
     "rigs": [
       {
         "id": "elite_ms33jfbp_ba2q",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 8465.724669312573,
+        "durability": 7727.635813492467,
         "status": "mining",
-        "miningSince": 1785666528274,
+        "miningSince": 1785757234736,
         "purchasedAt": 1785148859221
       },
       {
         "id": "elite_ms3b4dcn_h6hf",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 8465.724669312573,
+        "durability": 7727.635813492467,
         "status": "mining",
-        "miningSince": 1785666528274,
+        "miningSince": 1785757234736,
         "purchasedAt": 1785161593751
       },
       {
         "id": "pro_ms3dbmdi_65jn",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 6248.599537036948,
+        "durability": 5453.7346153845365,
         "status": "mining",
-        "miningSince": 1785666528274,
+        "miningSince": 1785757234736,
         "purchasedAt": 1785165291270
       },
       {
         "id": "advanced_ms3emvuc_ioe4",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 5935.596508487666,
+        "durability": 5074.492843364198,
         "status": "mining",
-        "miningSince": 1785666528274,
+        "miningSince": 1785757234736,
         "purchasedAt": 1785167496372
       },
       {
         "id": "advanced_ms3ensip_r7z9",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 5935.596508487666,
+        "durability": 5074.492843364198,
         "status": "mining",
-        "miningSince": 1785666528274,
+        "miningSince": 1785757234736,
         "purchasedAt": 1785167538721
       },
       {
         "id": "elite_ms3lsig1_ay22",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 8465.724669312573,
+        "durability": 7727.635813492467,
         "status": "mining",
-        "miningSince": 1785666528274,
+        "miningSince": 1785757234736,
         "purchasedAt": 1785179516257
       },
       {
         "id": "quantum_ms49utef_7vwj",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8657.509085648102,
+        "durability": 8011.681336805502,
         "status": "mining",
-        "miningSince": 1785666528274,
+        "miningSince": 1785757234736,
         "purchasedAt": 1785219934551
       },
       {
         "id": "elite_ms4h0lfw_dejl",
         "tierId": "elite",
         "name": "Elite Station",
-        "durability": 7383.510102513412,
+        "durability": 6645.421246693306,
         "status": "mining",
-        "miningSince": 1785666528274,
+        "miningSince": 1785757234736,
         "purchasedAt": 1785231961484
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 384,
+        "solvedAt": 1785742762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 383,
+        "solvedAt": 1785739162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 382,
+        "solvedAt": 1785735562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 381,
+        "solvedAt": 1785731962607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 380,
+        "solvedAt": 1785728362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 379,
+        "solvedAt": 1785724762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 378,
+        "solvedAt": 1785721162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 377,
+        "solvedAt": 1785717562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 376,
+        "solvedAt": 1785713962607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 375,
+        "solvedAt": 1785710362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 374,
+        "solvedAt": 1785706762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 373,
+        "solvedAt": 1785703162607,
+        "amount": 500,
+        "type": "finder"
+      },
       {
         "blockNumber": 372,
         "solvedAt": 1785699562607,
@@ -818,166 +890,142 @@
         "solvedAt": 1785256762607,
         "amount": 500,
         "type": "finder"
-      },
-      {
-        "blockNumber": 248,
-        "solvedAt": 1785253162607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 247,
-        "solvedAt": 1785249562607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 246,
-        "solvedAt": 1785245962607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 245,
-        "solvedAt": 1785242362607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 245,
-        "solvedAt": 1785242362607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 244,
-        "solvedAt": 1785238762607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 244,
-        "solvedAt": 1785238762607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 243,
-        "solvedAt": 1785235162607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 242,
-        "solvedAt": 1785231562607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 241,
-        "solvedAt": 1785227962607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 240,
-        "solvedAt": 1785224362607,
-        "amount": 500,
-        "type": "finder"
-      },
-      {
-        "blockNumber": 239,
-        "solvedAt": 1785220762607,
-        "amount": 500,
-        "type": "finder"
       }
     ],
-    "exchangeUsedToday": 3,
-    "exchangeResetAt": 1785752886503,
-    "miningExpiresAt": 1785742773855,
-    "miningRenewedAt": 1785699573855
+    "exchangeUsedToday": 1,
+    "exchangeResetAt": 1785841349221,
+    "miningExpiresAt": 1785800431338,
+    "miningRenewedAt": 1785757231338
   },
   "alibicimss": {
     "username": "AliBicimss",
     "createdAt": 1785498595605,
-    "lastCheckedAt": 1785707000007,
-    "balance": 2000.630930930929,
+    "lastCheckedAt": 1785756113781,
+    "balance": 6000.630930930929,
     "gems": 247027.62,
     "rigs": [
       {
         "id": "starter_ms91n1ke_i03j",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 8323.366729798023,
+        "durability": 7693.997159091229,
         "status": "mining",
-        "miningSince": 1785692656767,
+        "miningSince": 1785755059758,
         "purchasedAt": 1785508465838
       },
       {
         "id": "advanced_ms91ttay_e9b5",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 8469.066049382871,
+        "durability": 7892.143942901496,
         "status": "mining",
-        "miningSince": 1785692652275,
+        "miningSince": 1785755059758,
         "purchasedAt": 1785508781722
       },
       {
         "id": "advanced_ms94eaf4_7v12",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 8552.345486111233,
+        "durability": 7975.423379629859,
         "status": "mining",
-        "miningSince": 1785692654188,
+        "miningSince": 1785755059758,
         "purchasedAt": 1785513096256
       },
       {
         "id": "pro_ms989iqc_tltx",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 8784.316826922994,
+        "durability": 8251.77334401696,
         "status": "mining",
-        "miningSince": 1785692654522,
+        "miningSince": 1785755059758,
         "purchasedAt": 1785519592212
       },
       {
         "id": "advanced_ms9aex7h_c8vk",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 8747.22326388893,
+        "durability": 8170.301157407556,
         "status": "mining",
-        "miningSince": 1785692653508,
+        "miningSince": 1785755059758,
         "purchasedAt": 1785523203485
       },
       {
         "id": "pro_ms9ckuxb_zxzi",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 8908.422863247815,
+        "durability": 8375.879380341781,
         "status": "mining",
-        "miningSince": 1785692651695,
+        "miningSince": 1785755059758,
         "purchasedAt": 1785526839695
       },
       {
         "id": "quantum_msc3agd8_2o6u",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9792.375737847227,
+        "durability": 9359.684157986054,
         "status": "mining",
-        "miningSince": 1785692650698,
+        "miningSince": 1785755057214,
         "purchasedAt": 1785692636252
       },
       {
         "id": "quantum_msc3eyrs_rc6o",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9795.25743634259,
+        "durability": 9362.565856481417,
         "status": "mining",
-        "miningSince": 1785692848808,
+        "miningSince": 1785755059758,
         "purchasedAt": 1785692846728
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 382,
+        "solvedAt": 1785735562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 381,
+        "solvedAt": 1785731962607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 380,
+        "solvedAt": 1785728362607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 379,
+        "solvedAt": 1785724762607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 378,
+        "solvedAt": 1785721162607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 377,
+        "solvedAt": 1785717562607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 376,
+        "solvedAt": 1785713962607,
+        "amount": 500,
+        "type": "finder"
+      },
+      {
+        "blockNumber": 375,
+        "solvedAt": 1785710362607,
+        "amount": 500,
+        "type": "finder"
+      },
       {
         "blockNumber": 374,
         "solvedAt": 1785706762607,
@@ -1119,7 +1167,7 @@
     ],
     "exchangeUsedToday": 2,
     "exchangeResetAt": 1785779030544,
-    "miningExpiresAt": 1785735849018,
-    "miningRenewedAt": 1785692649018
+    "miningExpiresAt": 1785798248955,
+    "miningRenewedAt": 1785755048955
   }
 }
