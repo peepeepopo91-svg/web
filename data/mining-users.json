@@ -900,7 +900,7 @@
   "alibicimss": {
     "username": "AliBicimss",
     "createdAt": 1785498595605,
-    "lastCheckedAt": 1785766105806,
+    "lastCheckedAt": 1785767545810,
     "balance": 6858.630930930929,
     "gems": 247027.62,
     "rigs": [
@@ -908,7 +908,7 @@
         "id": "starter_ms91n1ke_i03j",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 7483.7272727282925,
+        "durability": 7453.424158250178,
         "status": "mining",
         "miningSince": 1785755059758,
         "purchasedAt": 1785508465838
@@ -917,7 +917,7 @@
         "id": "advanced_ms91ttay_e9b5",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 7699.396547068449,
+        "durability": 7671.618692130177,
         "status": "mining",
         "miningSince": 1785755059758,
         "purchasedAt": 1785508781722
@@ -926,7 +926,7 @@
         "id": "advanced_ms94eaf4_7v12",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 7782.675983796811,
+        "durability": 7754.898128858539,
         "status": "mining",
         "miningSince": 1785755059758,
         "purchasedAt": 1785513096256
@@ -935,7 +935,7 @@
         "id": "pro_ms989iqc_tltx",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 8073.852670939793,
+        "durability": 8048.211574073694,
         "status": "mining",
         "miningSince": 1785755059758,
         "purchasedAt": 1785519592212
@@ -944,7 +944,7 @@
         "id": "advanced_ms9aex7h_c8vk",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 7977.553761574509,
+        "durability": 7949.775906636237,
         "status": "mining",
         "miningSince": 1785755059758,
         "purchasedAt": 1785523203485
@@ -953,7 +953,7 @@
         "id": "pro_ms9ckuxb_zxzi",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 8197.958707264754,
+        "durability": 8172.317610398654,
         "status": "mining",
         "miningSince": 1785755059758,
         "purchasedAt": 1785526839695
@@ -962,7 +962,7 @@
         "id": "quantum_msc3agd8_2o6u",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9215.123611110861,
+        "durability": 9194.290219907161,
         "status": "mining",
         "miningSince": 1785755057214,
         "purchasedAt": 1785692636252
@@ -971,7 +971,7 @@
         "id": "quantum_msc3eyrs_rc6o",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 9218.005309606224,
+        "durability": 9197.171918402524,
         "status": "mining",
         "miningSince": 1785755059758,
         "purchasedAt": 1785692846728
