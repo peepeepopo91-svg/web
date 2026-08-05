@@ -513,9 +513,9 @@
   "somerandomdude54": {
     "username": "SomeRandomDude54",
     "createdAt": 1785144169760,
-    "lastCheckedAt": 1785936482276,
-    "balance": 0.36314331693574786,
-    "gems": 259643556.94,
+    "lastCheckedAt": 1785939900945,
+    "balance": 11063073.61879549,
+    "gems": 0.9399999976158142,
     "rigs": [
       {
         "id": "elite_ms33jfbp_ba2q",
@@ -892,7 +892,7 @@
         "type": "finder"
       }
     ],
-    "exchangeUsedToday": 2,
+    "exchangeUsedToday": 3,
     "exchangeResetAt": 1786012676597,
     "miningExpiresAt": 1785811920942,
     "miningRenewedAt": 1785768720942
