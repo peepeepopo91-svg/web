@@ -1227,24 +1227,15 @@
   "laviepro": {
     "username": "LaviePRO",
     "createdAt": 1786022672847,
-    "lastCheckedAt": 1786046314533,
-    "balance": 212,
-    "gems": 0,
+    "lastCheckedAt": 1786047727461,
+    "balance": 0,
+    "gems": 37786.840000000004,
     "rigs": [
-      {
-        "id": "advanced_mshkbh5j_lpat",
-        "tierId": "advanced",
-        "name": "Advanced Rig",
-        "durability": 9561.137731481504,
-        "status": "mining",
-        "miningSince": 1786023572159,
-        "purchasedAt": 1786023568279
-      },
       {
         "id": "pro_mshvzul8_sfbn",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9944.389173789175,
+        "durability": 9919.230199430203,
         "status": "mining",
         "miningSince": 1786043193102,
         "purchasedAt": 1786043181212
@@ -1253,7 +1244,7 @@
         "id": "advanced_mshw01ur_dqg8",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9939.75493827161,
+        "durability": 9912.499382716063,
         "status": "mining",
         "miningSince": 1786043193102,
         "purchasedAt": 1786043190627
@@ -1262,7 +1253,7 @@
         "id": "advanced_mshx8y4r_gxt6",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9980.15405092593,
+        "durability": 9952.898495370384,
         "status": "mining",
         "miningSince": 1786045287428,
         "purchasedAt": 1786045285323
@@ -1312,7 +1303,7 @@
         "type": "finder"
       }
     ],
-    "exchangeUsedToday": 0,
+    "exchangeUsedToday": 2,
     "exchangeResetAt": 1786109149826,
     "miningExpiresAt": 1786065949826,
     "miningRenewedAt": 1786022749826
