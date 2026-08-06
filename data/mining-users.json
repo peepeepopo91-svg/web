@@ -108,98 +108,98 @@
   "d3n1s1": {
     "username": "D3n1s1",
     "createdAt": 1785094613983,
-    "lastCheckedAt": 1785961571957,
-    "balance": 6000.375523349438,
-    "gems": 3878301.18,
+    "lastCheckedAt": 1786021874941,
+    "balance": 0.3755233494375716,
+    "gems": 4360461.18,
     "rigs": [
       {
         "id": "quantum_ms2y9mja_mgu2",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8725.368344907416,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8724.777951388896,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785140003926
       },
       {
         "id": "quantum_msbvcpyk_i31c",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8532.440436921303,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8531.850043402783,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785679305068
       },
       {
         "id": "quantum_msbw9hyt_rqj6",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8555.044675925936,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8554.454282407416,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785680834358
       },
       {
         "id": "quantum_msbw9iwl_ih5h",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8555.044675925936,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8554.454282407416,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785680835573
       },
       {
         "id": "quantum_msbw9jxe_j57q",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8555.044675925936,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8554.454282407416,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785680836898
       },
       {
         "id": "quantum_msbw9kug_8wa5",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8555.044675925936,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8554.454282407416,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785680838088
       },
       {
         "id": "quantum_msbw9lri_6h4y",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8555.044675925936,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8554.454282407416,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785680839278
       },
       {
         "id": "quantum_msbwa2fv_cuot",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8555.044675925936,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8554.454282407416,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785680860891
       },
       {
         "id": "quantum_msbwa3i7_fbpb",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8555.044675925936,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8554.454282407416,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785680862271
       },
       {
         "id": "quantum_msbwa49g_xm41",
         "tierId": "quantum",
         "name": "Quantum Array",
-        "durability": 8555.044675925936,
-        "status": "idle",
-        "miningSince": null,
+        "durability": 8554.454282407416,
+        "status": "mining",
+        "miningSince": 1786021836443,
         "purchasedAt": 1785680863252
       }
     ],
@@ -505,10 +505,10 @@
         "type": "finder"
       }
     ],
-    "exchangeUsedToday": 0,
+    "exchangeUsedToday": 1,
     "exchangeResetAt": 1786047562122,
-    "miningExpiresAt": 1785818161947,
-    "miningRenewedAt": 1785774961947
+    "miningExpiresAt": 1786065034133,
+    "miningRenewedAt": 1786021834133
   },
   "somerandomdude54": {
     "username": "SomeRandomDude54",
