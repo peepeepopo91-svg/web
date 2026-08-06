@@ -1227,15 +1227,15 @@
   "laviepro": {
     "username": "LaviePRO",
     "createdAt": 1786022672847,
-    "lastCheckedAt": 1786048747462,
-    "balance": 0,
+    "lastCheckedAt": 1786048807462,
+    "balance": 500,
     "gems": 37786.840000000004,
     "rigs": [
       {
         "id": "pro_mshvzul8_sfbn",
         "tierId": "pro",
         "name": "Pro Miner",
-        "durability": 9901.067788461536,
+        "durability": 9899.99941239316,
         "status": "mining",
         "miningSince": 1786043193102,
         "purchasedAt": 1786043181212
@@ -1244,7 +1244,7 @@
         "id": "advanced_mshw01ur_dqg8",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9892.823437500014,
+        "durability": 9891.666030092607,
         "status": "mining",
         "miningSince": 1786043193102,
         "purchasedAt": 1786043190627
@@ -1253,13 +1253,19 @@
         "id": "advanced_mshx8y4r_gxt6",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9933.222550154334,
+        "durability": 9932.065142746927,
         "status": "mining",
         "miningSince": 1786045287428,
         "purchasedAt": 1786045285323
       }
     ],
     "rewardHistory": [
+      {
+        "blockNumber": 469,
+        "solvedAt": 1786048762607,
+        "amount": 500,
+        "type": "finder"
+      },
       {
         "blockNumber": 468,
         "solvedAt": 1786045162607,
