@@ -1227,7 +1227,7 @@
   "laviepro": {
     "username": "LaviePRO",
     "createdAt": 1786022672847,
-    "lastCheckedAt": 1786023187334,
+    "lastCheckedAt": 1786023247334,
     "balance": 50,
     "gems": 0,
     "rigs": [
@@ -1235,7 +1235,7 @@
         "id": "starter_mshjztgv_dtf6",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9996.560984848491,
+        "durability": 9995.298358585866,
         "status": "mining",
         "miningSince": 1786023026801,
         "purchasedAt": 1786023024367
