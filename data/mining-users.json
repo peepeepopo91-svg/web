@@ -1227,7 +1227,7 @@
   "laviepro": {
     "username": "LaviePRO",
     "createdAt": 1786022672847,
-    "lastCheckedAt": 1786033567359,
+    "lastCheckedAt": 1786033627359,
     "balance": 127,
     "gems": 0,
     "rigs": [
@@ -1235,7 +1235,7 @@
         "id": "starter_mshjztgv_dtf6",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9785.281018518584,
+        "durability": 9784.018392255959,
         "status": "mining",
         "miningSince": 1786023369944,
         "purchasedAt": 1786023024367
@@ -1244,7 +1244,7 @@
         "id": "advanced_mshkbh5j_lpat",
         "tierId": "advanced",
         "name": "Advanced Rig",
-        "durability": 9807.032291666683,
+        "durability": 9805.874884259276,
         "status": "mining",
         "miningSince": 1786023572159,
         "purchasedAt": 1786023568279
@@ -1253,7 +1253,7 @@
         "id": "starter_mshoxgv4_m7q2",
         "tierId": "starter",
         "name": "Starter Pack",
-        "durability": 9952.505787037086,
+        "durability": 9951.24316077446,
         "status": "mining",
         "miningSince": 1786031315032,
         "purchasedAt": 1786031312800
