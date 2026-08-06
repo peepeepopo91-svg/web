@@ -227,6 +227,72 @@
         "Android": 10
       },
       "peakConcurrent": 10
+    },
+    "2026-08-05": {
+      "pageViews": 41,
+      "uniqueSessions": 17,
+      "pages": {
+        "/": 3,
+        "/tournament": 8,
+        "/rankings": 13,
+        "/tier-tagger": 2,
+        "/shop": 2,
+        "/exchange": 11,
+        "/mining": 2
+      },
+      "referrers": {
+        "Direct": 39,
+        "Referral": 1,
+        "Google": 1
+      },
+      "devices": {
+        "Desktop": 15,
+        "Mobile": 26
+      },
+      "browsers": {
+        "Chrome": 25,
+        "Firefox": 1,
+        "Opera": 8,
+        "Edge": 5,
+        "Safari": 2
+      },
+      "os": {
+        "Linux": 2,
+        "Windows": 13,
+        "Android": 24,
+        "iOS": 2
+      },
+      "peakConcurrent": 4
+    },
+    "2026-08-06": {
+      "pageViews": 29,
+      "uniqueSessions": 15,
+      "pages": {
+        "/rankings": 9,
+        "/tournament": 11,
+        "/exchange": 7,
+        "/mining": 2
+      },
+      "referrers": {
+        "Direct": 26,
+        "Google": 2,
+        "Referral": 1
+      },
+      "devices": {
+        "Desktop": 10,
+        "Mobile": 19
+      },
+      "browsers": {
+        "Edge": 6,
+        "Chrome": 19,
+        "Firefox": 2,
+        "Opera": 2
+      },
+      "os": {
+        "Windows": 10,
+        "Android": 19
+      },
+      "peakConcurrent": 2
     }
   }
 }
