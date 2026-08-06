@@ -1223,5 +1223,28 @@
     "exchangeResetAt": 1785872405982,
     "miningExpiresAt": 1785798248955,
     "miningRenewedAt": 1785755048955
+  },
+  "laviepro": {
+    "username": "LaviePRO",
+    "createdAt": 1786022672847,
+    "lastCheckedAt": 1786023187334,
+    "balance": 50,
+    "gems": 0,
+    "rigs": [
+      {
+        "id": "starter_mshjztgv_dtf6",
+        "tierId": "starter",
+        "name": "Starter Pack",
+        "durability": 9996.560984848491,
+        "status": "mining",
+        "miningSince": 1786023026801,
+        "purchasedAt": 1786023024367
+      }
+    ],
+    "rewardHistory": [],
+    "exchangeUsedToday": 0,
+    "exchangeResetAt": 1786109149826,
+    "miningExpiresAt": 1786065949826,
+    "miningRenewedAt": 1786022749826
   }
 }
